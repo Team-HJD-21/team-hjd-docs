@@ -17,4 +17,4 @@ npm start
 
 ## 배포 전 확인
 
-GitHub Pages의 **Source**를 `GitHub Actions`로 설정합니다. 이 저장소의 배포 주소는 `[https://team-hjd-21.github.io/team-hjd-docs/](https://team-hjd-21.github.io/team-hjd-docs/)`입니다.
+GitHub Pages의 **Source**를 `GitHub Actions`로 설정합니다. 이 저장소의 배포 주소는 `https://team-hjd-21.github.io/team-hjd-docs/`입니다.
