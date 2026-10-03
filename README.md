@@ -29,12 +29,12 @@ npm start
 
 ## 배포 전 확인
 
-GitHub Pages의 **Source**를 `GitHub Actions`로 설정합니다. 목표 배포 주소는 `https://teamhjd.com/`입니다. 배포 빌드는 `actions/configure-pages`의 현재 주소를 읽으므로 사용자 도메인을 연결하기 전에는 기존 GitHub Pages 주소가 유지됩니다.
+GitHub Pages의 **Source**를 `GitHub Actions`로 설정합니다. 문서 주소는 `https://docs.teamhjd.com/`입니다. 팀 대표 사이트 `https://teamhjd.com/`은 별도 저장소 `Team-HJD-21/team-hjd-site`에서 배포합니다. 배포 빌드는 `actions/configure-pages`의 현재 주소를 읽습니다.
 
 ## 사용자 도메인 연결
 
-1. GitHub 저장소 Settings → Pages의 Custom domain을 `teamhjd.com`으로 설정합니다.
-2. Squarespace DNS에서 기존 웹사이트용 `@` A 레코드를 아래 GitHub Pages 값으로 교체합니다. `www` CNAME은 `team-hjd-21.github.io`로 설정합니다.
+1. 이 문서 저장소 Settings → Pages의 Custom domain을 `docs.teamhjd.com`으로 설정합니다. 대표 사이트 저장소의 Custom domain은 `teamhjd.com`입니다.
+2. Squarespace DNS에서 아래 레코드를 유지하고 `docs` CNAME을 추가합니다. 이미 설정한 `@`와 `www`는 변경하지 않습니다.
 
 | 이름 | 종류 | 값 |
 | --- | --- | --- |
@@ -43,6 +43,7 @@ GitHub Pages의 **Source**를 `GitHub Actions`로 설정합니다. 목표 배포
 | @ | A | 185.199.110.153 |
 | @ | A | 185.199.111.153 |
 | www | CNAME | team-hjd-21.github.io |
+| docs | CNAME | team-hjd-21.github.io |
 
 구글 메일의 MX와 SPF/DKIM/DMARC TXT 및 도메인 인증 레코드는 유지합니다. 루트 도메인에 CNAME을 추가하거나 DNS 전체를 초기화하지 않습니다.
 

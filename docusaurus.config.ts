@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'TeamHJD Docs',
   tagline: '함께 일하는 방식을 기록하고, 더 잘 만드는 팀의 지식 기반',
-  url: process.env.SITE_URL ?? 'https://teamhjd.com',
+  url: process.env.SITE_URL ?? 'https://docs.teamhjd.com',
   baseUrl: process.env.SITE_BASE_URL ?? '/',
   organizationName: 'Team-HJD-21',
   projectName: 'team-hjd-docs',
@@ -42,6 +42,7 @@ const config: Config = {
     navbar: {
       title: 'TeamHJD Docs',
       items: [
+        {href: 'https://teamhjd.com', label: '팀 홈페이지', position: 'left'},
         {to: '/docs/start-here', label: '시작하기', position: 'left'},
         {to: '/docs/collaboration/overview', label: '협업 가이드', position: 'left'},
         {to: '/docs/turret', label: '터렛 API', position: 'left'},
