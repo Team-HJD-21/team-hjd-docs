@@ -4,18 +4,20 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'TeamHJD Docs',
   tagline: '함께 일하는 방식을 기록하고, 더 잘 만드는 팀의 지식 기반',
-  url: 'https://teamhjd.github.io',
+  url: 'https://team-hjd-21.github.io',
   baseUrl: '/team-hjd-docs/',
-  organizationName: 'TeamHJD',
+  organizationName: 'Team-HJD-21',
   projectName: 'team-hjd-docs',
   favicon: 'img/brand/favicon.png',
   trailingSlash: false,
   onBrokenLinks: 'throw',
   markdown: {
+    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'warn',
     },
   },
+  themes: ['@docusaurus/theme-mermaid'],
   i18n: {defaultLocale: 'ko', locales: ['ko']},
   presets: [
     [
@@ -24,7 +26,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: 'docs',
-          editUrl: 'https://github.com/TeamHJD/team-hjd-docs/tree/main/',
+          editUrl: 'https://github.com/Team-HJD-21/team-hjd-docs/tree/main/',
         },
         blog: false,
         theme: {customCss: './src/css/custom.css'},
@@ -42,9 +44,11 @@ const config: Config = {
       items: [
         {to: '/docs/start-here', label: '시작하기', position: 'left'},
         {to: '/docs/collaboration/overview', label: '협업 가이드', position: 'left'},
+        {to: '/docs/turret', label: '터렛 API', position: 'left'},
+        {to: '/turret-search', label: 'API 찾기', position: 'left'},
         {to: '/docs/reference/glossary', label: '용어 사전', position: 'left'},
         {to: '/docs/reference/abbreviations', label: '약어', position: 'left'},
-        {href: 'https://github.com/TeamHJD/team-hjd-docs', label: 'GitHub', position: 'right'},
+        {href: 'https://github.com/Team-HJD-21/team-hjd-docs', label: 'GitHub', position: 'right'},
       ],
     },
     footer: {
