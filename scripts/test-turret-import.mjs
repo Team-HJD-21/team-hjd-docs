@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+
+const root = path.resolve(import.meta.dirname, '..');
+const preview = process.argv[2];
+if (!preview) throw new Error('Pass a local CBC documentation worktree.');
+const run = args => spawnSync(process.execPath, [path.join(root, 'scripts/import-turret-docs.mjs'), ...args], {cwd: root, encoding: 'utf8'});
+const search = () => JSON.parse(readFileSync(path.join(root, 'static/turret-search.json'), 'utf8'));
+const main = run([path.join(root, 'cbc-source'), '--published']);
+assert.equal(main.status, 0, main.stderr);
+assert(search().some(page => page.url === '/docs/turret'));
+const blocked = run([preview, '--published']);
+assert.notEqual(blocked.status, 0);
+assert.match(blocked.stderr, /require CBC main/);
+const result = run([preview]);
+assert.equal(result.status, 0, result.stderr);
+const pages = search();
+assert.equal(pages.length, 6);
+assert(pages.some(page => page.text.includes('ApplyDamage')));
+assert(pages.some(page => page.text.includes('AvailablePower')));
+assert.match(readFileSync(path.join(root, 'docs/turret/index.md'), 'utf8'), /배포본이 아닙니다/);
+assert.match(readFileSync(path.join(root, 'docs/turret/runtime-flows.md'), 'utf8'), /```mermaid/);
+assert(!pages.some(page => /\/index$/.test(page.url)));
+console.log('Passed: main import, preview-only deployment guard, 6 pages, API search, source notice, Mermaid retention and index route.');
