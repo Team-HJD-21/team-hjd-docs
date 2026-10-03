@@ -34,7 +34,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/import-turret-docs.mjs cbc-source --published
+      - name: Read current GitHub Pages URL
+        id: pages
+        uses: actions/configure-pages@v5
       - run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          SITE_BASE_URL: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:

@@ -4,8 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'TeamHJD Docs',
   tagline: '함께 일하는 방식을 기록하고, 더 잘 만드는 팀의 지식 기반',
-  url: 'https://team-hjd-21.github.io',
-  baseUrl: '/team-hjd-docs/',
+  url: process.env.SITE_URL ?? 'https://teamhjd.com',
+  baseUrl: process.env.SITE_BASE_URL ?? '/',
   organizationName: 'Team-HJD-21',
   projectName: 'team-hjd-docs',
   favicon: 'img/brand/favicon.png',
