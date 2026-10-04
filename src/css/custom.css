@@ -94,6 +94,12 @@ body { background: var(--ifm-background-color); }
 .footer-business dt { font-weight: 600; color: #dcebef; }
 .footer-business dd { margin: 0; overflow-wrap: anywhere; }
 .footer-company small { font-size: .8rem; }
+.brand-game { display: inline-block; position: relative; overflow: hidden; width: 9.6em; max-width: 100%; aspect-ratio: 896/94; vertical-align: middle; }
+.brand-game img { position: absolute; display: block; width: 142.857143%; max-width: none; height: auto; left: -21.205357%; top: -329.787234%; }
+[data-theme='light'] .brand-game img { filter: brightness(.25); }
+.theme-doc-markdown h1 { word-break: keep-all; }
+@media (max-width: 600px) { .theme-doc-markdown h1 .brand-game { display: block; width: min(100%, 500px); margin-bottom: .45em; } }
+.footer__col:nth-child(2) .footer__title { font-size: 0; width: 140px; height: 30px; background: url('/img/brand/teamhjd-wordmark.png') left center / contain no-repeat; }
 
 @media (max-width: 996px) {
   /* A backdrop-filter makes fixed descendants relative to the navbar rather
