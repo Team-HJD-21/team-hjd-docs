@@ -50,7 +50,8 @@ const config: Config = {
     },
     image: 'img/teamhjd-social-card.png',
     navbar: {
-      title: 'TeamHJD Docs',
+      title: 'Docs',
+      logo: {alt: 'TeamHJD', src: 'img/brand/teamhjd-wordmark.png'},
       items: [
         {href: 'https://teamhjd.com', label: '팀 홈페이지', position: 'left'},
         {to: '/docs/start-here', label: '시작하기', position: 'left'},

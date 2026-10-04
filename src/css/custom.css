@@ -54,7 +54,10 @@ body { background: var(--ifm-background-color); }
 }
 
 .navbar__brand { gap: .55rem; color: var(--team-ink); font-weight: 800; letter-spacing: -.025em; }
-.navbar__brand::before { width: .7rem; height: .7rem; border-radius: 50%; background: var(--team-accent); box-shadow: 0 0 0 4px var(--team-wash); content: ""; }
+.navbar__brand::before { display: none; }
+.navbar__logo { height: auto; display: flex; align-items: center; }
+.navbar__logo img { width: 130px; height: auto; }
+[data-theme='light'] .navbar__logo img { filter: brightness(.45); }
 .navbar__link { color: var(--team-muted); font-size: .92rem; font-weight: 650; }
 .navbar__link:hover, .navbar__link--active { color: var(--team-accent); }
 .navbar-sidebar { background: var(--team-surface); }
