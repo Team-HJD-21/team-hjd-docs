@@ -72,7 +72,8 @@ body { background: var(--ifm-background-color); }
 .guide-screenshot { margin: 1.75rem 0; border: 1px solid var(--team-line); border-radius: 14px; overflow: hidden; background: var(--team-surface); box-shadow: var(--team-shadow); }
 .guide-screenshot img { display: block; width: 100%; height: auto; }
 .guide-screenshot figcaption { padding: .8rem 1rem; border-top: 1px solid var(--team-line); color: var(--team-muted); font-size: .88rem; line-height: 1.55; }
-.theme-doc-markdown table { display: table; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 0 var(--team-line); }
+.theme-doc-markdown table { display: block; max-width: 100%; border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 0 var(--team-line); }
+.theme-doc-markdown :not(pre) > code { overflow-wrap: anywhere; }
 .theme-doc-markdown th { background: var(--team-wash); color: var(--team-ink); }
 .theme-doc-markdown td, .theme-doc-markdown th { border-color: var(--team-line); }
 .theme-code-block { box-shadow: 0 10px 26px rgba(20, 50, 62, .12); }

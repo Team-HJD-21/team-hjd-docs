@@ -7,6 +7,5 @@ yarn-debug.log*
 yarn-error.log*
 .env.local
 cbc-source/
-# CBC owns these generated documents and search data.
-docs/turret/
+# Search data is rebuilt from the committed documentation, not the game repo.
 static/turret-search.json

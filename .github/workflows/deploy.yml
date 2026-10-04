@@ -21,19 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read turret documents from CBC main
-        uses: actions/checkout@v4
-        with:
-          repository: Team-HJD-21/unity-6-the-developer
-          ref: main
-          path: cbc-source
-          sparse-checkout: Docs
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: node scripts/import-turret-docs.mjs cbc-source --published
+      - run: npm run check
       - name: Read current GitHub Pages URL
         id: pages
         uses: actions/configure-pages@v5

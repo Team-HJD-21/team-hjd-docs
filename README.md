@@ -2,15 +2,22 @@
 
 ## 터렛 문서 연동
 
-CBC `Docs/architecture/turrets`와 기존 `turret-system-guide.md`가 터렛 문서의 원본입니다. 사이트에서 생성된 `docs/turret`를 직접 수정하지 않습니다.
+공개 터렛 문서의 배포 원본은 이 저장소의 `docs/turret/*.md`입니다. 이 파일들을 직접 수정하고 PR로 검토합니다. 게임 저장소를 비공개로 전환해도 문서 사이트 배포에는 영향이 없습니다.
 
-로컬 검토: `node scripts/import-turret-docs.mjs D:/UnityProjects/CBC-turret-api-docs` 실행 후 `npm start`.
+검색 인덱스는 `npm start`와 `npm run build` 때 공개 문서 파일에서 로컬 생성합니다. 외부 검색 서비스나 게임 저장소 접근은 사용하지 않습니다.
 
-배포 빌드는 CBC main만 가져옵니다. API 문서가 아직 main에 없으면 현재 main의 전체 가이드만 표시합니다. 로컬 브랜치 미리보기에는 배포본이 아니라는 안내를 표시합니다. 기존 Mermaid를 그대로 유지하며 별도 API 검색은 외부 검색 서비스에 정보를 보내지 않습니다.
+2026-10-05 이관은 당시 공개 배포와 동일한 CBC main `b73e0e76a93d2b2793751402539e7fb2fe449462`의 두 페이지를 대상으로 했습니다. 미병합 API 문서, 게임 소스, 기획·스프린트·회의 자료는 새로 공개하지 않았습니다. Mermaid는 유지했습니다. 내부 코드·기획 링크는 팀원 전용 파일 경로 설명으로 바꾸었으며 비공개 저장소로 향하는 편집 링크도 제거했습니다.
 
-검증: `node scripts/test-turret-import.mjs D:/UnityProjects/CBC-turret-api-docs` 후 `npm run build`.
+검증: `npm run check` 후 `npm run build`.
 
-CBC 문서 PR이 main에 병합된 뒤 이 사이트의 Deploy 워크플로를 실행하면 최신 문서를 가져옵니다. CBC 변경만으로 이 저장소의 배포가 자동 실행되지는 않습니다. 사이트 설정의 main 병합과 실제 GitHub Pages 배포는 별도 검토 단계입니다.
+CBC 변경은 이 사이트 문서를 자동으로 바꾸지 않습니다. 공개할 문서 변경은 문서 저장소의 별도 PR로 반영합니다. 필요할 때만 명시적인 로컬 경로로 `node scripts/import-turret-docs.mjs <game-checkout> --published`를 실행할 수 있지만 기존 공개 문서 편집을 덮어쓰므로 먼저 차이를 검토해야 합니다. 이 수동 도구는 배포 단계에서 실행되지 않습니다. `--published`는 가져온 `origin/main`과 동일한 커밋·커밋된 Docs만 허용합니다.
+
+## 공개/비공개 경계
+
+- 회사 사이트의 아트·로고·장식 이미지·메일 바닥글은 `team-hjd-site/assets`에서 독립 배포합니다.
+- 개발 가이드와 공개 터렛 문서는 이 저장소에서 독립 배포합니다.
+- 이 사이트와 레포는 여전히 공개입니다. 게임 레포를 Private으로 전환해도 이미 이관한 문서가 비공개가 되지는 않습니다.
+- 코드·원본 게임 에셋·미공개 기획은 게임 레포에 유지합니다. 기존 게임 파일을 삭제하거나 저장소 공개 상태를 바꾸지 않았습니다.
 
 TeamHJD의 기술 지식과 협업 방식을 기록하는 Docusaurus 기반 문서 사이트입니다.
 
