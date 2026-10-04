@@ -1,7 +1,7 @@
 ---
 title: 전체 구조와 실행 흐름
 sidebar_position: 6
-edit_url: https://github.com/Team-HJD-21/team-hjd-docs/edit/main/docs/turret/runtime-flows.md
+edit_url: https://github.com/Team-HJD-21/team-hjd-docs/edit/main/docs/projects/the-developer/turret/runtime-flows.md
 ---
 
 :::info 출처와 상태

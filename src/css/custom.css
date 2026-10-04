@@ -75,7 +75,7 @@ body { background: var(--ifm-background-color); }
 .theme-doc-markdown table { display: block; max-width: 100%; border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 0 var(--team-line); }
 .theme-doc-markdown :not(pre) > code { overflow-wrap: anywhere; }
 .theme-doc-markdown th { background: var(--team-wash); color: var(--team-ink); }
-.theme-doc-markdown td, .theme-doc-markdown th { border-color: var(--team-line); }
+.theme-doc-markdown td, .theme-doc-markdown th { border-color: var(--team-line); min-width: 8rem; }
 .theme-code-block { box-shadow: 0 10px 26px rgba(20, 50, 62, .12); }
 [data-theme='dark'] pre.prism-code { border: 1px solid var(--team-line); background: #102832 !important; color: #d9f2ee !important; }
 [data-theme='dark'] pre.prism-code code { color: inherit !important; }

@@ -38,6 +38,16 @@ export default function Home(): JSX.Element {
           <h3>{path.title}</h3><p>{path.text}</p><span className={styles.arrow}>읽기 →</span>
         </Link>)}</div>
       </section>
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}><p>PROJECT DOCUMENTATION</p><h2>프로젝트별 개발 문서</h2></div>
+        <article className={styles.projectEntry}>
+          <div><h3>The Developer</h3><p>Core · Player · World / Spaceship · Turret / Power · Enemy<br />main 기준 API와 모듈 연결 방법을 확인하세요.</p></div>
+          <div className={styles.actions}>
+            <Link className="button button--primary" to="/docs/projects/the-developer">문서 들어가기 →</Link>
+            <Link className="button button--secondary" to="/projects/the-developer/search">API 찾기</Link>
+          </div>
+        </article>
+      </section>
       <section className={clsx(styles.section, styles.situation)}>
         <div className={styles.sectionHeading}><p>FIND BY MOMENT</p><h2>지금 어떤 도움이 필요한가요?</h2></div>
         <div className={styles.situationLinks}>

@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "start": "docusaurus start",
-    "prestart": "node scripts/build-turret-search.mjs",
-    "prebuild": "node scripts/build-turret-search.mjs",
+    "prestart": "node scripts/build-project-search.mjs",
+    "prebuild": "node scripts/build-project-search.mjs",
     "build": "docusaurus build",
-    "check": "node scripts/test-turret-import.mjs",
+    "check": "node scripts/test-project-docs.mjs",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear"
   },
   "dependencies": {
     "@docusaurus/core": "^3.9.2",
+    "@docusaurus/plugin-client-redirects": "^3.10.2",
     "@docusaurus/preset-classic": "^3.9.2",
     "@docusaurus/theme-mermaid": "^3.10.2",
     "@mdx-js/react": "^3.1.0",

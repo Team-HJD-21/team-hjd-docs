@@ -9,3 +9,4 @@ yarn-error.log*
 cbc-source/
 # Search data is rebuilt from the committed documentation, not the game repo.
 static/turret-search.json
+static/*-search.json
