@@ -84,8 +84,16 @@ body { background: var(--ifm-background-color); }
 .pagination-nav__link { border-color: var(--team-line); border-radius: 12px; background: var(--team-surface); }
 .pagination-nav__link:hover { border-color: var(--team-accent); }
 .footer { background: #102b37; }
+.footer { padding-top: 3rem; padding-bottom: 2.5rem; }
+.footer-company { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #294653; text-align: left; color: #a9c1c9; }
+.footer-business { display: flex; flex-wrap: wrap; gap: .65rem 2rem; margin: 0 0 1.2rem; font-size: .85rem; line-height: 1.7; }
+.footer-business > div { display: flex; flex-wrap: wrap; gap: .15rem .65rem; }
+.footer-business dt { font-weight: 600; color: #dcebef; }
+.footer-business dd { margin: 0; overflow-wrap: anywhere; }
+.footer-company small { font-size: .8rem; }
 
 @media (max-width: 996px) {
+  .footer-business { flex-direction: column; gap: .5rem; }
   .navbar__brand::before { width: .58rem; height: .58rem; }
   .theme-doc-markdown { font-size: .97rem; }
   .theme-doc-markdown > h2 { margin-top: 2.6rem; }

@@ -62,8 +62,25 @@ const config: Config = {
             {label: '협업 가이드', to: '/docs/collaboration/overview'},
           ],
         },
+        {
+          title: 'TeamHJD',
+          items: [
+            {label: '팀 홈페이지', href: 'https://teamhjd.com/'},
+            {label: 'support@teamhjd.com', href: 'https://teamhjd.com/privacy/#email'},
+            {label: '개인정보처리방침', href: 'https://teamhjd.com/privacy/'},
+          ],
+        },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} TeamHJD. Built with Docusaurus.`,
+      copyright: `
+        <div class="footer-company">
+          <dl class="footer-business">
+            <div><dt>상호</dt><dd>팀 에이치제이디(TeamHJD)</dd></div>
+            <div><dt>대표자</dt><dd>황재동</dd></div>
+            <div><dt>사업자등록번호</dt><dd>622-10-17519</dd></div>
+            <div><dt>사업장 주소</dt><dd>경기도 수원시 영통구 태장로 71번길 19</dd></div>
+          </dl>
+          <small>© ${new Date().getFullYear()} TeamHJD. All rights reserved.</small>
+        </div>`,
     },
     prism: {
       theme: {plain: {color: '#1f2937', backgroundColor: '#f8fafc'}, styles: []},
