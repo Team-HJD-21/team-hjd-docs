@@ -81,6 +81,7 @@ const config: Config = {
             {label: '팀 홈페이지', href: 'https://teamhjd.com/'},
             {label: 'support@teamhjd.com', href: 'https://teamhjd.com/privacy/#email'},
             {label: '개인정보처리방침', href: 'https://teamhjd.com/privacy/'},
+            {label: '콘텐츠 이용 · AI 학습 정책', href: 'https://teamhjd.com/content-policy/'},
           ],
         },
       ],
