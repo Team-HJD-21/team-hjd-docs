@@ -1,8 +1,8 @@
 ---
-title: Turret · Power 연동
+title: Turret / Power — 터렛·전력·상태
 ---
 
-# Turret · Power 연동
+# Turret / Power 연동 가이드
 
 담당: 황재동. 기준: CBC main `b73e0e76a93d2b2793751402539e7fb2fe449462` (2026-10-05 코드 확인).
 

@@ -11,6 +11,16 @@ for (const suffix of ['', '/core', '/player', '/world', '/enemy', '/integration'
 }
 for (const symbol of ['TurretSnapshot', 'ApplyDamage', 'TrySpawn', 'InitBullet', 'MatchSession'])
   assert(pages.some(page => page.text.includes(symbol)), `Search missing ${symbol}`);
+for (const [module, children] of Object.entries({
+  core: ['quick-start', 'api-reference', 'events', 'testing'],
+  player: ['quick-start', 'combat', 'health', 'skills', 'testing'],
+  world: ['quick-start', 'spatial-inputs', 'progress', 'testing'],
+  enemy: ['quick-start', 'api-reference', 'targeting', 'damage', 'testing'],
+})) {
+  for (const child of children)
+    assert(pages.some(page => page.url === `/docs/projects/the-developer/${module}/${child}`), `Missing ${module}/${child}`);
+}
+assert.equal(pages.length, 30, 'Search must index every module document');
 const workflow = readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8');
 assert(!/unity-6-the-developer|cbc-source|import-turret-docs/.test(workflow), 'Deploy must not read the game repo');
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -31,5 +41,11 @@ assert(readFileSync(path.join(root, 'docs/projects/the-developer/turret/runtime-
 const config = readFileSync(path.join(root, 'docusaurus.config.ts'), 'utf8');
 assert(config.includes('@docusaurus/plugin-client-redirects'));
 assert(config.includes("label: '프로젝트 API'"));
+assert(config.includes("{to: '/docs/projects', label: '프로젝트 API', position: 'left'}"), 'Project navbar must be a direct link');
+assert(config.includes("from: '/projects/the-developer/search', to: '/docs/projects/the-developer/api-search'"), 'Preserve old API search bookmarks');
+const sidebar = readFileSync(path.join(root, 'sidebars.ts'), 'utf8');
+assert(sidebar.indexOf("'projects/the-developer/api-search'") > sidebar.indexOf("label: 'The Developer'"), 'Search belongs under The Developer');
+assert(sidebar.includes('Turret / Power — 터렛·전력·상태'), 'Module titles must use a consistent format');
+assert(readFileSync(path.join(root, 'docs/projects/the-developer/api-search.mdx'), 'utf8').includes('<ProjectApiSearch />'));
 assert(config.includes("to: '/docs/collaboration/overview'"));
 console.log('PASS: project modules, local search, common collaboration, legacy redirects, standalone deployment.');

@@ -44,7 +44,7 @@ export default function Home(): JSX.Element {
           <div><h3>The Developer</h3><p>Core · Player · World / Spaceship · Turret / Power · Enemy<br />main 기준 API와 모듈 연결 방법을 확인하세요.</p></div>
           <div className={styles.actions}>
             <Link className="button button--primary" to="/docs/projects/the-developer">문서 들어가기 →</Link>
-            <Link className="button button--secondary" to="/projects/the-developer/search">API 찾기</Link>
+            <Link className="button button--secondary" to="/docs/projects/the-developer/api-search">API 찾기</Link>
           </div>
         </article>
       </section>

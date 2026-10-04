@@ -40,7 +40,7 @@ flowchart LR
   Core --> View[UI와 디버그 조회]
 ```
 
-처음 연동할 때는 [통합 체크리스트](integration.md)를 사용하세요. 타입 이름을 알고 있다면 [API 검색](/projects/the-developer/search)을 이용하세요.
+처음 연동할 때는 [통합 체크리스트](integration.md)를 사용하세요. 타입 이름을 알고 있다면 [API 찾기](api-search.mdx)를 이용하세요. 각 모듈 목차에서 준비·API·실행 흐름·검증 등 필요한 하위 문서를 선택할 수 있습니다.
 
 ## 문서 업데이트
 

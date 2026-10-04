@@ -1,5 +1,11 @@
 # TeamHJD Tech Docs
 
+## 프로젝트 탐색 구조 (2026-10-05)
+
+상단 프로젝트 API는 `/docs/projects`로 직접 이동합니다. 프로젝트 선택 → The Developer → 모듈별 목차/하위 문서 순서로 읽습니다. Core·Player·World/Spaceship·Enemy를 목적별 18개 하위 문서로 분리했으며 기존 모듈 주소와 설명·제한 사항을 보존했습니다. Turret/Power도 다른 모듈과 같은 제목 형식으로 표시합니다.
+
+API 찾기는 The Developer 사이드바 내부 `/docs/projects/the-developer/api-search`에 있습니다. 기존 `/projects/the-developer/search`와 `/turret-search`는 새 주소로 이동합니다. 검색은 30개 로컬 Markdown 문서를 색인하며 공통 협업 가이드나 게임 저장소의 배포 의존성을 변경하지 않습니다.
+
 ## 공통 가이드와 프로젝트 문서
 
 협업·Git·PR·온보딩은 프로젝트와 무관한 공통 가이드로 유지합니다. 프로젝트 API의 배포 원본은 `docs/projects/<project-slug>/`입니다. 현재 The Developer는 Core, Player, World/Spaceship, Turret/Power, Enemy 및 통합 체크리스트를 제공합니다. 다른 프로젝트는 별도 디렉터리·사이드바 카테고리·탐색 진입점을 추가합니다.

@@ -8,7 +8,7 @@ export default function TheDeveloperSearch() {
   const [query, setQuery] = useState('');
   const [pages, setPages] = useState<Page[]>([]);
   const [error, setError] = useState(false);
-  const indexUrl = useBaseUrl('/the-developer-search.json?revision=b73e0e76-projects-v1');
+  const indexUrl = useBaseUrl('/the-developer-search.json?revision=b73e0e76-modules-v2');
   useEffect(() => {
     const controller = new AbortController();
     fetch(indexUrl, {signal: controller.signal}).then(response => {
@@ -19,8 +19,8 @@ export default function TheDeveloperSearch() {
   }, [indexUrl]);
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   const results = pages.filter(page => terms.every(term => `${page.title} ${page.text}`.toLocaleLowerCase().includes(term)));
-  return <Layout title="The Developer API 찾기" description="메서드 이름과 한글 설명으로 The Developer의 모듈 연동 문서 검색">
-    <main className="container margin-vert--lg" style={{maxWidth: 900}}>
+  return <div>
+    <section className="margin-vert--lg" aria-label="The Developer API 검색">
       <h1>The Developer API 찾기</h1>
       <p>메서드 이름 또는 한글 설명으로 찾아보세요. 예: ApplyDamage, TrySpawn 또는 전력</p>
       <label htmlFor="turret-query">검색어</label>
@@ -33,6 +33,6 @@ export default function TheDeveloperSearch() {
           return <li key={page.url} className="margin-bottom--lg"><Link to={page.url}>{page.title}</Link>
             <p style={{whiteSpace: 'pre-wrap'}}>{page.text.slice(start, start + 230)}…</p></li>;
         })}</ul></>}
-    </main>
-  </Layout>;
+    </section>
+  </div>;
 }

@@ -24,7 +24,8 @@ const config: Config = {
       ...['', '/quick-start', '/api-reference', '/snapshots', '/testing', '/runtime-flows'].map(suffix => ({
         from: `/docs/turret${suffix}`, to: `/docs/projects/the-developer/turret${suffix}`,
       })),
-      {from: '/turret-search', to: '/projects/the-developer/search'},
+      {from: '/turret-search', to: '/docs/projects/the-developer/api-search'},
+      {from: '/projects/the-developer/search', to: '/docs/projects/the-developer/api-search'},
     ]},
   ]],
   i18n: {defaultLocale: 'ko', locales: ['ko']},
@@ -54,11 +55,7 @@ const config: Config = {
         {href: 'https://teamhjd.com', label: '팀 홈페이지', position: 'left'},
         {to: '/docs/start-here', label: '시작하기', position: 'left'},
         {to: '/docs/collaboration/overview', label: '협업 가이드', position: 'left'},
-        {label: '프로젝트 API', position: 'left', items: [
-          {label: '프로젝트 목록', to: '/docs/projects'},
-          {label: 'The Developer', to: '/docs/projects/the-developer'},
-          {label: 'The Developer API 찾기', to: '/projects/the-developer/search'},
-        ]},
+        {to: '/docs/projects', label: '프로젝트 API', position: 'left'},
         {to: '/docs/reference/glossary', label: '용어 사전', position: 'left'},
         {to: '/docs/reference/abbreviations', label: '약어', position: 'left'},
         {href: 'https://github.com/Team-HJD-21/team-hjd-docs', label: 'GitHub', position: 'right'},
