@@ -93,6 +93,9 @@ body { background: var(--ifm-background-color); }
 .footer-company small { font-size: .8rem; }
 
 @media (max-width: 996px) {
+  /* A backdrop-filter makes fixed descendants relative to the navbar rather
+     than the viewport, collapsing Docusaurus's mobile drawer to header height. */
+  .navbar { background: var(--team-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .footer-business { flex-direction: column; gap: .5rem; }
   .navbar__brand::before { width: .58rem; height: .58rem; }
   .theme-doc-markdown { font-size: .97rem; }
