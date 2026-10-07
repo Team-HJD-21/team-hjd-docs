@@ -1,5 +1,23 @@
 # TeamHJD Tech Docs
 
+## 에디터 도구 문서 (2026-10-08)
+
+상단 `프로젝트 API → 에디터 도구 → 용어 사전` 순서로 탐색합니다. `/docs/editor-tools`에서 프로젝트를 선택하고 `The Developer → Game Debugger`에서 빠른 시작·창/시간·Battlefield/Scene·Encounter·통계·스폰 판단·Timeline/공유·문제 해결을 읽습니다. API sidebar와 도구 sidebar를 분리하며 기존 프로젝트 API/검색 주소는 유지합니다.
+
+도구 사용법의 기준은 게임 `feature/core` 작업본 `9fc3a458`(Grid 셀 단위 공간 분산 및 service 진단 포함)이며 아래 API 문서의 기존 main 기준을 자동 갱신한 것은 아닙니다. 사진 6장·영상 6개를 연결했고 #4·#11 사진 자리는 요청에 따라 제거했습니다. [자료 대응표](planning/game-debugger-screenshots.md)에서 실제 화면의 범위를 확인하세요. 원본 파일은 보존했으며 localhost 화면 확인 후 배포 승인을 받았습니다. 검사 내역은 [로컬 검증 기록](planning/game-debugger-preview-validation.md)에 있습니다.
+
+`npm run check`는 기존 API/검색 검사와 에디터 도구 nav·목차·링크·자료 12개의 연결/존재 검사를 수행합니다. `npm run build`는 로컬 정적 파일 생성이며 push/원격 배포가 아닙니다.
+
+배포본 형태의 로컬 미리보기:
+
+```bash
+npm run check
+npm run build
+npm run serve -- --host 127.0.0.1 --port 3000 --no-open
+```
+
+`http://localhost:3000/docs/editor-tools/the-developer/game-debugger/quick-start`에서 메뉴 → 도구 사용법 → 사진/영상 순으로 확인합니다. 이미지 원본 열기, 영상 재생·탐색·전체화면, 라이트/다크 및 좁은 화면 배치를 확인한 뒤 배포합니다.
+
 ## 프로젝트 탐색 구조 (2026-10-05)
 
 상단 프로젝트 API는 `/docs/projects`로 직접 이동합니다. 프로젝트 선택 → The Developer → 모듈별 목차/하위 문서 순서로 읽습니다. Core·Player·World/Spaceship·Enemy를 목적별 18개 하위 문서로 분리했으며 기존 모듈 주소와 설명·제한 사항을 보존했습니다. Turret/Power도 다른 모듈과 같은 제목 형식으로 표시합니다.

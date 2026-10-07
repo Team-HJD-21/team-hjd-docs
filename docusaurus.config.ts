@@ -57,6 +57,7 @@ const config: Config = {
         {to: '/docs/start-here', label: '시작하기', position: 'left'},
         {to: '/docs/collaboration/overview', label: '협업 가이드', position: 'left'},
         {to: '/docs/projects', label: '프로젝트 API', position: 'left'},
+        {to: '/docs/editor-tools', label: '에디터 도구', position: 'left'},
         {to: '/docs/reference/glossary', label: '용어 사전', position: 'left'},
         {to: '/docs/reference/abbreviations', label: '약어', position: 'left'},
         {href: 'https://github.com/Team-HJD-21/team-hjd-docs', label: 'GitHub', position: 'right'},
@@ -71,6 +72,7 @@ const config: Config = {
             {label: '새 팀원 시작하기', to: '/docs/start-here'},
             {label: '협업 가이드', to: '/docs/collaboration/overview'},
             {label: '프로젝트 API', to: '/docs/projects'},
+            {label: '에디터 도구', to: '/docs/editor-tools'},
           ],
         },
         {

@@ -1,6 +1,22 @@
 import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
+  editorTools: [
+    'editor-tools/index',
+    {
+      type: 'category', label: 'The Developer', collapsed: false,
+      link: {type: 'doc', id: 'editor-tools/the-developer/index'},
+      items: [
+        {
+          type: 'category', label: 'Game Debugger', collapsed: false,
+          link: {type: 'doc', id: 'editor-tools/the-developer/game-debugger/index'},
+          items: ['quick-start', 'window-and-time', 'battlefield', 'encounter', 'statistics',
+            'spawn-inspection', 'timeline-and-sharing', 'troubleshooting']
+            .map(page => `editor-tools/the-developer/game-debugger/${page}`),
+        },
+      ],
+    },
+  ],
   projects: [
     'projects/index',
     {

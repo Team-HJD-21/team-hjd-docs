@@ -1,0 +1,74 @@
+[
+  {
+    "number": 1,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 064736.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/01-open-menu.png"
+  },
+  {
+    "number": 2,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 064800.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/02-monitor-four-panels.png"
+  },
+  {
+    "number": 3,
+    "type": "video",
+    "original": "녹화_2026_10_08_06_49_36_625.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/03-time-controls.mp4"
+  },
+  {
+    "number": 5,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 072238.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/05-frontline-inspector.png"
+  },
+  {
+    "number": 6,
+    "type": "video",
+    "original": "녹화_2026_10_08_07_24_00_29.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/06-grid-settings.mp4"
+  },
+  {
+    "number": 7,
+    "type": "video",
+    "original": "녹화_2026_10_08_07_25_11_831.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/07-encounter-request.mp4"
+  },
+  {
+    "number": 8,
+    "type": "video",
+    "original": "녹화_2026_10_08_07_25_27_800.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/08-repeat-running.mp4"
+  },
+  {
+    "number": 9,
+    "type": "video",
+    "original": "녹화_2026_10_08_07_26_07_851.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/09-time-series.mp4"
+  },
+  {
+    "number": 10,
+    "type": "video",
+    "original": "녹화_2026_10_08_07_26_41_513.mp4",
+    "src": "/video/editor-tools/the-developer/game-debugger/10-statistics-window.mp4"
+  },
+  {
+    "number": 12,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 072726.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/12-request-results.png"
+  },
+  {
+    "number": 13,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 072808.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/13-timeline-controls.png"
+  },
+  {
+    "number": 14,
+    "type": "image",
+    "original": "스크린샷 2026-10-08 072855.png",
+    "src": "/img/editor-tools/the-developer/game-debugger/14-export-and-metadata.png"
+  }
+]

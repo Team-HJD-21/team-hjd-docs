@@ -7,7 +7,7 @@
     "prestart": "node scripts/build-project-search.mjs",
     "prebuild": "node scripts/build-project-search.mjs",
     "build": "docusaurus build",
-    "check": "node scripts/test-project-docs.mjs",
+    "check": "node scripts/test-project-docs.mjs && node scripts/test-editor-tools-docs.mjs",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear"
   },

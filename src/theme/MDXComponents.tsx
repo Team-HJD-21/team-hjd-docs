@@ -1,6 +1,7 @@
 import React from 'react';
 import OriginalComponents from '@theme-original/MDXComponents';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import GuideMedia from '@site/src/components/GuideMedia';
 
 function GameWordmark() {
   const src = useBaseUrl('/img/brand/the-developer-logo.png');
@@ -23,6 +24,7 @@ function withGameBrand(Component: React.ElementType) {
 
 export default {
   ...OriginalComponents,
+  GuideMedia,
   h1: withGameBrand(OriginalComponents.h1),
   h2: withGameBrand(OriginalComponents.h2),
   h3: withGameBrand(OriginalComponents.h3),

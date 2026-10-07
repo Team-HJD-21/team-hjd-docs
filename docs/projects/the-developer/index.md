@@ -44,4 +44,6 @@ flowchart LR
 
 ## 문서 업데이트
 
+Game Debugger와 Scene 표시·반복 실험의 조작법은 [에디터 도구 — The Developer](../../editor-tools/the-developer/index.md)에서 확인합니다. 도구 문서의 확인 버전은 이 API 문서의 main 기준과 별도로 표시합니다.
+
 게임의 main 변경은 이 사이트를 자동 수정하지 않습니다. API가 바뀌면 해당 프로젝트 문서와 확인한 기준 커밋을 `team-hjd-docs`에서 함께 갱신합니다. [문서 기여 가이드](../../team/document-contribution.md)를 따르세요.
