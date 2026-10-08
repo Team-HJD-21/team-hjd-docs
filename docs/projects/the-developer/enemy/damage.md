@@ -8,6 +8,8 @@ title: 서버 피해와 네트워크
 
 ## 피해와 네트워크 주의
 
+Enemy가 무기 터렛과 CU를 공격할 때 `TargetableComponent.TryApplyDamage(int)`가 `IDamageableTarget.ApplyDamage(int)`로 전달합니다. CU의 `ControlUnitHealth`는 `HealthChanged`와 `Destroyed`를 발행하며 현재 PoC의 게임 오버 연결은 후속 연동 대상입니다.
+
 ```csharp
 // Host/Server의 이미 Spawn된 EnemyHealth를 전달받는 예제입니다.
 void ApplyServerHit(EnemyHealth health, int damage)

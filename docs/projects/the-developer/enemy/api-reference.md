@@ -20,6 +20,6 @@ title: Enemy 스폰 API 사용법
 
 `TrySpawn`의 squadOrder는 catalog의 실제 프리셋 키를 전달합니다. 특정 문자열을 모든 Scene에서 유효하다고 가정하지 않습니다. 생성 상한과 실제 생성 수는 같지 않을 수 있습니다.
 
-현재 Encounter는 Match snapshot의 유효성을 확인하고 진단 정보를 출력하지만, topology/grid로 스폰 배치를 결정하는 정식 정책은 아직 적용하지 않습니다.
+현재 Encounter는 Match Battlefield의 topology/grid를 사용해 적합한 셀과 Spawn Point를 선택합니다. 같은 셀의 지점 개수로 생성 비중이 늘어나지 않으며 근거리·원거리 분산과 실패 진단은 [스폰 공간 분산](spawn-distribution.md)을 확인하세요.
 
 [Enemy / Encounter — 스폰·타깃·피해 목차](../enemy.md) · [통합 체크리스트](../integration.md)
