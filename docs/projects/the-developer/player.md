@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Player 연동 가이드
 
-**기준:** main `b73e0e76` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
+**기준:** main `eb35ceb1` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
 
 별도 Player 전용 Markdown이 없어 현재 구현을 참고해 작성했습니다. Player V2의 Manager 기반 런타임과 Core adapter를 구분합니다.
 

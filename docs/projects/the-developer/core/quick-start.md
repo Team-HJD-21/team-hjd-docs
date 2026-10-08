@@ -4,7 +4,7 @@ title: Core 빠른 시작
 
 # Core 빠른 시작
 
-**기준:** main `b73e0e76` · **영역:** 양현석 · **원본:** `Assets/PoC/Core/README.md`, `Application/MatchSession.cs`, `Application/IAppMatchHost.cs`, `Contracts/IMatchEventStream.cs`, `Domain/Match/MatchSimulation.cs`.
+**기준:** main `eb35ceb1` · **영역:** 양현석 · **원본:** `Assets/PoC/Core/README.md`, `Application/MatchSession.cs`, `Application/IAppMatchHost.cs`, `Contracts/IMatchEventStream.cs`, `Domain/Match/MatchSimulation.cs`.
 
 ## 먼저 준비할 것
 

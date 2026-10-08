@@ -6,21 +6,21 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 execFileSync(process.execPath, [path.join(root, 'scripts/build-project-search.mjs')], {stdio: 'inherit'});
 const pages = JSON.parse(readFileSync(path.join(root, 'static/the-developer-search.json'), 'utf8'));
-for (const suffix of ['', '/core', '/player', '/world', '/enemy', '/integration', '/turret', '/turret/quick-start', '/turret/api-reference', '/turret/snapshots', '/turret/testing', '/turret/runtime-flows']) {
+for (const suffix of ['', '/core', '/player', '/world', '/enemy', '/integration', '/turret', '/turret/quick-start', '/turret/initialization', '/turret/api-reference', '/turret/snapshots', '/turret/testing', '/turret/runtime-flows']) {
   assert(pages.some(page => page.url === `/docs/projects/the-developer${suffix}`), `Missing ${suffix}`);
 }
 for (const symbol of ['TurretSnapshot', 'ApplyDamage', 'TrySpawn', 'InitBullet', 'MatchSession'])
   assert(pages.some(page => page.text.includes(symbol)), `Search missing ${symbol}`);
 for (const [module, children] of Object.entries({
-  core: ['quick-start', 'api-reference', 'events', 'testing'],
+  core: ['quick-start', 'api-reference', 'contracts', 'events', 'testing'],
   player: ['quick-start', 'combat', 'health', 'skills', 'testing'],
   world: ['quick-start', 'spatial-inputs', 'progress', 'testing'],
-  enemy: ['quick-start', 'api-reference', 'targeting', 'damage', 'testing'],
+  enemy: ['quick-start', 'api-reference', 'spawn-distribution', 'targeting', 'damage', 'testing'],
 })) {
   for (const child of children)
     assert(pages.some(page => page.url === `/docs/projects/the-developer/${module}/${child}`), `Missing ${module}/${child}`);
 }
-assert.equal(pages.length, 30, 'Search must index every module document');
+assert.equal(pages.length, 33, 'Search must index every module document');
 const workflow = readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8');
 assert(!/unity-6-the-developer|cbc-source|import-turret-docs/.test(workflow), 'Deploy must not read the game repo');
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));

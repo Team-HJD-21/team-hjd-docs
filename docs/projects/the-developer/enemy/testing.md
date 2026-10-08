@@ -4,7 +4,7 @@ title: Enemy 검증과 제한 사항
 
 # Enemy 검증과 제한 사항
 
-**기준:** main `b73e0e76` · **영역:** 조수빈 · **원본:** `Assets/PoC/Enemy/Scripts/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/TurretTargetableAdapter.cs`.
+**기준:** main `eb35ceb1` · **영역:** 조수빈 · **원본:** `Assets/PoC/Enemy/Scripts/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
 
 ## 검증 체크
 

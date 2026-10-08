@@ -6,7 +6,7 @@ sidebar_position: 1
 # The Developer 개발 문서
 
 :::info 기준과 공개 범위
-2026-10-05 확인한 게임 `main` 커밋 `b73e0e76a93d2b2793751402539e7fb2fe449462` 기준입니다. 원본 문서와 실제 코드를 대조해 정리한 연동 안내이며, Unity 플레이 검증이나 출시 기능의 보증을 뜻하지 않습니다. 게임 코드·원본 에셋·회의록은 복사하지 않습니다. 이 문서 사이트는 공개입니다.
+2026-10-09 확인한 게임 `main` 커밋 `eb35ceb1` 기준입니다. 원본 문서와 실제 코드를 대조해 정리한 연동 안내이며, Unity 플레이 검증이나 출시 기능의 보증을 뜻하지 않습니다. 게임 코드·원본 에셋·회의록은 복사하지 않습니다. 이 문서 사이트는 팀원 접근용입니다.
 :::
 
 ## 필요한 영역부터 읽기
@@ -23,10 +23,10 @@ sidebar_position: 1
 
 ## 현재 구현과 계획을 구분하기
 
-- **main 구현 확인:** Core 세션 수명·공간 snapshot, Player V2 입력과 탄환, 터렛 registry/snapshot/명령, 적 분대 스폰·서버 피해, Spaceship 씬/JSON 실험.
+- **main 구현 확인:** Core 세션 수명·공간 snapshot, Player V2 입력과 탄환, 터렛 controller/registry/snapshot/명령, 공간 분산 기반 적 스폰·서버 피해, Spaceship 씬/JSON 실험.
 - **전환 중:** Player/Spaceship의 기존 Manager 접근과 새 Core 계약이 함께 있습니다. 서로 자동 연결됐다고 가정하지 않습니다.
 - **미완료·미확정:** Core 명령의 실제 전투 처리, 최종 승패·보상 정책, 완성된 협동 플레이, 영구 저장 계약, Laser의 새 터렛 구조 이식.
-- **미병합 기능:** 검토 중인 브랜치의 추가 API를 main 사용법에 섞지 않습니다. `TurretController`·`ControllerSnapshot` 같은 추가 계약을 이 문서의 전제로 요구하지 않습니다.
+- **미병합 기능:** 검토 중인 브랜치의 추가 API를 main 사용법에 섞지 않습니다. 자동 활성화 재배분처럼 아직 main에 없는 기능은 반영하지 않습니다.
 
 ## 연결 흐름
 
@@ -46,4 +46,4 @@ flowchart LR
 
 Game Debugger와 Scene 표시·반복 실험의 조작법은 [에디터 도구 — The Developer](../../editor-tools/the-developer/index.md)에서 확인합니다. 도구 문서의 확인 버전은 이 API 문서의 main 기준과 별도로 표시합니다.
 
-게임의 main 변경은 이 사이트를 자동 수정하지 않습니다. API가 바뀌면 해당 프로젝트 문서와 확인한 기준 커밋을 `team-hjd-docs`에서 함께 갱신합니다. [문서 기여 가이드](../../team/document-contribution.md)를 따르세요.
+게임의 main 변경은 매일 동기화 작업에서 확인합니다. 공개 계약이 바뀌면 해당 프로젝트 문서와 확인한 기준 커밋을 `team-hjd-docs`에서 함께 갱신하고 실제 배포까지 검증합니다. [문서 기여 가이드](../../team/document-contribution.md)를 따르세요.

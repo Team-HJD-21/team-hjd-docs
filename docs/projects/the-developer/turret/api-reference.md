@@ -4,7 +4,7 @@ title: 터렛 API 사용법
 
 # 터렛 API 사용법
 
-기준: CBC main `b73e0e76`. 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
+기준: CBC main `eb35ceb1`. 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
 
 ## 상태 변경은 TurretBase를 통해
 
@@ -33,10 +33,15 @@ title: 터렛 API 사용법
 | `InsufficientPower` | 전력 예약에 실패 |
 | `PowerSourceUnavailable` | 전력 공급자가 없거나 초기화되지 않음 |
 | `InvalidPowerCost` | 전력 비용이 유효하지 않음 |
+| `AutoActivationInProgress` | 자동 재배분 진행 중 개별 활성화 요청이 거부됨 |
 
 켜짐(`IsActivated`)과 공격 가능(`IsOperational`)은 다릅니다. 잠금·파괴·일시 중지까지 반영한 판단에는 `IsOperational`을 사용하세요.
 
 ## 피해와 복구 예제
+
+Enemy가 CU와 무기 터렛에 공통으로 피해를 줄 때는 `IDamageableTarget`의 `CurrentHealth`, `MaxHealth`, `IsDestroyed`, `ApplyDamage(int)`를 사용합니다. `TurretBase`와 `ControlUnitHealth`가 구현하며 CU는 Registry·활성화·전력 명령에는 포함되지 않습니다.
+
+`TurretController.TryStartAutoActivation()`은 버튼 시점의 사거리 내 적 수로 후보 순서를 고정하고 활성 터렛을 끈 뒤 전력을 재배분합니다. 전력 반환 중에는 재시도하며 수락부터 게임 시간 60초 쿨타임입니다. 상세 조건은 [실행 흐름](runtime-flows.md)의 자동 활성화를 확인하세요.
 
 ```csharp
 using TeamHJD.Game.Turrets;

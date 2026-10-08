@@ -5,7 +5,7 @@ import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 const source = process.argv[2];
 assert(source, 'Pass an explicit, clean checkout of the documented main revision.');
-const expected = 'b73e0e76a93d2b2793751402539e7fb2fe449462';
+const expected = 'eb35ceb1e734cc515977bb1698b29b1e166c677a';
 assert.equal(execFileSync('git', ['-C', source, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim(), expected);
 assert.equal(execFileSync('git', ['-C', source, 'status', '--porcelain'], {encoding:'utf8'}).trim(), '', 'Source must be clean');
 const checks = [

@@ -5,7 +5,7 @@ sidebar_position: 7
 
 # The Developer 통합 체크리스트
 
-기준은 main `b73e0e76`입니다. 아래는 각 기능을 연결할 때 수행할 검증 항목이며, 이번 문서 작업에서 Unity PlayMode 검증을 완료했다는 기록은 아닙니다.
+기준은 main `eb35ceb1`입니다. 아래는 각 기능을 연결할 때 수행할 검증 항목이며, 이번 문서 작업에서 Unity PlayMode 검증을 완료했다는 기록은 아닙니다.
 
 ## 연결 전에
 

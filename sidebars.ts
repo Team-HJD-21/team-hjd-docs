@@ -25,7 +25,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'projects/the-developer/api-search',
         ...[
-          {name: 'core', label: 'Core — 세션·명령·이벤트', pages: ['quick-start', 'api-reference', 'events', 'testing']},
+          {name: 'core', label: 'Core — 세션·명령·이벤트', pages: ['quick-start', 'api-reference', 'contracts', 'events', 'testing']},
           {name: 'player', label: 'Player — 입력·전투·피해', pages: ['quick-start', 'combat', 'health', 'skills', 'testing']},
           {name: 'world', label: 'World / Spaceship — 공간·씬·진행 상태', pages: ['quick-start', 'spatial-inputs', 'progress', 'testing']},
         ].map(({name, label, pages}) => ({
@@ -36,12 +36,12 @@ const sidebars: SidebarsConfig = {
         {
           type: 'category', label: 'Turret / Power — 터렛·전력·상태', collapsed: true,
           link: {type: 'doc', id: 'projects/the-developer/turret/index'},
-          items: ['quick-start', 'api-reference', 'snapshots', 'testing', 'runtime-flows'].map(name => `projects/the-developer/turret/${name}`),
+          items: ['quick-start', 'initialization', 'api-reference', 'snapshots', 'testing', 'runtime-flows'].map(name => `projects/the-developer/turret/${name}`),
         },
         {
           type: 'category', label: 'Enemy / Encounter — 스폰·타깃·피해', collapsed: true,
           link: {type: 'doc', id: 'projects/the-developer/enemy'},
-          items: ['quick-start', 'api-reference', 'targeting', 'damage', 'testing'].map(page => `projects/the-developer/enemy/${page}`),
+          items: ['quick-start', 'api-reference', 'spawn-distribution', 'targeting', 'damage', 'testing'].map(page => `projects/the-developer/enemy/${page}`),
         },
         'projects/the-developer/integration',
       ],
