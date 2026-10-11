@@ -4,7 +4,7 @@ title: Core 호출·소유권 계약
 
 # Core 호출·소유권 계약
 
-기준: 게임 main `eb35ceb1` · 원본: `Docs/architecture/core-api-usage.md`.
+기준: 게임 main `789f5b44` · 원본: `Docs/architecture/core-api-usage.md`.
 
 Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임입니다. 기존 `Global` 계열과의 대응은 책임을 이해하기 위한 설명이며 상속·호환 계보가 아닙니다.
 

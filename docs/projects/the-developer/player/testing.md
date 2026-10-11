@@ -4,7 +4,7 @@ title: Player 검증과 제한 사항
 
 # Player 검증과 제한 사항
 
-**기준:** main `eb35ceb1` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
+**기준:** main `789f5b44` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
 
 ## 연결 검증
 

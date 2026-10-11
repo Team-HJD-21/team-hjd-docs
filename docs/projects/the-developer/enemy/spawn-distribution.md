@@ -4,7 +4,7 @@ title: 공간 기반 스폰 분산
 
 # 공간 기반 스폰 분산
 
-기준: 게임 main `eb35ceb1` · 원본: `Docs/architecture/spatial-spawn-distribution.md`.
+기준: 게임 main `789f5b44` · 원본: `Docs/architecture/spatial-spawn-distribution.md`.
 
 스폰 분산은 스포너 개수가 아니라 적합한 Grid 셀의 공간 분포를 기준으로 합니다. 같은 셀에 Spawn Point가 여러 개 있어도 그 셀이 배수의 생성 비중을 얻지 않습니다.
 

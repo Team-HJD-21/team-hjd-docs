@@ -3,12 +3,12 @@ title: 전체 구조와 실행 흐름
 sidebar_position: 6
 ---
 
-기준: 게임 main `eb35ceb1` · 원본: `Docs/architecture/turret-system-guide.md`.
+기준: 게임 main `789f5b44` · 원본: `Docs/architecture/turret-system-guide.md`.
 
 # Turret System Guide
 
 작성일: 2026-09-24
-최종 갱신: 2026-10-08
+최종 갱신: 2026-10-11
 상태: Sprint 1 전환기 구현 가이드 / Canon·Missile 기준
 
 문서 목차 — `../README.md` (게임 저장소 참고 자료) · 코드·아키텍처 명명 규칙 — `Docs/architecture/naming-and-architecture-conventions.md` (게임 저장소 참고 자료) · System Re-architecture Charter — `Docs/architecture/system-rearchitecture-charter.md` (게임 저장소 참고 자료) · Sprint 1 Stage 1 PoC — `../planning/SPRINT_1_STAGE_1_POC.md` (게임 저장소 참고 자료)
@@ -575,15 +575,19 @@ flowchart TD
 
 ### 6.2 잠금과 해금
 
-잠금은 Definition의 고정 능력치가 아니라 터렛 인스턴스의 런타임 상태다. 기본값은 해금 상태여서 기존 Prefab 동작을 바꾸지 않는다. `SetLocked(true)`는 활성 터렛을 먼저 끄고 예약 전력을 반환한 뒤 잠근다. 잠긴 터렛의 `RequestActivation(true)`는 `Locked`를 반환한다. `SetLocked(false)`로 해금해도 자동으로 켜지지 않으며 플레이어가 다시 활성화해야 한다. 잠금 상태는 레벨 변경 시 이어받고 읽기 전용 스냅샷의 `IsLocked`에도 반영된다. `TurretInteractionUI`는 잠긴 터렛에 `Locked`라고 표시한다. `TurretTest`에는 잠금·해금 버튼이 있지만 제품 UI의 해금 동작과 비용·영구 저장 규칙은 아직 적용하지 않았다.
+잠금은 Definition의 고정 능력치가 아니라 터렛 인스턴스의 런타임 상태다. 기본값은 해금 상태여서 기존 Prefab 동작을 바꾸지 않는다. `SetLocked(true)`는 활성 터렛을 먼저 끄고 예약 전력을 반환한 뒤 잠근다. 잠긴 터렛의 `RequestActivation(true)`는 `Locked`를 반환한다. `SetLocked(false)`로 해금해도 자동으로 켜지지 않으며 플레이어가 다시 활성화해야 한다. 잠금 상태는 레벨 변경 시 이어받고 읽기 전용 스냅샷의 `IsLocked`에도 반영된다. `TurretInteractionUI`는 잠긴 터렛에 `Locked`라고 표시한다. 제품 UI의 해금 비용과 영구 저장 규칙은 아직 구현되지 않았다.
+
+`TurretController.ConfigureUnlockZones(grid, cuPosition, zoneCount = 4)`는 전달된 Core Grid와 CU 월드 위치를 사용해 셀 기반 거리 구역을 구성하고 첫 구역만 즉시 해금한다. 셀 거리는 상하좌우 이동 칸 수(맨해튼 거리)다. 구역 수는 지정할 수 있고 Grid가 커버하는 최대 거리보다 많으면 실제 가능한 구역 수로 줄인다. CU와 터렛은 Cell ID를 저장하지 않고 위치에서 계산한다. Grid 밖 터렛은 잠긴다. 이미 등록된 터렛과 이후 등록되는 터렛 모두 현재 구역 잠금 상태가 반영된다. `UnlockThroughZone(zone)`은 지정 구역과 더 가까운 구역을 해금하지만 터렛을 켜거나 전력을 예약하지 않는다. 해금되지 않은 구역은 `SetLocked(false)`로 임의 해제할 수 없다.
+
+`TurretTest`는 테스트 전용 Grid를 만들고 Inspector의 `unlockZoneCount`, `Unlock Next Zone` 버튼 및 Scene/Game 뷰 구역 표시로 시험한다. 이 Grid는 Core가 실제 Stage에서 사용하는 설정과 같다고 보장되지 않는다. 실제 Stage에서는 Match가 준비된 뒤 실제 Core Grid와 CU 위치를 `ConfigureUnlockZones(...)`에 전달해야 한다. 현재 계약은 CU 중심 셀 거리 구역이며 이름 있는 지역 ID나 Cell→Region 매핑을 제공하지 않는다. 해금 진행의 영구 저장도 포함하지 않는다.
 
 ```mermaid
 flowchart LR
     Lock["SetLocked(true)"] --> Off["활성 해제<br>전력 반환"]
     Off --> State["RuntimeState<br>IsLocked = true"]
     State --> Reject["RequestActivation(true)<br>Locked 반환"]
-    State --> Unlock["SetLocked(false)"]
-    Unlock --> Wait["비활성 유지<br>플레이어 재활성화"]
+    State --> Unlock["UnlockThroughZone(zone)"]
+    Unlock --> Wait["해금 후에도 비활성 유지<br>플레이어 재활성화"]
 ```
 
 ## 7. 멀티플레이 전환 시 주의점

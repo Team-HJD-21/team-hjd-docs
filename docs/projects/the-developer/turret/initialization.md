@@ -4,7 +4,7 @@ title: 명시적 터렛 생성·초기화
 
 # 명시적 터렛 생성·초기화
 
-기준: 게임 main `eb35ceb1` · 원본: `Docs/architecture/turrets/initialization.md`.
+기준: 게임 main `789f5b44` · 원본: `Docs/architecture/turrets/initialization.md`.
 
 `TurretInitializationData`는 새 게임이나 향후 로드 경로에서 사용할 해석된 생성 입력입니다. 조회용 `TurretSnapshot`이나 파일 저장 형식이 아닙니다.
 

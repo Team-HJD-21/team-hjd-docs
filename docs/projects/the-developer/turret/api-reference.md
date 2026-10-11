@@ -4,7 +4,7 @@ title: 터렛 API 사용법
 
 # 터렛 API 사용법
 
-기준: CBC main `eb35ceb1`. 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
+기준: CBC main `789f5b44`. 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
 
 ## 상태 변경은 TurretBase를 통해
 
@@ -16,12 +16,17 @@ title: 터렛 API 사용법
 | `Restore()` | bool. 파괴 상태 복구 및 최대 체력 회복; 자동 재활성화는 아님 |
 | `SetDamageBonus(int damageBonus)` | void. 보너스 값을 지정 |
 | `AddDamageBonus(int damageBonus)` | void. 보너스 값을 더함 |
+| `TurretController.ConfigureUnlockZones(grid, cuPosition, zoneCount = 4)` | CU 위치와 Grid로 셀 거리 구역을 구성하고 첫 구역만 해금 |
+| `UnlockThroughZone(int zone)` | 지정 구역과 더 가까운 구역을 해금; 활성화나 전력 예약은 하지 않음 |
+| `TryGetUnlockZone(TurretBase turret, out int zone)` | 컨트롤러가 관리하는 터렛의 현재 셀 거리 구역 조회 |
 | `ApplyUpgrade(TurretUpgradeDefinition upgrade)` | `TurretUpgradeResult`. 정의·분기·레벨·전력 조건을 검사 |
 | `DowngradeUpgrade(TurretUpgradeDefinition upgrade)` | `TurretUpgradeResult`. 성공 결과는 `Downgraded` |
 | `RequestLevelUpgrade(TurretBase nextLevelPrefab, out TurretBase upgradedTurret)` | `TurretLevelUpgradeResult`. 다음 레벨 프리팹으로 교체 |
 | `RequestLevelDowngrade(TurretBase previousLevelPrefab, out TurretBase downgradedTurret)` | `TurretLevelUpgradeResult`. 이전 레벨 프리팹으로 교체 |
 
 `RuntimeState`를 직접 바꾸면 컴포넌트의 전력·이벤트 처리와 어긋날 수 있습니다. 외부 변경은 위 API로 요청하세요. 업그레이드 성공 여부도 enum으로 확인하고, 프리팹 교체 성공 뒤에는 반환된 컴포넌트나 ID 재조회 결과를 사용합니다.
+
+구역을 구성한 컨트롤러에 연결된 터렛은 CU로부터 Grid 셀 상하좌우 거리로 구역을 배정받습니다. 새 터렛에도 현재 해금 상태가 적용되고 Grid 밖 위치는 잠깁니다. `SetLocked(false)`도 아직 해금되지 않은 구역에서는 거부됩니다. 거리 계산과 테스트 Scene 적용 조건은 [실행 흐름의 잠금·해금](runtime-flows.md#62-잠금과-해금)을 확인하세요.
 
 ## 활성화 결과
 

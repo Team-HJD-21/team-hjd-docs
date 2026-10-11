@@ -4,7 +4,7 @@ title: Turret / Power — 터렛·전력·상태
 
 # Turret / Power 연동 가이드
 
-담당: 황재동. 기준: 게임 main `eb35ceb1` (2026-10-08 문서·코드 확인).
+담당: 황재동. 기준: 게임 main `789f5b44` (2026-10-11 원본 문서·코드 확인).
 
 터렛은 `TurretBase`를 통해 상태를 변경하고, `TurretInstanceRegistry`의 `TurretSnapshot`으로 외부 시스템에 상태를 전달합니다. 전력 예약은 활성화 요청 내부에서 처리합니다.
 
@@ -18,7 +18,7 @@ title: Turret / Power — 터렛·전력·상태
 | 구현 구조와 런타임 흐름 | [전체 구조와 실행 흐름](runtime-flows.md) |
 
 :::info 현재 제공 범위
-이 문서는 main에 병합된 `TurretController`, `TurretPowerBudget`, `TurretControllerSnapshot`, 자동 활성화 재배분과 `IDamageableTarget` 계약을 포함합니다. 문서 빌드 검증과 Unity 플레이 검증은 별개입니다.
+이 문서는 main에 병합된 `TurretController`, `TurretPowerBudget`, `TurretControllerSnapshot`, 자동 활성화 재배분, 셀 거리 기반 잠금 해금과 `IDamageableTarget` 계약을 포함합니다. 문서 빌드 검증과 Unity 플레이 검증은 별개입니다.
 :::
 
 관련 모듈: [Core](../core.md) · [Enemy](../enemy.md) · [통합 체크리스트](../integration.md)

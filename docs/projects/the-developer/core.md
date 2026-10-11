@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Core 연동 가이드
 
-**기준:** main `eb35ceb1` · **영역:** 양현석 · **원본:** `Docs/architecture/core-api-usage.md`, `Assets/PoC/Core/README.md`와 실제 공개 계약.
+**기준:** main `789f5b44` · **영역:** 양현석 · **원본:** `Docs/architecture/core-api-usage.md`, `Assets/PoC/Core/README.md`와 실제 공개 계약.
 
 Core README의 설명과 코드를 함께 대조했습니다. 기존 `Global`·`Game`·`GeneralManager`와 새 `TeamHJD.Game.*` 계약이 자동 호환되는 구조는 아닙니다.
 

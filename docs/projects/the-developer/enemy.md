@@ -5,7 +5,7 @@ sidebar_position: 6
 
 # Enemy / Encounter 연동 가이드
 
-**기준:** main `eb35ceb1` · **영역:** 조수빈 · **원본:** `Docs/architecture/spatial-spawn-distribution.md`, `Assets/PoC/Enemy/Scripts/Spawning/`과 실제 공개 계약.
+**기준:** main `789f5b44` · **영역:** 조수빈 · **원본:** `Docs/architecture/spatial-spawn-distribution.md`, `Assets/PoC/Enemy/Scripts/Spawning/`과 실제 공개 계약.
 
 별도 Enemy 사용 문서가 없어 main 코드를 대조했습니다. 레거시 `Monster`와 새 PoC의 서버 기반 Enemy를 구분합니다.
 
