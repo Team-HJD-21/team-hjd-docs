@@ -3,7 +3,7 @@ title: 전체 구조와 실행 흐름
 sidebar_position: 6
 ---
 
-기준: 게임 main `789f5b44` · 원본: `Docs/architecture/turret-system-guide.md`.
+기준: 게임 main `c34c2159` · 원본: `Docs/architecture/turret-system-guide.md`.
 
 # Turret System Guide
 
@@ -321,11 +321,12 @@ flowchart TD
 
 ### 4.2 활성화와 전력
 
-켜기와 끄기는 같은 `RequestActivation(bool)` API를 사용한다. 가로로 넓어져 글자가 잘리지 않도록 결과 흐름을 나눠 표시한다.
+켜기와 끄기는 같은 `RequestActivation(bool)` API를 사용한다. 제품 UI와 TurretTest UI는 `TurretController.RequestActivation(instanceId, shouldActivate)`를 호출한다. Test UI의 `TurretTestController`는 UI와 표시를 담당하며, 컨트롤러 생성이나 게임 규칙을 구현하지 않는다.
 
 ```mermaid
 flowchart TD
-    Request["TurretInteractionUI 또는<br>TurretTestController"] --> Base["TurretBase<br>RequestActivation(true)"]
+    Request["TurretInteractionUI 또는<br>TurretTestController UI"] --> TurretController["TurretController<br>RequestActivation(id, true)"]
+    TurretController --> Base["TurretBase<br>RequestActivation(true)"]
     Base --> Controller["TurretActivationController<br>RequestActivation()"]
     Controller --> Source["TurretController<br>TryConsumePower()"]
     Source --> Consume["TurretPowerBudget<br>EffectivePower 예약"]
@@ -336,7 +337,8 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Request["TurretInteractionUI 또는<br>TurretTestController"] --> Base["TurretBase<br>RequestActivation(false)"]
+    Request["TurretInteractionUI 또는<br>TurretTestController UI"] --> TurretController["TurretController<br>RequestActivation(id, false)"]
+    TurretController --> Base["TurretBase<br>RequestActivation(false)"]
     Base --> Controller["TurretActivationController<br>RequestActivation()"]
     Controller --> Off["RuntimeState<br>IsActivated = false"]
     Off --> Source["TurretController<br>ReleasePower()"]
@@ -577,9 +579,11 @@ flowchart TD
 
 잠금은 Definition의 고정 능력치가 아니라 터렛 인스턴스의 런타임 상태다. 기본값은 해금 상태여서 기존 Prefab 동작을 바꾸지 않는다. `SetLocked(true)`는 활성 터렛을 먼저 끄고 예약 전력을 반환한 뒤 잠근다. 잠긴 터렛의 `RequestActivation(true)`는 `Locked`를 반환한다. `SetLocked(false)`로 해금해도 자동으로 켜지지 않으며 플레이어가 다시 활성화해야 한다. 잠금 상태는 레벨 변경 시 이어받고 읽기 전용 스냅샷의 `IsLocked`에도 반영된다. `TurretInteractionUI`는 잠긴 터렛에 `Locked`라고 표시한다. 제품 UI의 해금 비용과 영구 저장 규칙은 아직 구현되지 않았다.
 
-`TurretController.ConfigureUnlockZones(grid, cuPosition, zoneCount = 4)`는 전달된 Core Grid와 CU 월드 위치를 사용해 셀 기반 거리 구역을 구성하고 첫 구역만 즉시 해금한다. 셀 거리는 상하좌우 이동 칸 수(맨해튼 거리)다. 구역 수는 지정할 수 있고 Grid가 커버하는 최대 거리보다 많으면 실제 가능한 구역 수로 줄인다. CU와 터렛은 Cell ID를 저장하지 않고 위치에서 계산한다. Grid 밖 터렛은 잠긴다. 이미 등록된 터렛과 이후 등록되는 터렛 모두 현재 구역 잠금 상태가 반영된다. `UnlockThroughZone(zone)`은 지정 구역과 더 가까운 구역을 해금하지만 터렛을 켜거나 전력을 예약하지 않는다. 해금되지 않은 구역은 `SetLocked(false)`로 임의 해제할 수 없다.
+`TurretUnlockZones`는 Core의 `BattlefieldGridConfiguration`을 재사용하지 않고 터렛 전용 `TurretGridConfiguration`으로 CU와 터렛 위치의 셀을 계산한다. 기본 설정은 `TurretController` Inspector에서 맵 중심, 크기, 셀 수, 해금 구역 수를 조절한다. 기본 맵 크기는 275×275, 셀 분할은 16×16, 구역 수는 4개다. `ConfigureUnlockZones(cuPosition)`은 Inspector 설정을 사용한다. 코드에서 다른 설정이 필요하면 `ConfigureUnlockZones(TurretGridConfiguration grid, Vector2 cuPosition, int zoneCount = 4)` 오버로드를 사용한다. Core Grid 크기 변경은 터렛 Grid에 자동 반영되지 않으므로 두 설정을 맞춰야 한다.
 
-`TurretTest`는 테스트 전용 Grid를 만들고 Inspector의 `unlockZoneCount`, `Unlock Next Zone` 버튼 및 Scene/Game 뷰 구역 표시로 시험한다. 이 Grid는 Core가 실제 Stage에서 사용하는 설정과 같다고 보장되지 않는다. 실제 Stage에서는 Match가 준비된 뒤 실제 Core Grid와 CU 위치를 `ConfigureUnlockZones(...)`에 전달해야 한다. 현재 계약은 CU 중심 셀 거리 구역이며 이름 있는 지역 ID나 Cell→Region 매핑을 제공하지 않는다. 해금 진행의 영구 저장도 포함하지 않는다.
+구역은 CU 셀에서 상하좌우로 이동하는 최소 칸 수(맨해튼 거리)로 나누고 첫 구역만 처음부터 해금한다. 지정 구역 수가 Grid의 최대 거리보다 많으면 실제 가능한 수로 줄어든다. CU와 터렛은 `CellId`를 저장하지 않고 위치에서 계산한다. CU가 Grid 밖이면 `TurretUnlockZones` 생성 시 `ArgumentOutOfRangeException`이 발생한다. Grid 밖 터렛은 현재 구역 조회에 실패하고 잠긴다. 이미 등록된 터렛과 이후 등록되는 터렛 모두 컨트롤러의 현재 해금 상태가 반영된다. `UnlockThroughZone(zone)`은 지정 구역과 더 가까운 구역을 해금하지만 터렛을 켜거나 전력을 예약하지 않는다. 해금되지 않은 구역은 `SetLocked(false)`로 임의 해제할 수 없다.
+
+`TurretTest`는 가장 큰 Tilemap의 월드 경계를 덮는 터렛 전용 Grid를 구성한다. `unlockGridCellsX/Y`, `unlockZoneCount`, `Unlock Next Zone` 버튼과 Scene/Game 뷰 표시로 시험한다. 실제 Stage에서는 CU 위치를 확인한 뒤 `TurretController.ConfigureUnlockZones(cuPosition)`을 호출하고 컨트롤러 Inspector의 전용 Grid 설정을 사용한다. Core Grid의 크기 변경은 터렛 Grid에 자동 반영되지 않는다. 현재 계약은 CU 중심의 셀 거리 구역이며 이름 있는 지역 ID나 Core `RegionId`/Cell→Region 매핑은 제공하지 않고, 해금 진행의 영구 저장도 포함하지 않는다.
 
 ```mermaid
 flowchart LR
@@ -749,7 +753,7 @@ flowchart TD
 - `IDamageableTarget.cs` — `../../Assets/Scripts/Tower/Turret/Contracts/IDamageableTarget.cs` (게임 저장소 참고 자료)
 - `DamageableTargetAdapter.cs` — `../../Assets/PoC/Enemy/Scripts/Targeting/DamageableTargetAdapter.cs` (게임 저장소 참고 자료)
 - `ControlUnit.asset` — `../../Assets/Scripts/Tower/TurretDefinitions/ControlUnit.asset` (게임 저장소 참고 자료)
-- `TurretTestController.cs` — `../../Assets/Scripts/Tower/Turret/TurretTestController.cs` (게임 저장소 참고 자료)
+- `TurretTestController.cs` — `../../Assets/Scripts/Features/Turrets/TurretTestController.cs` (게임 저장소 참고 자료)
 - `TurretInstanceRegistry.cs` — `../../Assets/Scripts/Tower/Turret/Core/TurretInstanceRegistry.cs` (게임 저장소 참고 자료)
 - `TeamHJD.Game.Turrets.Contracts.asmdef` — `../../Assets/Scripts/Tower/Turret/Contracts/TeamHJD.Game.Turrets.Contracts.asmdef` (게임 저장소 참고 자료)
 - `TeamHJD.Game.Turrets.asmdef` — `../../Assets/Scripts/Tower/Turret/Core/TeamHJD.Game.Turrets.asmdef` (게임 저장소 참고 자료)
