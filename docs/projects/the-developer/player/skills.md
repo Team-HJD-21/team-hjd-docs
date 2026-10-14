@@ -4,7 +4,7 @@ title: 임시 터렛 스킬
 
 # 임시 터렛 스킬
 
-**기준:** main `789f5b44` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
+**기준:** main `789f5b44` · **영역:** 이영빈 · **현재 원본 경로:** `Assets/Scripts/Features/Player/`, `Assets/Scripts/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
 
 ## 임시 터렛 스킬
 

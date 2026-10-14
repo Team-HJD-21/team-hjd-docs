@@ -4,7 +4,7 @@ title: Turret / Power — 터렛·전력·상태
 
 # Turret / Power 연동 가이드
 
-담당: 황재동. 기준: 게임 main `c34c2159` (2026-10-13 원본 문서·코드 확인).
+담당: 황재동. 기준: 게임 main `1277de10` (2026-10-14 원본 문서·코드 확인).
 
 터렛은 `TurretBase`를 통해 상태를 변경하고, `TurretInstanceRegistry`의 `TurretSnapshot`으로 외부 시스템에 상태를 전달합니다. 전력 예약은 활성화 요청 내부에서 처리합니다.
 

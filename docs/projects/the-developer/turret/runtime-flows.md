@@ -3,7 +3,7 @@ title: 전체 구조와 실행 흐름
 sidebar_position: 6
 ---
 
-기준: 게임 main `c34c2159` · 원본: `Docs/architecture/turret-system-guide.md`.
+기준: 게임 main `1277de10` · 원본: `Docs/architecture/turret-system-guide.md`.
 
 # Turret System Guide
 
@@ -347,10 +347,12 @@ flowchart TD
 ```
 
 호출부는 전력을 먼저 검사한 다음 별도 활성화 메서드를 호출하지 않는다. 전력 확인과 상태
-변경은 반드시 `RequestActivation` 한 경로에서 처리한다. 과열은 사용자가 끈 상태가 아니므로
-`IsActivated`와 전력 예약을 유지하고 `IsOperational`만 일시적으로 `false`가 된다.
-`TurretPowerBudget.ReleasePower`는 반환 전력을 대기시키고 `Tick`으로 0.1초에 1씩 회복한다. 반면 업그레이드로
-전력 사용량이 감소할 때의 차액은 `TryChangeReservation`에서 즉시 반환한다.
+변경은 반드시 `RequestActivation` 한 경로에서 처리한다. 과열 중에는 `IsActivated`와 전력
+예약을 유지하지만 `IsOperational`은 false다. 과열 냉각과 수동 비활성화 뒤 냉각은
+`IsCoolingDown` / `CoolingDownRemaining`으로 함께 조회한다. 꺼진 터렛은 냉각이 끝날 때까지
+다시 켤 수 없고, 켜진 터렛은 냉각 완료 뒤 공격을 재개한다. 과열 중 OFF를 요청하면 기존
+냉각 종료 시각을 유지한다. 냉각은 게임 시간 기준이므로 일시정지 중 진행하지 않는다.
+`TurretPowerBudget.ReleasePower`는 반환 전력을 대기시키고 `Tick`으로 0.1초에 1씩 회복한다.
 
 ### 4.3 체력, 파괴와 복구
 
@@ -458,13 +460,16 @@ flowchart TD
     Combat["Canon/Missile<br>Update()"] --> Check["OverHeatAnimationController()"]
     Check -->|Canon: 시간 누적| CanonHeat["Definition<br>OverHeatTime 도달"]
     Check -->|Missile: 발사 횟수| MissileHeat["Definition<br>OverHeatMissileCount 도달"]
-    CanonHeat --> Suspend["TurretBase<br>SetTemporarilySuspended(true)"]
-    MissileHeat --> Suspend
-    Suspend --> Cool["OverHeat()<br>냉각 코루틴"]
-    Cool --> Resume["SetTemporarilySuspended(false)<br>공격 재개"]
+    CanonHeat --> Begin["TurretBase.BeginCooling()<br>공통 냉각"]
+    MissileHeat --> Begin
+    Off["수동·시스템 비활성화<br>남은 열 비율"] --> Begin
+    Begin --> Cool["TurretBase.UpdateCooling()<br>열·시간 갱신"]
+    Cool --> Complete{"IsActivated?"}
+    Complete -->|true| Resume["공격 재개"]
+    Complete -->|false| Ready["꺼진 상태 유지<br>ON 요청 허용"]
 ```
 
-과열 중에는 `IsActivated`와 예약 전력을 유지하지만 `IsOperational`만 `false`다. 따라서 수동 비활성화와 과열을 같은 상태로 취급하지 않는다. Missile은 `Shoot()` 호출마다 카운트가 1씩 증가하므로 한 번에 여러 발을 쏴도 발사 1회로 센다. 과열 기준은 `OverHeatMissileCount`, 과열 후 냉각 시간은 `CoolTime`이 정한다.
+Canon 과열은 연속 사격 시간, Missile 과열은 발사 호출 횟수로 시작한다. 두 경우의 기준값은 각 Definition의 `OverHeatTime`, `OverHeatMissileCount`, `CoolTime`이다. 공통 냉각 중에는 `IsCoolingDown`과 `CoolingDownRemaining`을 사용할 수 있다. 과열된 터렛은 활성 상태와 예약 전력을 유지하지만 공격하지 않는다. OFF 요청은 냉각 중에도 가능하고 기존 냉각 종료 시각을 유지하며 전력을 반환한다. 꺼진 터렛은 냉각 종료 뒤에도 자동으로 켜지지 않는다. 냉각은 게임 시간 기준이다.
 
 ## 5. Prefab과 Definition 설정 방법
 
@@ -509,12 +514,11 @@ TurretUpgradeResult rollback = turret.DowngradeUpgrade(upgradeDefinition);
 ```mermaid
 flowchart TD
     UI["TurretTestController<br>Spec +1 / -1"] --> Base["TurretBase<br>ApplyUpgrade / DowngradeUpgrade"]
-    Base --> Check["ID와 호환성 검사<br>선택 경로와 0~5단계 검사"]
-    Check --> Power["TurretActivationController<br>TrySetPowerCost()"]
-    Power -->|활성: 전력 차액| CU["TurretController → PowerBudget<br>TryChangeReservation()"]
-    Power -->|성공| State["TurretRuntimeState<br>단계당 10% × 현재 단계"]
-    CU -->|성공| State
-    CU -->|전력 부족| Reject["업그레이드 미적용"]
+    Base --> Gate{"자동 활성화 미진행<br>비활성·냉각 완료?"}
+    Gate -->|아니오| Reject["업그레이드 미적용"]
+    Gate -->|예| Check["ID와 호환성 검사<br>선택 경로와 0~5단계 검사"]
+    Check --> Power["TurretActivationController<br>요구 전력 변경"]
+    Power --> State["TurretRuntimeState<br>단계당 10% × 현재 단계"]
     State --> Visual["TurretBase<br>RefreshRangeVisual()"]
     Visual --> Event["Registry<br>UpgradeApplied 또는 UpgradeDowngraded<br>SnapshotChanged 알림"]
 ```
@@ -527,8 +531,8 @@ flowchart TD
 - `DowngradeUpgrade`는 선택 경로를 한 단계 낮춘다. 0단계로 돌아오면 경로 선택을 해제해 반대 경로를 다시 선택할 수 있다.
 - 단계는 0~5로 Clamp한다. 경계에서 추가 요청은 `MinimumLevel` 또는 `MaximumLevel`을 반환하고 상태와 전력을 바꾸지 않는다. 기존 `AlreadyApplied` enum은 호환성을 위해 남겨두지만 이 경로에서는 반환하지 않는다.
 - 단계별 보정은 에셋의 1단계 보정 × 현재 단계로 재계산한다. 누적 덧셈을 되돌리는 방식이 아니므로 반복 왕복 시 사거리 오차가 쌓이지 않는다. `HasAppliedUpgrade(id)`는 현재 선택 경로에 1단계 이상 투자되어 있는지를 뜻한다.
-- 활성 터렛의 Power가 증가하면 추가 전력을 즉시 예약한다. 전력이 부족하면 업그레이드 전체를 적용하지 않는다.
-- Power가 감소하면 차액을 즉시 반환한다. 절전 경로를 되돌려 Power가 증가하는 경우에도 전력 부족 검사를 먼저 수행하며 실패하면 단계와 수치가 모두 유지된다.
+- 세부 업그레이드는 비활성 상태이며 냉각이 끝나야 가능하다. 활성 중에는 `RequiresDeactivation`, 꺼진 냉각 중에는 `CoolingDown`, 자동 활성화 중에는 `AutoActivationInProgress`로 거부한다.
+- 업그레이드는 꺼진 터렛의 요구 전력만 바꾼다. 실제 예약과 전력 부족 검사는 다음 활성화 요청에서 수행한다.
 - 최종 Damage와 Power 및 Range는 0 미만으로 내려가지 않는다. Clamp된 최종값에서 보정량을 빼지 않고 원본 수치와 현재 단계로 다시 계산하므로 0단계에서 원래 수치로 복귀한다. 별도 최대 능력치 상한은 아직 없다.
 - 외부 조회에는 `EffectiveDamage`, `EffectivePower`, `EffectiveRange`를 사용한다.
 - 상승 성공 시 `UpgradeApplied`가 발생하고 하락 성공 시 `UpgradeDowngraded`가 발생한다. 두 경우 모두 `SnapshotChanged`가 발생한다. 스냅샷은 `SelectedUpgradeId`와 `UpgradeLevel`을 제공한다.
@@ -557,23 +561,24 @@ if (catalog.TryGetPrevious(turret.Definition, out TurretBase previousPrefab))
 flowchart TD
     UI["TurretTestController<br>Level Up·Down"] --> Catalog["TurretLevelUpgradeCatalog<br>이전·다음 Prefab 조회"]
     Catalog --> Base["TurretBase<br>RequestLevelChange()"]
-    Base --> Validate["한 단계 차이·종류<br>전력 확인"]
+    Base --> Gate{"자동 활성화 미진행<br>비활성·냉각 완료?"}
+    Gate -->|아니오| Reject["기존 터렛 유지"]
+    Gate -->|예| Validate["한 단계 차이·종류 검사"]
     Validate -->|가능| Create["대상 Level Prefab<br>비활성 상태로 생성"]
     Validate -->|불가능| Reject["기존 터렛 유지"]
     Create --> Power["TurretActivationController<br>TrySetPowerCost()"]
-    Power -->|전력 부족| Reject
     Power -->|성공| Copy["RuntimeState<br>CopyForLevelChange()"]
     Copy --> Swap["기존 객체 끄기<br>새 객체 켜기"]
     Swap --> Registry["Registry에 같은 ID로<br>새 객체 등록"]
-    Registry --> Active["전력 예약·활성·잠금 상태<br>승계"]
+    Registry --> Active["같은 ID·체력 비율·강화 승계<br>비활성 상태"]
     Active --> Event["Registry<br>LevelUpgraded·LevelDowngraded"]
 ```
 
-레벨 변경은 이전 또는 다음 레벨 프리팹으로 GameObject를 교체한다. 같은 `InstanceId`, 위치, 현재 체력 비율, 세부 업그레이드 보정과 적용 이력, 활성·잠금 상태 및 사거리 표시 설정을 이전한다. 체력 비율을 유지하므로 레벨 변경만으로 전체 회복되지는 않는다. 활성 터렛은 대상 레벨의 전력 사용량에 맞춰 예약량을 즉시 변경하며 전력이 부족하면 원래 터렛을 유지한다. 성공하면 방향에 따라 `LevelUpgraded` 또는 `LevelDowngraded` 이벤트가 발생한다. 읽기 전용 소비자는 객체 참조 대신 같은 ID로 스냅샷을 다시 조회한다. 이미 발사된 총알·미사일은 기존 발사체로 남는다.
+레벨 변경은 비활성화되고 냉각이 끝난 터렛만 이전 또는 다음 레벨 프리팹으로 교체한다. 같은 `InstanceId`, 위치, 현재 체력 비율, 세부 업그레이드 보정과 적용 이력, 사거리 표시 설정을 이전하고 새 객체는 비활성 상태로 유지한다. 활성 중에는 `RequiresDeactivation`, 꺼진 냉각 중에는 `CoolingDown`, 자동 활성화 중에는 `AutoActivationInProgress`로 거부하며 기존 객체를 유지한다. 요구 전력은 교체 시 바뀌고 예약은 다음 활성화에서 이뤄진다. 체력 비율을 유지하므로 레벨 변경만으로 전체 회복되지는 않는다. 성공하면 방향에 따라 `LevelUpgraded` 또는 `LevelDowngraded` 이벤트가 발생한다. 소비자는 같은 ID로 새 객체를 다시 조회한다. 이미 발사된 총알·미사일은 기존 발사체로 남는다.
 
 현재 레벨 변경 비용·시간, 멀티플레이 상태 동기화, 파괴된 터렛의 변경 규칙은 확정되지 않았다. 파괴된 터렛의 레벨 변경 요청은 거부한다. 제품 UI에서 변경 버튼을 노출하는 작업은 아직 별도다.
 
-`TurretTest`에서 Canon LV1 하나의 ID와 TurretController 전력을 기록하고 활성화·Damage·세부 업그레이드 후 `Level Up`을 누른다. LV2가 같은 ID와 체력 비율·보정값을 유지하는지 확인한다. 이어 `Level Down`으로 LV1에 돌아와 같은 항목을 재확인한다. Missile도 같은 순서로 확인한다. 여러 터렛을 켜 남은 전력을 낮춘 뒤 승급을 요청하면 부족한 전력으로 거부되는지도 확인할 수 있다. 이 Play Mode 검증은 코드 컴파일 검사와 별개다.
+`TurretTest`에서 활성화·피해 후 끄고 냉각이 끝나기 전에는 강화·레벨 변경이 `CoolingDown`으로 거부되는지 확인한다. 냉각 완료 뒤에는 변경이 가능해야 하며, 새 요구 전력은 다음 활성화에서 예약된다. 레벨 교체 후 같은 ID·체력 비율·보정값과 비활성 상태를 확인한다. 이 Play Mode 검증은 코드 컴파일 검사와 별개다.
 
 ### 6.2 잠금과 해금
 

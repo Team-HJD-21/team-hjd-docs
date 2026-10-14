@@ -4,7 +4,7 @@ title: 탄환과 Enemy 피해
 
 # 탄환과 Enemy 피해
 
-**기준:** main `789f5b44` · **영역:** 이영빈 · **원본:** `Assets/Scripts/Player_V2/`, `Assets/PoC/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
+**기준:** main `789f5b44` · **영역:** 이영빈 · **현재 원본 경로:** `Assets/Scripts/Features/Player/`, `Assets/Scripts/Core/Presentation/Scene/PlayerSceneAdapter.cs`.
 
 ## 탄환 초기화와 Enemy 피해
 

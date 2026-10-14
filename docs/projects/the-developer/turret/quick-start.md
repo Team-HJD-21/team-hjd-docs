@@ -4,7 +4,7 @@ title: 터렛 빠른 시작
 
 # 터렛 빠른 시작
 
-기준: CBC main `789f5b44`. 이미 씬에서 초기화되고 등록된 터렛을 사용하는 외부 호출 예제입니다. 이 예제가 터렛 프리팹·정의·전력 공급원을 생성하거나 연결해 주지는 않습니다.
+기준: CBC main `1277de10` (2026-10-14). 이미 씬에서 초기화되고 등록된 터렛을 사용하는 외부 호출 예제입니다. 이 예제가 터렛 프리팹·정의·전력 공급원을 생성하거나 연결해 주지는 않습니다.
 
 ## 1. ID로 찾고 활성화 요청하기
 
@@ -28,7 +28,9 @@ public static class TurretCommands
 
 `Unchanged`는 요청한 활성화 상태와 이미 같다는 뜻입니다. 공격 가능 여부까지 의미하지는 않습니다. 실제 작동 여부는 `IsOperational`을 확인하세요.
 
-전력 부족·잠금·파괴 등 실패 이유를 UI에 보여줄 때는 bool로 축약하지 말고 `TurretActivationResult`를 그대로 분기하세요. 활성화 전에 `TryConsumePower`를 직접 호출하면 중복 차감할 수 있습니다.
+전력 부족·잠금·파괴·냉각 중 등 실패 이유를 UI에 보여줄 때는 bool로 축약하지 말고 `TurretActivationResult`를 그대로 분기하세요. 활성화 전에 `TryConsumePower`를 직접 호출하면 중복 차감할 수 있습니다. 컨트롤러를 이미 가지고 있다면 `TurretController.RequestActivation(instanceId, true)`를 사용할 수 있으며, 같은 전력 공급자가 아닌 터렛 ID는 거부됩니다.
+
+과열과 수동 OFF 후 냉각에는 `IsCoolingDown`과 `CoolingDownRemaining`을 사용합니다. ON은 냉각 중 거부되며 결과는 `CoolingDown`입니다. 활성 과열 중 OFF는 가능하지만, 자동 활성화가 진행 중이면 수동 ON/OFF는 `AutoActivationInProgress`로 제한됩니다.
 
 ## 2. 끄기 / 조회
 
