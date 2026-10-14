@@ -8,6 +8,11 @@ function GameWordmark() {
   return <span className="brand-game"><img src={src} width="1280" height="714" alt="The Developer" /></span>;
 }
 
+function LeaveMeAloneLogo() {
+  const src = useBaseUrl('/img/projects/leave-me-alone/logo.png');
+  return <span className="brand-leave-me-alone"><img src={src} width="2172" height="724" alt="Leave Me Alone!!!" /></span>;
+}
+
 function brandChildren(children: React.ReactNode): React.ReactNode {
   return React.Children.map(children, child => {
     if (typeof child !== 'string') return child;
@@ -25,6 +30,7 @@ function withGameBrand(Component: React.ElementType) {
 export default {
   ...OriginalComponents,
   GuideMedia,
+  LeaveMeAloneLogo,
   h1: withGameBrand(OriginalComponents.h1),
   h2: withGameBrand(OriginalComponents.h2),
   h3: withGameBrand(OriginalComponents.h3),

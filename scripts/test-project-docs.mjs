@@ -21,6 +21,10 @@ for (const [module, children] of Object.entries({
     assert(pages.some(page => page.url === `/docs/projects/the-developer/${module}/${child}`), `Missing ${module}/${child}`);
 }
 assert.equal(pages.length, 34, 'Search must index every module document');
+const leaveMeAlonePages = JSON.parse(readFileSync(path.join(root, 'static/leave-me-alone-search.json'), 'utf8'));
+for (const suffix of ['', '/gameplay-flow', '/player-guide', '/boss-guide', '/items-guide', '/unity-setup'])
+  assert(leaveMeAlonePages.some(page => page.url === `/docs/projects/leave-me-alone${suffix}`), `Missing Leave Me Alone ${suffix}`);
+assert.equal(leaveMeAlonePages.length, 6, 'Leave Me Alone search must index every project document');
 const workflow = readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8');
 assert(!/unity-6-the-developer|cbc-source|import-turret-docs/.test(workflow), 'Deploy must not read the game repo');
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -45,7 +49,10 @@ assert(config.includes("{to: '/docs/projects', label: '프로젝트 API', positi
 assert(config.includes("from: '/projects/the-developer/search', to: '/docs/projects/the-developer/api-search'"), 'Preserve old API search bookmarks');
 const sidebar = readFileSync(path.join(root, 'sidebars.ts'), 'utf8');
 assert(sidebar.indexOf("'projects/the-developer/api-search'") > sidebar.indexOf("label: 'The Developer'"), 'Search belongs under The Developer');
+assert(sidebar.indexOf("label: 'The Developer'", sidebar.indexOf("projects: [")) < sidebar.indexOf("label: 'Leave Me Alone'"), 'Leave Me Alone must follow The Developer in the project sidebar');
 assert(sidebar.includes('Turret / Power — 터렛·전력·상태'), 'Module titles must use a consistent format');
 assert(readFileSync(path.join(root, 'docs/projects/the-developer/api-search.mdx'), 'utf8').includes('<ProjectApiSearch />'));
+assert(readFileSync(path.join(root, 'docs/projects/leave-me-alone/index.md'), 'utf8').includes('<LeaveMeAloneLogo />'));
+assert(readFileSync(path.join(root, 'src/theme/MDXComponents.tsx'), 'utf8').includes("width=\"2172\" height=\"724\""), 'Logo keeps its source aspect ratio');
 assert(config.includes("to: '/docs/collaboration/overview'"));
 console.log('PASS: project modules, local search, common collaboration, legacy redirects, standalone deployment.');

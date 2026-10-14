@@ -46,6 +46,17 @@ const sidebars: SidebarsConfig = {
         'projects/the-developer/integration',
       ],
     },
+    {
+      type: 'category', label: 'Leave Me Alone', collapsed: false,
+      link: {type: 'doc', id: 'projects/leave-me-alone/index'},
+      items: [
+        'projects/leave-me-alone/gameplay-flow',
+        'projects/leave-me-alone/player-guide',
+        'projects/leave-me-alone/boss-guide',
+        'projects/leave-me-alone/items-guide',
+        'projects/leave-me-alone/unity-setup',
+      ],
+    },
   ],
   docs: [
     'start-here',
