@@ -53,9 +53,14 @@ assert(sidebar.indexOf("label: 'The Developer'", sidebar.indexOf("projects: ["))
 assert(sidebar.includes('Turret / Power — 터렛·전력·상태'), 'Module titles must use a consistent format');
 assert(readFileSync(path.join(root, 'docs/projects/the-developer/api-search.mdx'), 'utf8').includes('<ProjectApiSearch />'));
 assert(readFileSync(path.join(root, 'docs/projects/leave-me-alone/index.md'), 'utf8').includes('<LeaveMeAloneLogo />'));
+const bossGuide = readFileSync(path.join(root, 'docs/projects/leave-me-alone/boss-guide.md'), 'utf8');
+assert(bossGuide.includes('6221b11ba0926c9e6b49e781f6a2eb78285ffbbc'), 'Boss guide must track the latest source revision');
+assert(bossGuide.includes('```mermaid'), 'Boss guide must include the Behavior Graph flow');
+assert(bossGuide.includes('Player 밭 경로는 접근 뒤 상태를 다시 확인'), 'Boss guide must preserve the target recheck behavior');
 const projectIndex = readFileSync(path.join(root, 'docs/projects/index.md'), 'utf8');
-assert(projectIndex.includes('## Leave Me Alone'), 'Project listing keeps a readable text heading');
+assert(projectIndex.includes('## <LeaveMeAloneLogo />'), 'Project listing keeps the project logo heading');
 assert(projectIndex.includes('<LeaveMeAloneEntryLink />'), 'Project listing uses the small logo and start-docs link');
 assert(readFileSync(path.join(root, 'src/theme/MDXComponents.tsx'), 'utf8').includes("width=\"2172\" height=\"724\""), 'Logo keeps its source aspect ratio');
+assert(readFileSync(path.join(root, 'src/css/custom.css'), 'utf8').includes('height: 1.8em'), 'Entry logo stays compact beside its label');
 assert(config.includes("to: '/docs/collaboration/overview'"));
 console.log('PASS: project modules, local search, common collaboration, legacy redirects, standalone deployment.');

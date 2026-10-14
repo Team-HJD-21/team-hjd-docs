@@ -6,7 +6,7 @@ sidebar_position: 2
 # <LeaveMeAloneLogo /> 프로젝트 문서
 
 :::info 문서 기준
-Unity 저장소 [`Team-HJD-21/unity-6-leave-me-alone`](https://github.com/Team-HJD-21/unity-6-leave-me-alone)의 `main` 커밋 `03e20da0eeef6350f2a26807811d81c55bea74dd` (2026-10-15)를 확인했습니다. 문서는 저장소의 Docs와 README에서 공개 가능한 프로젝트 안내를 정리합니다. 코드·원본 에셋 묶음·회의록·내부 기획 자료는 복사하지 않았습니다. 게임 동작은 정적 소스 확인 기준이며 Unity 플레이 검증을 뜻하지 않습니다.
+Unity 저장소 [`Team-HJD-21/unity-6-leave-me-alone`](https://github.com/Team-HJD-21/unity-6-leave-me-alone)의 최신 확인 `main` 커밋은 `6221b11ba0926c9e6b49e781f6a2eb78285ffbbc` (2026-10-15)입니다. 문서는 저장소의 Docs와 README에서 공개 가능한 프로젝트 안내를 정리합니다. 코드·원본 에셋 묶음·회의록·내부 기획 자료는 복사하지 않았습니다. 게임 동작은 정적 소스 확인 기준이며 Unity 플레이 검증을 뜻하지 않습니다.
 :::
 
 **LEAVE ME ALONE!!!**은 토마토 농장을 운영해 AI 농부보다 높은 점수를 얻는 경쟁 게임입니다. 플레이어는 작물을 심고 물을 주어 키운 뒤 수확하며, 경기 중 얻은 차량과 드론 아이템을 사용합니다.
