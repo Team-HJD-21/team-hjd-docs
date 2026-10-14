@@ -54,8 +54,8 @@ assert(sidebar.includes('Turret / Power — 터렛·전력·상태'), 'Module ti
 assert(readFileSync(path.join(root, 'docs/projects/the-developer/api-search.mdx'), 'utf8').includes('<ProjectApiSearch />'));
 assert(readFileSync(path.join(root, 'docs/projects/leave-me-alone/index.md'), 'utf8').includes('<LeaveMeAloneLogo />'));
 const projectIndex = readFileSync(path.join(root, 'docs/projects/index.md'), 'utf8');
-assert(projectIndex.includes('<LeaveMeAloneLogo />'), 'Project listing heading must show the Leave Me Alone logo');
-assert(projectIndex.includes('[![Leave Me Alone!!!](/img/projects/leave-me-alone/logo.png)](leave-me-alone/index.md)'), 'Project listing link must use the Leave Me Alone logo');
+assert(projectIndex.includes('## Leave Me Alone'), 'Project listing keeps a readable text heading');
+assert(projectIndex.includes('<LeaveMeAloneEntryLink />'), 'Project listing uses the small logo and start-docs link');
 assert(readFileSync(path.join(root, 'src/theme/MDXComponents.tsx'), 'utf8').includes("width=\"2172\" height=\"724\""), 'Logo keeps its source aspect ratio');
 assert(config.includes("to: '/docs/collaboration/overview'"));
 console.log('PASS: project modules, local search, common collaboration, legacy redirects, standalone deployment.');

@@ -15,8 +15,8 @@ Core, Player, World/Spaceship, Turret, Enemy의 연동 API와 현재 구현 제�
 
 다른 프로젝트는 해당 프로젝트의 문서가 준비될 때 별도 카테고리로 추가합니다. The Developer의 전력·분대·매치 규칙을 공통 협업 규칙으로 취급하지 않습니다.
 
-## <LeaveMeAloneLogo />
+## Leave Me Alone
 
-[![Leave Me Alone!!!](/img/projects/leave-me-alone/logo.png)](leave-me-alone/index.md)
+<LeaveMeAloneEntryLink />
 
 토마토 농장 경쟁 게임의 현재 플레이 흐름, 조작, 아이템 효과와 Unity 프로젝트 설정을 확인합니다. Dedicated Server 멀티플레이어는 저장소의 방향이며 현재 온라인 구현 상태와 구분합니다.

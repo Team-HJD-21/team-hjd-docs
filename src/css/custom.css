@@ -111,6 +111,8 @@ body { background: var(--ifm-background-color); }
 [data-theme='light'] .brand-game img { filter: brightness(.25); }
 .brand-leave-me-alone { display: inline-block; width: 9.6em; max-width: 100%; vertical-align: middle; }
 .brand-leave-me-alone img { display: block; width: 100%; height: auto; }
+.leave-me-alone-entry { display: inline-flex; align-items: center; gap: .5em; text-decoration: none; }
+.leave-me-alone-entry img { display: block; height: 1.2em; width: auto; max-width: none; }
 .theme-doc-markdown h1 { word-break: keep-all; }
 @media (max-width: 600px) { .theme-doc-markdown h1 .brand-game { display: block; width: min(100%, 500px); margin-bottom: .45em; } }
 @media (max-width: 600px) { .theme-doc-markdown h1 .brand-leave-me-alone { display: block; width: min(100%, 500px); margin-bottom: .45em; } }
