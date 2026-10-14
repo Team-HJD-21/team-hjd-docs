@@ -18,7 +18,9 @@ function LeaveMeAloneEntryLink() {
   const src = useBaseUrl('/img/projects/leave-me-alone/logo.png');
   return (
     <Link className="leave-me-alone-entry" to="/docs/projects/leave-me-alone">
-      <img src={src} width="2172" height="724" alt="Leave Me Alone!!!" />
+      <span className="leave-me-alone-entry-logo">
+        <img src={src} width="2172" height="724" alt="Leave Me Alone!!!" />
+      </span>
       <span>개발 문서 시작하기</span>
     </Link>
   );

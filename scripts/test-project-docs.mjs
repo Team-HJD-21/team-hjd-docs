@@ -61,6 +61,9 @@ const projectIndex = readFileSync(path.join(root, 'docs/projects/index.md'), 'ut
 assert(projectIndex.includes('## <LeaveMeAloneLogo />'), 'Project listing keeps the project logo heading');
 assert(projectIndex.includes('<LeaveMeAloneEntryLink />'), 'Project listing uses the small logo and start-docs link');
 assert(readFileSync(path.join(root, 'src/theme/MDXComponents.tsx'), 'utf8').includes("width=\"2172\" height=\"724\""), 'Logo keeps its source aspect ratio');
-assert(readFileSync(path.join(root, 'src/css/custom.css'), 'utf8').includes('height: 1.8em'), 'Entry logo stays compact beside its label');
+const projectStyles = readFileSync(path.join(root, 'src/css/custom.css'), 'utf8');
+assert(projectStyles.includes('aspect-ratio: 2090/228'), 'Leave Me Alone logos crop transparent padding at the artwork ratio');
+assert(projectStyles.includes('width: 7.5em'), 'Entry logo is enlarged while staying compact beside its label');
+assert(projectStyles.includes('object-fit: cover'), 'Logo artwork is cropped without stretching');
 assert(config.includes("to: '/docs/collaboration/overview'"));
 console.log('PASS: project modules, local search, common collaboration, legacy redirects, standalone deployment.');
