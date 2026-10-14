@@ -7,7 +7,7 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 const config = readFileSync(path.join(root, 'docusaurus.config.ts'), 'utf8');
 const navbar = config.slice(config.indexOf('navbar:'), config.indexOf('footer:'));
-const project = navbar.indexOf("label: '프로젝트 API'");
+const project = navbar.indexOf("label: '프로젝트 Docs'");
 const editor = navbar.indexOf("label: '에디터 도구'");
 const glossary = navbar.indexOf("label: '용어 사전'");
 assert(project >= 0 && editor > project && glossary > editor, 'Editor tools must be between Project API and Glossary');

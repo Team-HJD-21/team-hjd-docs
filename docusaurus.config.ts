@@ -56,7 +56,7 @@ const config: Config = {
         {href: 'https://teamhjd.com', label: '팀 홈페이지', position: 'left'},
         {to: '/docs/start-here', label: '시작하기', position: 'left'},
         {to: '/docs/collaboration/overview', label: '협업 가이드', position: 'left'},
-        {to: '/docs/projects', label: '프로젝트 API', position: 'left'},
+        {to: '/docs/projects', label: '프로젝트 Docs', position: 'left'},
         {to: '/docs/editor-tools', label: '에디터 도구', position: 'left'},
         {to: '/docs/reference/glossary', label: '용어 사전', position: 'left'},
         {to: '/docs/reference/abbreviations', label: '약어', position: 'left'},
@@ -71,7 +71,7 @@ const config: Config = {
           items: [
             {label: '새 팀원 시작하기', to: '/docs/start-here'},
             {label: '협업 가이드', to: '/docs/collaboration/overview'},
-            {label: '프로젝트 API', to: '/docs/projects'},
+            {label: '프로젝트 Docs', to: '/docs/projects'},
             {label: '에디터 도구', to: '/docs/editor-tools'},
           ],
         },
