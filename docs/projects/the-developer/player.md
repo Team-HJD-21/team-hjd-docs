@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Player 연동 가이드
 
-**최근 원본 확인:** main `1277de10` · **영역:** 이영빈 · **현재 경로:** `Assets/Scripts/Features/Player/`, `Assets/Scripts/Core/Presentation/Scene/PlayerSceneAdapter.cs`. 세부 Player 문서는 본문에 각각의 기준 커밋을 표시합니다.
+**최근 원본 확인:** main `20ca65d1` (#529) · **영역:** 이영빈 · **현재 경로:** `Assets/Scripts/Features/Player/`. 세부 Player 문서는 본문에 각각의 기준 커밋을 표시합니다.
 
 Player V2의 Manager 기반 런타임과 Core adapter를 구분합니다. Initial Stage HUD 연동/API 조건은 별도 페이지에 정리하며, 프리팹 내부 구성이나 화면 디자인 지침은 이 사이트의 범위에 포함하지 않습니다.
 

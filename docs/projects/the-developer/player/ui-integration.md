@@ -4,7 +4,7 @@ title: Initial Stage UI 연동
 
 # Initial Stage UI 연동
 
-**기준:** 게임 main `1277de10` · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret API.
+**기준:** 게임 main `7f22b9ca` (#530) · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret·Core API.
 
 이 문서는 상태 표시와 터렛 조작을 연결할 때 사용할 API 계약과 제한을 정리합니다. 프리팹 계층·배치·스타일 등 화면 제작 세부 사항은 다루지 않습니다. 원본도 최종 Unity PlayMode 외형·조작 검증은 별도라고 기록합니다.
 
@@ -23,6 +23,8 @@ title: Initial Stage UI 연동
 - 터렛은 현재 씬의 등록 ID로 선택하고, 교체 후에도 같은 ID로 새 컴포넌트를 다시 조회합니다.
 - 활성화 요청은 `TurretController.RequestActivation(instanceId, shouldActivate)`로 전달하고 `TurretActivationResult`를 처리합니다. UI가 전력을 미리 소비하거나 직접 상태를 바꾸지 않습니다.
 - 승급·강등은 `RequestLevelUpgrade` / `RequestLevelDowngrade`, 세부 강화는 `ApplyUpgrade` / `DowngradeUpgrade`의 결과를 표시합니다.
+- Core 지역이 연결된 HUD는 `TurretController.Regions`에서 확정된 지역 정책과 점령 셀을 읽습니다. 동적 정책은 지역 잠금 대신 활성 터렛의 점유 상태를 안내합니다.
+- 살아 있는 조작 가능 Player가 CU 상호작용 거리 안에 있을 때 `TryStartAutoActivation()`을 호출할 수 있습니다. 이는 후보·전력 재배분을 Turret Controller에 요청하는 API이며 HUD가 직접 활성 상태를 바꾸지 않습니다.
 - 선택 가능 거리와 Player 입력 허용 여부는 UI 정책입니다. Initial Stage HUD 기본 상호작용 거리는 10 Unity 단위이며, 게임 입력이 차단되거나 일시정지·사망 중일 때는 수동 요청을 막습니다.
 
 ## 냉각·자동 활성화·강화 제한

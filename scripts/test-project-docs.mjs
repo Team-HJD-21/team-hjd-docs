@@ -9,10 +9,10 @@ const pages = JSON.parse(readFileSync(path.join(root, 'static/the-developer-sear
 for (const suffix of ['', '/core', '/player', '/player/ui-integration', '/world', '/enemy', '/integration', '/turret', '/turret/quick-start', '/turret/initialization', '/turret/api-reference', '/turret/snapshots', '/turret/testing', '/turret/runtime-flows']) {
   assert(pages.some(page => page.url === `/docs/projects/the-developer${suffix}`), `Missing ${suffix}`);
 }
-for (const symbol of ['TurretSnapshot', 'ApplyDamage', 'TrySpawn', 'InitBullet', 'MatchSession'])
+for (const symbol of ['TurretSnapshot', 'ApplyDamage', 'TrySpawn', 'PlayerBullet.Initialize', 'MatchSession'])
   assert(pages.some(page => page.text.includes(symbol)), `Search missing ${symbol}`);
 for (const [module, children] of Object.entries({
-  core: ['quick-start', 'api-reference', 'contracts', 'events', 'testing'],
+  core: ['quick-start', 'api-reference', 'contracts', 'events', 'regions-encounters', 'testing'],
   player: ['quick-start', 'combat', 'health', 'skills', 'testing', 'ui-integration'],
   world: ['quick-start', 'spatial-inputs', 'progress', 'testing'],
   enemy: ['quick-start', 'api-reference', 'spawn-distribution', 'targeting', 'damage', 'testing'],
@@ -20,7 +20,7 @@ for (const [module, children] of Object.entries({
   for (const child of children)
     assert(pages.some(page => page.url === `/docs/projects/the-developer/${module}/${child}`), `Missing ${module}/${child}`);
 }
-assert.equal(pages.length, 34, 'Search must index every module document');
+assert.equal(pages.length, 35, 'Search must index every module document');
 const leaveMeAlonePages = JSON.parse(readFileSync(path.join(root, 'static/leave-me-alone-search.json'), 'utf8'));
 for (const suffix of ['', '/gameplay-flow', '/player-guide', '/boss-guide', '/items-guide', '/unity-setup'])
   assert(leaveMeAlonePages.some(page => page.url === `/docs/projects/leave-me-alone${suffix}`), `Missing Leave Me Alone ${suffix}`);
