@@ -36,7 +36,7 @@ title: 터렛 API 사용법
 
 ## Core 지역 Grid와 연결된 경우
 
-`TurretController.Regions`는 Core 지역 상태를 읽는 Port입니다. Core가 Scene에 바인딩되면 기존 `UnlockZones`와 `UnlockedZoneCount`는 독립 D 테스트용 읽기 모델이며 Core 상태를 대신하지 않습니다. 이때 `ConfigureUnlockZones`는 예외를 내고 `UnlockThroughZone`은 실패를 반환해 이중 쓰기를 막습니다. 구역 해금은 `RegionSceneBinding.TryUnlockThroughZone`, 모드·Grid 변경은 사용자 확인 뒤 `ResetPolicy`로 요청하세요. 상세한 지역·Encounter 상태는 [Core 지역 API](../core/regions-encounters.md)를 확인하세요.
+`TurretController.Regions`는 Core 지역 상태를 읽는 Port입니다. Core가 Scene에 바인딩되면 기존 `UnlockZones`와 `UnlockedZoneCount`는 황재동의 독립 터렛 테스트용 읽기 모델이며 Core 상태를 대신하지 않습니다. 이때 `ConfigureUnlockZones`는 예외를 내고 `UnlockThroughZone`은 실패를 반환해 이중 쓰기를 막습니다. 구역 해금은 `RegionSceneBinding.TryUnlockThroughZone`, 모드·Grid 변경은 사용자 확인 뒤 `ResetPolicy`로 요청하세요. 상세한 지역·Encounter 상태는 [Core 지역 API](../core/regions-encounters.md)를 확인하세요.
 
 구역은 Core의 `BattlefieldGridConfiguration`과 별개인 `TurretGridConfiguration`을 사용합니다. `TurretController` Inspector 기본값은 맵 275×275, 셀 16×16, 구역 4개입니다. `ConfigureUnlockZones(cuPosition)`은 이 설정을 사용하며, Core Grid 크기를 바꿔도 자동으로 동기화되지 않으므로 맵 설정을 맞춰야 합니다. 구역은 CU 셀에서 상하좌우 셀 거리로 계산하고 새 터렛에도 적용됩니다. Grid 밖 터렛은 잠기며 아직 열리지 않은 구역은 `SetLocked(false)`로 해제할 수 없습니다. 상세 조건은 [실행 흐름의 잠금·해금](runtime-flows.md#62-잠금과-해금)을 확인하세요.
 
