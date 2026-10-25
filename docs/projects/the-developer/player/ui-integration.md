@@ -4,7 +4,7 @@ title: Initial Stage UI 연동
 
 # Initial Stage UI 연동
 
-**기준:** 게임 main `7f22b9ca` (#530) · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret·Core API.
+**기준:** 게임 main `6b4310dc` (#549, 2026-10-24) · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret·Core API.
 
 이 문서는 상태 표시와 터렛 조작을 연결할 때 사용할 API 계약과 제한을 정리합니다. 프리팹 계층·배치·스타일 등 화면 제작 세부 사항은 다루지 않습니다. 원본도 최종 Unity PlayMode 외형·조작 검증은 별도라고 기록합니다.
 
@@ -25,7 +25,15 @@ title: Initial Stage UI 연동
 - 승급·강등은 `RequestLevelUpgrade` / `RequestLevelDowngrade`, 세부 강화는 `ApplyUpgrade` / `DowngradeUpgrade`의 결과를 표시합니다.
 - Core 지역이 연결된 HUD는 `TurretController.Regions`에서 확정된 지역 정책과 점령 셀을 읽습니다. 동적 정책은 지역 잠금 대신 활성 터렛의 점유 상태를 안내합니다.
 - 살아 있는 조작 가능 Player가 CU 상호작용 거리 안에 있을 때 `TryStartAutoActivation()`을 호출할 수 있습니다. 이는 후보·전력 재배분을 Turret Controller에 요청하는 API이며 HUD가 직접 활성 상태를 바꾸지 않습니다.
-- 선택 가능 거리와 Player 입력 허용 여부는 UI 정책입니다. Initial Stage HUD 기본 상호작용 거리는 10 Unity 단위이며, 게임 입력이 차단되거나 일시정지·사망 중일 때는 수동 요청을 막습니다.
+- 선택과 조작 가능 거리를 구분합니다. 같은 씬의 활성·등록 터렛은 멀리서도 선택할 수 있고 수동 요청은 Player가 기본 상호작용 거리 10 안에 있어야 합니다. 입력 차단·일시정지·사망 중에도 수동 요청을 막습니다.
+
+## 원거리 선택과 근접 조작
+
+`StageTurretSelection.CanSelect(turret)`는 같은 씬의 활성·등록 상태를 검사하고 거리 제한을 두지 않습니다. `CanInteractWith(turret)`는 여기에 활성 Player와 터렛 중심 사이의 XY 거리를 검사하며 정렬 Z를 제외합니다.
+
+거리 밖에서도 선택·창·사거리를 유지하고 피드백에 `Move closer to control this turret.`를 표시합니다. 기존 요청 결과·현재 상태·냉각 안내는 유지하며 활성화·OFF·레벨·강화 버튼을 비활성화합니다. 접근하면 재클릭 없이 거리 안내가 사라지고 기존 API 조건에 따라 버튼을 활성화합니다. 다시 멀어져도 창을 닫지 않고 조작만 차단합니다. 빈 공간·Escape·Close는 선택을 해제합니다.
+
+Presenter는 요청 직전에도 거리와 조작 허용 조건을 검사합니다. 임시 터렛 미리보기 중 일반 터렛 선택을 막아 같은 클릭이 중복 처리되지 않게 합니다. 씬 스킬 HUD의 로컬 Player 연결은 [스킬·HUD 안내](skills.md)를 따릅니다.
 
 ## 냉각·자동 활성화·강화 제한
 

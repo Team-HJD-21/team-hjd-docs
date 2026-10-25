@@ -4,7 +4,7 @@ title: 터렛 API 사용법
 
 # 터렛 API 사용법
 
-기준: CBC main `1277de10` (2026-10-14). 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
+기존 상태 변경 API 기준: 게임 main `1277de10` (2026-10-14). 부분 수리 Repair(int)는 main `6b4310dc` (#549, 2026-10-24)의 `Docs/architecture/turrets/api-reference.md`와 `Assets/Scripts/Features/Turrets/Core/TurretBase.cs`를 별도로 대조했습니다. 기본 네임스페이스는 `TeamHJD.Game.Turrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.Turrets.Contracts`입니다.
 
 ## 상태 변경 API
 
@@ -18,6 +18,7 @@ title: 터렛 API 사용법
 | `SetLocked(bool isLocked)` | bool. 변경 여부; 잠금과 활성 상태를 구분 |
 | `ApplyDamage(int damage)` | bool. 실제 체력 변경 여부; 양수가 아닌 피해나 이미 파괴된 대상은 실패 |
 | `Restore()` | bool. 파괴 상태 복구 및 최대 체력 회복; 자동 재활성화는 아님 |
+| `Repair(int amount)` | bool. 살아 있는 터렛 부분 회복; 실제 회복이 있을 때만 true |
 | `SetDamageBonus(int damageBonus)` | void. 보너스 값을 지정 |
 | `AddDamageBonus(int damageBonus)` | void. 보너스 값을 더함 |
 | `TurretController.ConfigureUnlockZones(Vector2 cuPosition)` | Inspector의 전용 터렛 Grid 설정으로 셀 거리 구역을 구성하고 첫 구역만 해금 |
@@ -72,6 +73,14 @@ public static bool HitTurret(int id, int damage)
 ```
 
 위 메서드는 호출 측 클래스 안에 넣습니다. 체력이 0이 되면 터렛은 비활성화·파괴 처리됩니다. `Restore()` 성공 뒤에도 켜려면 별도로 `RequestActivation(true)`을 요청하고 전력 결과를 확인합니다.
+
+## 부분 수리 API
+
+`TurretBase.Repair(int amount)`는 양수 회복량만 받습니다. 초기화 전·비활성 컴포넌트·잠금·파괴·체력 0·자동 활성화 진행 중에는 false입니다. 만피이거나 실제 회복이 없을 때도 false를 반환합니다.
+
+살아 있는 터렛은 활성·냉각 중에도 최대 체력 이내로 부분 회복할 수 있습니다. 활성 상태·전력 예약·냉각을 유지하고 실제 변경 시 기존 체력·Snapshot 변경 알림을 보냅니다. RuntimeState 직접 수정이나 파괴 복구용 Restore로 대체하지 않습니다.
+
+PlayerSpannerRepair는 같은 씬의 도달 가능한 손상 일반 터렛 하나에 이 API를 요청합니다. CU·Player 임시 터렛은 제외하며 로컬 API로서 서버 권한·수리 RPC·전력/재화 소비를 추가한 계약은 아닙니다. [Player 스패너 연동](../player/combat.md#스패너-공격과-일반-터렛-수리)
 
 ## 전력 공급 계약
 

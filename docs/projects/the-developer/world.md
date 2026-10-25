@@ -15,9 +15,9 @@ sidebar_position: 4
 | --- | --- |
 | Spaceship 씬 왕복 | [Spaceship 씬 왕복](world/quick-start.md) |
 | 전장 공간 입력 | [전장 공간 입력](world/spatial-inputs.md) |
-| 진행 상태와 저장 실험 | [진행 상태와 저장 실험](world/progress.md) |
+| 진행 상태·저장 실험·날씨 큐 | [진행 상태와 날씨](world/progress.md) |
 | World 검증과 제한 사항 | [World 검증과 제한 사항](world/testing.md) |
 
-기존 설명을 목적별 페이지로 나누었습니다. 문서 기준 커밋은 변경하지 않았으며, 새 기능 구현이나 Unity 플레이 검증을 뜻하지 않습니다.
+기존 공간·Spaceship 설명은 개별 기준을 유지합니다. Map 날씨 큐와 변경 알림은 main `4ff1e77d` (#537)의 `Assets/Scripts/Map/WeatherManager.cs`, `CountTick.cs`, `WeatherChangeEvent.cs`를 추가 대조했으며 Unity 플레이 검증을 뜻하지 않습니다.
 
 [The Developer 목차](index.md) · [통합 체크리스트](integration.md)
