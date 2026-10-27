@@ -42,13 +42,15 @@ bool ConfigureShot(PlayerBullet bullet, Vector2 direction)
 | `PlayerSpannerWeapon.Bind(Transform, PlayerInputHandler)` | 소유자와 조준 입력 연결 |
 | `PlayerSpannerWeapon.TryAttack(Vector2)` | 방향·조작 가능 상태·공격 간격·예약 판정 검사. true는 타격 예약이며 적중 보장이 아님 |
 | `PlayerSpannerRepair.CanRepair(owner, direction)` | 준비 모션을 고르는 조회이며 대상 예약이 아님 |
-| `TryRepair(owner, direction)` / `TryRepair(owner, direction, out position)` | 실행 시 대상을 다시 검사하고 일반 터렛 하나에 `TurretBase.Repair(int)` 요청 |
+| `TryRepair(owner, direction)` / `TryRepair(owner, direction, out position)` | 실행 시 대상을 다시 검사하고 일반 터렛 하나에 `FieldTurretBase.Repair(int)` 요청 |
+
+현재 Player 스패너는 적중 시 정수 수리 오버로드를 사용합니다. 지속 수리 API는 플레이어 입력·무기·거리 검사를 자동 연결하지 않으며, 호출 측이 조건을 확인하고 갱신 시간마다 직접 호출해야 합니다. 두 오버로드를 한 동작에서 함께 호출하지 않습니다.
 
 기본 근접 설정은 반경 2·전방 100도·피해 20·간격 0.6초입니다. Attack/Repair 클립의 50% 지점에 한 번 판정하며 모션이 없으면 휘두르기 표시 시간의 절반을 사용합니다. 무기 전환·비활성화·조작 차단은 남은 판정을 취소합니다. 같은 씬의 EnemyHealth를 대상당 한 번 처리하고 거리·전방·장애물 가림을 검사합니다. 실제 피해는 기존 서버 검사를 따르며 Client 공격 RPC는 추가되지 않았습니다.
 
 수리는 기본 반경 3·전방 100도 안의 가장 가까운 손상 일반 터렛 하나를 10 회복합니다. 잠금·파괴·자동 활성화 진행 중, 다른 씬, 벽 뒤 대상은 제외합니다. 살아 있는 활성·냉각 중 터렛은 수리할 수 있지만 임시 터렛과 CU는 이 경로의 대상이 아닙니다. 수리 준비로 시작한 타격은 적 공격을 함께 수행하지 않으며, 타격 시 조건을 벗어나면 수리하지 않습니다.
 
-`Repair`는 실제 회복이 있을 때만 true이며 활성 상태·전력 예약·냉각을 유지합니다. 파괴 복구용 Restore와 구분하고 RuntimeState 체력을 직접 바꾸지 않습니다. 전력·재화 소비나 서버 수리 RPC를 추가한 계약은 아닙니다. [터렛 부분 수리](../turret/api-reference.md#부분-수리-api)
+`Repair`는 실제 회복이 있을 때만 true이며 활성 상태·전력 예약·냉각을 유지합니다. 파괴 복구용 Restore와 구분하고 RuntimeState 체력을 직접 바꾸지 않습니다. 전력·재화 소비나 서버 수리 RPC를 추가한 계약은 아닙니다. [터렛 수리 API](../turret/api-reference.md#수리-api)
 
 ## 8방향 표시와 모션 API
 

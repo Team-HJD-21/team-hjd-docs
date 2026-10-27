@@ -4,18 +4,18 @@ title: 터렛 스냅샷과 상태 동기화
 
 # 터렛 스냅샷과 상태 동기화
 
-기준: CBC main `789f5b44`. `TurretSnapshot`은 조회 시점의 값입니다. 보관한 스냅샷이 자동으로 갱신되거나 네트워크 동기화되지는 않습니다.
+기준: CBC main `789f5b44`. `FieldTurretSnapshot`은 조회 시점의 값입니다. 보관한 스냅샷이 자동으로 갱신되거나 네트워크 동기화되지는 않습니다.
 
 ## 조회 계약
 
 | API | 용도 |
 | --- | --- |
-| `TryGetSnapshot(int id, out TurretSnapshot snapshot)` | 단일 터렛 값 조회; 사라진 ID는 false |
+| `TryGetSnapshot(int id, out FieldTurretSnapshot snapshot)` | 단일 터렛 값 조회; 사라진 ID는 false |
 | `GetAllSnapshots()` | 등록된 전체 터렛 |
 | `GetActiveSnapshots()` | 활성화된 터렛 |
 | `GetOperationalSnapshots()` | 실제 작동 가능한 터렛 |
 | `TryGetInstanceId(Transform child, out int id)` | 자식 Transform에서 부모 터렛의 ID 찾기 |
-| `TryGet(int id, out TurretBase turret)` | 명령을 보낼 실제 컴포넌트 조회 |
+| `TryGet(int id, out FieldTurretBase turret)` | 명령을 보낼 실제 컴포넌트 조회 |
 
 `GetAll`, `GetActive`, `GetOperational`은 컴포넌트 목록이며 Snapshot 버전과 다릅니다. 목록 조회는 복사/할당 비용이 있으므로 대량 호출을 매 프레임 반복하기 전에 측정하세요.
 
@@ -23,36 +23,36 @@ title: 터렛 스냅샷과 상태 동기화
 
 `InstanceId`, `DefinitionId`, `Position`, `IsActivated`, `IsOperational`, `IsDestroyed`, `IsLocked`, `CurrentHealth`, `MaxHealth`, `EffectiveDamage`, `Range`, `EffectivePower`, `SelectedUpgradeId`, `UpgradeLevel`.
 
-컴포넌트의 사거리는 `EffectiveRange`, 스냅샷 필드는 **`Range`**입니다. `TheoreticalDps`와 `DpsPerPower`도 제공하며 과열·명중률·폭발 다중 피해를 제외한 이론값입니다. `TurretControllerSnapshot`은 컨트롤러 집계이며 개별 터렛 스냅샷과 다릅니다.
+컴포넌트의 사거리는 `EffectiveRange`, 스냅샷 필드는 **`Range`**입니다. `TheoreticalDps`와 `DpsPerPower`도 제공하며 과열·명중률·폭발 다중 피해를 제외한 이론값입니다. `FieldTurretControllerSnapshot`은 컨트롤러 집계이며 개별 터렛 스냅샷과 다릅니다.
 
 ## 구독은 재조회 신호로 사용
 
 ```csharp
 using System;
-using TeamHJD.Game.Turrets;
+using TeamHJD.Game.FieldTurrets;
 
 public sealed class TurretSnapshotObserver : IDisposable
 {
-    private readonly Action<int, TurretSnapshot?> _render;
+    private readonly Action<int, FieldTurretSnapshot?> _render;
 
-    public TurretSnapshotObserver(Action<int, TurretSnapshot?> render)
+    public TurretSnapshotObserver(Action<int, FieldTurretSnapshot?> render)
     {
         _render = render ?? throw new ArgumentNullException(nameof(render));
-        TurretInstanceRegistry.SnapshotChanged += Refresh;
-        foreach (var snapshot in TurretInstanceRegistry.GetAllSnapshots())
+        FieldTurretInstanceRegistry.SnapshotChanged += Refresh;
+        foreach (var snapshot in FieldTurretInstanceRegistry.GetAllSnapshots())
             _render(snapshot.InstanceId, snapshot);
     }
 
     private void Refresh(int id)
     {
-        if (TurretInstanceRegistry.TryGetSnapshot(id, out var snapshot))
+        if (FieldTurretInstanceRegistry.TryGetSnapshot(id, out var snapshot))
             _render(id, snapshot);
         else
             _render(id, null); // 등록 해제: UI 항목/타깃 제거
     }
 
     public void Dispose()
-        => TurretInstanceRegistry.SnapshotChanged -= Refresh;
+        => FieldTurretInstanceRegistry.SnapshotChanged -= Refresh;
 }
 ```
 

@@ -12,7 +12,7 @@ Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임
 | --- | --- | --- |
 | Scene 조립부 | `IAppMatchHost.StartMatch(...)`로 세션 생성·주입 | `AppServices`를 서비스 검색기로 공개하거나 static Instance 사용 |
 | Player 입력 | `PlayerSceneAdapter.Bind(session)` → `Submit(GameCommand)` | `MatchState` 직접 변경 또는 명령 성공 추정 |
-| Turret 입력 | `CaptureTurretLayout()` → `UpdateBattlefieldTurretLayout(...)` | `TurretBase`·Transform을 Core snapshot에 보관 |
+| Turret 입력 | `CaptureTurretLayout()` → `UpdateBattlefieldTurretLayout(...)` | `FieldTurretBase`·Transform을 Core snapshot에 보관 |
 | Player·Enemy 위치 | `BattlefieldDynamicSpatialInput` → `UpdateBattlefieldParticipants(...)` | 별도 전역 Grid나 두 번째 위치 권위 모델 생성 |
 | Encounter 소비자 | `BindMatch(matchId, snapshotProvider)` | Battlefield 분석 재구현 또는 과거 Match provider 재사용 |
 | HUD·관측자 | `session.Events.Subscribe(...)`, `session.CreateSnapshot(sequence)` | 구독 인터페이스로 이벤트 발행 또는 상태 쓰기 |

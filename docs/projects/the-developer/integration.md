@@ -29,7 +29,7 @@ sidebar_position: 7
 ## 실수하기 쉬운 반환값
 
 - Core `Submit()`의 `NotHandled`를 성공으로 취급하지 않습니다.
-- 터렛 `RequestActivation()`은 bool이 아니라 `TurretActivationResult`입니다.
+- 터렛 `RequestActivation()`은 bool이 아니라 `FieldTurretActivationResult`입니다.
 - 터렛 `ApplyDamage()`는 bool, Enemy `TakeDamage()`는 void입니다.
 - `NaviProgresser.TryUpgrade()`와 `EncounterRuntime.TrySpawn()` 실패를 UI에서 성공으로 표시하지 않습니다.
 - snapshot을 보관한다고 최신 상태가 계속 갱신되지 않습니다. 조회를 다시 수행합니다.

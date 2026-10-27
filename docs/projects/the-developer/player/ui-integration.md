@@ -14,16 +14,16 @@ title: Initial Stage UI 연동
 | --- | --- | --- |
 | Player 체력 | `PlayerInfo.curHp`, `maxHp`, `onHpChange` | 현재 값으로 초기화하고 UnityEvent를 구독합니다. `onHpChange`는 FixedUpdate에서도 발생할 수 있어 값 변경 1회에 대응하는 이벤트로 가정하지 않습니다. |
 | CU 체력 | `ControlUnitHealth.CurrentHealth`, `MaxHealth`, `HealthChanged` | 현재 값을 즉시 읽고 `HealthChanged`를 구독합니다. |
-| CU 전력 | `TurretController.Budget`의 `CurrentPower`, `MaximumPower`, `PendingRecovery` | 전력 예약·반환은 기존 API가 소유합니다. UI에서 예산을 직접 수정하지 않습니다. |
+| CU 전력 | `FieldTurretController.Budget`의 `CurrentPower`, `MaximumPower`, `PendingRecovery` | 전력 예약·반환은 기존 API가 소유합니다. UI에서 예산을 직접 수정하지 않습니다. |
 
 초기 값이나 대상 오브젝트가 아직 준비되지 않았으면 대기 상태를 표시하고 다시 찾습니다. 다중 플레이어에서는 HUD가 로컬 플레이어의 `PlayerInfo`에 연결되도록 구성해야 합니다. 현재 연결은 플레이어 UI에 새로운 Match 동기화 계약을 추가하지 않습니다.
 
 ## 터렛 선택과 명령
 
 - 터렛은 현재 씬의 등록 ID로 선택하고, 교체 후에도 같은 ID로 새 컴포넌트를 다시 조회합니다.
-- 활성화 요청은 `TurretController.RequestActivation(instanceId, shouldActivate)`로 전달하고 `TurretActivationResult`를 처리합니다. UI가 전력을 미리 소비하거나 직접 상태를 바꾸지 않습니다.
+- 활성화 요청은 `FieldTurretController.RequestActivation(instanceId, shouldActivate)`로 전달하고 `FieldTurretActivationResult`를 처리합니다. UI가 전력을 미리 소비하거나 직접 상태를 바꾸지 않습니다.
 - 승급·강등은 `RequestLevelUpgrade` / `RequestLevelDowngrade`, 세부 강화는 `ApplyUpgrade` / `DowngradeUpgrade`의 결과를 표시합니다.
-- Core 지역이 연결된 HUD는 `TurretController.Regions`에서 확정된 지역 정책과 점령 셀을 읽습니다. 동적 정책은 지역 잠금 대신 활성 터렛의 점유 상태를 안내합니다.
+- Core 지역이 연결된 HUD는 `FieldTurretController.Regions`에서 확정된 지역 정책과 점령 셀을 읽습니다. 동적 정책은 지역 잠금 대신 활성 터렛의 점유 상태를 안내합니다.
 - 살아 있는 조작 가능 Player가 CU 상호작용 거리 안에 있을 때 `TryStartAutoActivation()`을 호출할 수 있습니다. 이는 후보·전력 재배분을 Turret Controller에 요청하는 API이며 HUD가 직접 활성 상태를 바꾸지 않습니다.
 - 선택과 조작 가능 거리를 구분합니다. 같은 씬의 활성·등록 터렛은 멀리서도 선택할 수 있고 수동 요청은 Player가 기본 상호작용 거리 10 안에 있어야 합니다. 입력 차단·일시정지·사망 중에도 수동 요청을 막습니다.
 

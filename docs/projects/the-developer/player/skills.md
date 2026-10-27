@@ -18,7 +18,7 @@ Q/E는 PlayerSkillController의 `Loadout.Q` / `Loadout.E`에 선택한 스킬을
 | `IsPlacingTurret`, `PlacementHint`, `TurretPlacementFeedback` | 설치 미리보기와 안내·실패 결과 조회 |
 | `BarrierPlacementHint` | 기존 방벽 안내 호출과의 호환용 속성 |
 
-임시 터렛은 `PlayerSkillId.TemporaryTurret`으로 요청합니다. 수락은 미리보기 진입이며 즉시 생성됐다는 뜻이 아닙니다. 외부 public DeployTurret()을 가정하지 않습니다. 이 스킬은 [전력 기반 TurretBase](../turret/index.md)의 일반 건설·지역 해금 계약과 구분합니다.
+임시 터렛은 `PlayerSkillId.TemporaryTurret`으로 요청합니다. 수락은 미리보기 진입이며 즉시 생성됐다는 뜻이 아닙니다. 외부 public DeployTurret()을 가정하지 않습니다. 이 스킬은 [전력 기반 FieldTurretBase](../turret/index.md)의 일반 건설·지역 해금 계약과 구분합니다.
 
 ## 임시 터렛 설치 미리보기
 

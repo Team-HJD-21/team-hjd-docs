@@ -6,15 +6,15 @@ title: 명시적 터렛 생성·초기화
 
 기준: 게임 main `789f5b44` · 원본: `Docs/architecture/turrets/initialization.md`.
 
-`TurretInitializationData`는 새 게임이나 향후 로드 경로에서 사용할 해석된 생성 입력입니다. 조회용 `TurretSnapshot`이나 파일 저장 형식이 아닙니다.
+`FieldTurretInitializationData`는 새 게임이나 향후 로드 경로에서 사용할 해석된 생성 입력입니다. 조회용 `FieldTurretSnapshot`이나 파일 저장 형식이 아닙니다.
 
 ```csharp
-var initial = TurretInitializationData.CreateDefault(
+var initial = FieldTurretInitializationData.CreateDefault(
     canonPrefab.Definition,
     isLocked: false,
     shouldActivate: true);
 
-TurretBase turret = TurretFactory.Create(
+FieldTurretBase turret = FieldTurretFactory.Create(
     canonPrefab,
     initial,
     controller,
@@ -26,7 +26,7 @@ TurretBase turret = TurretFactory.Create(
 로드된 값을 적용할 때도 같은 생성 경로를 사용합니다.
 
 ```csharp
-var initial = new TurretInitializationData(
+var initial = new FieldTurretInitializationData(
     prefab.Definition,
     currentHealth: 37,
     isLocked: false,
@@ -44,9 +44,9 @@ var initial = new TurretInitializationData(
 - 체력과 업그레이드를 적용한 뒤 전력 비용을 계산합니다.
 - 기존 Scene/Prefab 직접 배치도 초기 상태 적용 → 등록 → 초기 활성화 순서로 동작합니다.
 
-새 비활성 인스턴스를 직접 조립하는 소비자는 `PrepareInitialization(data, source)`를 한 번 호출한 뒤 활성화할 수 있습니다. 기본 경로는 `TurretFactory.Create`입니다. 현재 Canon/Missile은 이 계약을 따르며 기존 Laser는 지원하지 않습니다.
+새 비활성 인스턴스를 직접 조립하는 소비자는 `PrepareInitialization(data, source)`를 한 번 호출한 뒤 활성화할 수 있습니다. 기본 경로는 `FieldTurretFactory.Create`입니다. 현재 Canon/Missile은 이 계약을 따르며 기존 Laser는 지원하지 않습니다.
 
-`CopyForLevelChange`는 승급·강등 상태 이전, `Restore()`는 파괴 터렛 수리, `Initialize(data)`는 생성 입력 적용입니다. 서로 대체하지 않습니다.
+`CopyForLevelChange`는 승급·강등 상태 이전, `Repair(healthPerSecond, deltaTime)`와 `Repair(int)`는 살아 있는 터렛의 부분 수리, `Restore()`는 파괴 터렛의 복구, `Initialize(data)`는 생성 입력 적용입니다. 서로 대체하지 않습니다. 지속 수리 호출은 [API 사용법](api-reference.md#호출-시간-기준-지속-수리)을 참고하세요.
 
 JSON 저장, 슬롯·버전·마이그레이션, 영구 ID, Research/Profile 해금, 전체 Match 복원은 아직 포함하지 않습니다.
 

@@ -14,7 +14,7 @@ title: 지역·Encounter 연동
 | --- | --- | --- |
 | `RegionSceneBinding.ResetPolicy(mode, true)` | 사용자 확인 뒤 새 Grid 세대로 정책을 다시 설정 | 확인되지 않은 Reset은 거부됩니다. |
 | `RegionSceneBinding.TryUnlockThroughZone(zone)` | 정적 모드에서 지정 구역 해금을 요청 | 활성화나 전력 예약은 별도입니다. |
-| `TurretController.Regions` | HUD·Feature가 점령 상태를 읽는 Port | Core 바인딩이 없으면 `null`일 수 있습니다. |
+| `FieldTurretController.Regions` | HUD·Feature가 점령 상태를 읽는 Port | Core 바인딩이 없으면 `null`일 수 있습니다. |
 | `RegionGridReplica.Apply(frame, senderIsVerifiedServer)` | 검증된 전달자에게서 받은 프레임으로 Client 읽기 모델 갱신 | 인수의 검증 여부는 전송 어댑터가 보장해야 합니다. |
 
 정적 모드는 CU가 정한 구역을 해금합니다. 동적 모드는 활성 터렛이 셀을 점유하며 지역 잠금은 사용하지 않습니다. 비활성·파괴된 터렛은 다음 계산에서 점유를 내놓고, 과열 터렛은 활성 상태이므로 계속 점유합니다. 점유의 실제 단위는 Grid 셀입니다.
