@@ -4,7 +4,7 @@ title: 지역·Encounter 연동
 
 # 지역·Encounter 연동
 
-**기준:** 게임 `main` `7f22b9ca` (#530) · **원본:** `Docs/architecture/core-sprint-region-and-request-api.md`, 공개 Core·Turret 계약.
+**기준:** 게임 `main` `7802e0c6` (#569, 2026-10-28) · **원본:** `Docs/architecture/core-sprint-region-and-request-api.md`, 공개 Core·FieldTurret 계약.
 
 ## 지역 Grid
 
@@ -18,6 +18,12 @@ title: 지역·Encounter 연동
 | `RegionGridReplica.Apply(frame, senderIsVerifiedServer)` | 검증된 전달자에게서 받은 프레임으로 Client 읽기 모델 갱신 | 인수의 검증 여부는 전송 어댑터가 보장해야 합니다. |
 
 정적 모드는 CU가 정한 구역을 해금합니다. 동적 모드는 활성 터렛이 셀을 점유하며 지역 잠금은 사용하지 않습니다. 비활성·파괴된 터렛은 다음 계산에서 점유를 내놓고, 과열 터렛은 활성 상태이므로 계속 점유합니다. 점유의 실제 단위는 Grid 셀입니다.
+
+### Initial_Stage 지역 초기화 순서
+
+Initial_Stage의 Scene 조립부는 Match·Player를 만들기 전에 같은 Scene의 활성 CU, `FieldTurretController`, 지역 바인딩, CU Grid 범위와 Inspector의 해금 구역 수를 확인합니다. Static 모드에서는 Match 소유권을 확보한 뒤 `ConfigureUnlockZones(cuPosition)`을 호출하고, 이어서 `RegionSceneBinding.BindMatch`로 Core 지역 정책을 연결합니다. Dynamic 모드에서는 정적 거리 잠금을 구성하지 않습니다.
+
+초기화가 실패하거나 예외가 나면 조립 실패로 처리해 이미 생성된 Match·actor·구독을 정리합니다. 이후 구역 해금과 모드 변경은 기존 `RegionRuntime` / `ResetPolicy` 경로를 사용하며 `ConfigureUnlockZones`를 다시 호출하지 않습니다. 터렛 메서드의 입력과 동작은 [터렛 API](../turret/api-reference.md)를 확인하세요.
 
 Core 지역 Grid와 Battlefield의 Player·Enemy 밀도 및 전선 분석 Grid는 서로 다른 데이터입니다. Turret의 기존 `UnlockZones`도 Core 지역 상태와 별개입니다. Core 지역이 바인딩된 Scene에서는 두 상태를 함께 쓰지 말고 `RegionSceneBinding` API를 사용하세요. [터렛 API](../turret/api-reference.md)
 
