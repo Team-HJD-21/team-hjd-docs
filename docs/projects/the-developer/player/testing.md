@@ -10,7 +10,7 @@ title: Player 검증과 제한 사항
 
 - MainCamera 태그·활성 카메라와 Rigidbody2D가 준비됐는지 확인합니다.
 - Q/Tab과 GameInput의 입력 경로를 따로 확인합니다.
-- EnemyHealth와 Monster에 중복 피해를 주지 않는지 확인합니다. Client의 EnemyHealth 피해 호출은 무시됩니다.
+- EnemyHealth와 Monster에 중복 피해를 주지 않는지 확인합니다. main `d0922f0b`의 EnemyHealth는 자체 서버 검사가 없으므로 Client에서 피해 호출이 실행되지 않도록 무기 호출 경계를 확인합니다.
 - HP 표시가 반복 이벤트에도 안정적인지 확인합니다. 사망 시 `onDeath`가 한 번 호출되는지와 입력 차단·이동 중지가 적용되는지도 확인합니다.
 - 선택된 Q/E 스킬의 쿨타임과 CanPrepare / CanUse / CanRecover, 선택창·조작 차단에 따른 제한을 확인합니다.
 - Player V2 상태가 Core PlayerState와 자동 동기화된다고 가정하지 않습니다.

@@ -4,7 +4,7 @@ title: 타깃 제공과 선택
 
 # 타깃 제공과 선택
 
-**기준:** main `789f5b44` · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
+**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01, 공개 API 정적 대조) · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
 
 ## 타깃 제공 계약
 
@@ -22,10 +22,10 @@ title: 타깃 제공과 선택
 | --- | --- |
 | `EnemyNavMeshPathfinder.TryCalculatePath(Vector3 start, Vector3 target, out Vector3[] corners)` | bool. 시작·목표의 Z를 0으로 두고 반경 3, AllAreas로 SamplePosition 후 완전한 경로만 허용 |
 | 실패 반환 | 샘플 실패·부분/무효 경로는 false와 null corners. 호출 측이 실패를 처리 |
-| `EnemyController.SetTarget(Transform)` | 목표 Collider 목록과 경로 인덱스를 다시 설정하고 현재 목표 위치까지 경로 계산. null이면 목표·경로 해제 |
-| `EnemyNetworkController` | Spawn된 서버만 FixedUpdate에서 EnemyAIBrain.UpdateAI 실행 |
+| `EnemyController.SetTargetAndDestination(Transform)` | 목표 Collider 목록과 경로 인덱스를 다시 설정하고 현재 목표 위치까지 경로 계산. null이면 목표·경로 해제 |
+| `EnemyNetworkController` | Spawn된 서버만 FixedUpdate에서 EnemyController.ExecuteBehavior 실행 |
 
-EnemyController는 도착한 코너를 건너뛰고 다음 코너 방향으로 Rigidbody2D 속도를 설정합니다. 경로가 없거나 소진되면 정지합니다. 경로 계산은 SetTarget 호출 때 수행하므로 이동 표적·지형 변경의 재탐색은 실제 호출 주기로 확인해야 하며 자동 NavMeshAgent 재계산 계약으로 해석하지 않습니다.
+EnemyController가 조율하는 EnemyMovement는 도착한 코너를 건너뛰고 다음 코너 방향으로 Rigidbody2D 속도를 설정합니다. 경로가 없거나 소진되면 정지합니다. 경로 계산은 SetTargetAndDestination 호출 때 수행하므로 이동 표적·지형 변경의 재탐색은 실제 호출 주기로 확인해야 하며 자동 NavMeshAgent 재계산 계약으로 해석하지 않습니다.
 
 공격 거리는 Transform 중심이 아니라 Enemy의 비 Trigger 몸통과 목표 자식의 활성·활성화된 비 Trigger Collider 사이 거리입니다. 몸통 참조가 없으면 범위 판정은 실패합니다. 공격 시 목표 쪽을 바라보고 EnemyNetworkAnimator는 서버 공격 RPC에 방향 값을 함께 전달합니다. 이 변경이 타깃 점수·권한·스폰 계약을 새로 완성한 것은 아닙니다.
 

@@ -416,7 +416,7 @@ flowchart TD
     Damage -->|체력 0| Die["NetworkObject.Despawn()<br>네트워크 적 제거"]
 ```
 
-Canon 포신은 Target을 향해 돌지만, **발사된 `FieldTurretBullet`은 몬스터를 추적하지 않는다.** `Initialize()` 때 발사 방향점으로 방향을 정한 뒤 직진하며 충돌한 Collider와 그 부모에서 `EnemyHealth`를 찾아 피해를 전달한다. `EnemyHealth.TakeDamage()`는 서버에서 Network Spawn된 적에 대해서만 피해를 적용한다. 발사체의 float 피해량은 `Mathf.RoundToInt()`로 변환한다. 현재 터렛 Damage는 int에서 전달하므로 기존 정수 공격력은 유지된다. 같은 탄환의 중복 충돌 피해를 차단한다. Target이 죽거나 사거리를 벗어나면 다음 탐색에서 새 대상을 찾는다.
+Canon 포신은 Target을 향해 돌지만, **발사된 `FieldTurretBullet`은 몬스터를 추적하지 않는다.** `Initialize()` 때 발사 방향점으로 방향을 정한 뒤 직진하며 충돌한 Collider와 그 부모에서 `EnemyHealth`를 찾아 피해를 전달한다. main `d0922f0b`의 `EnemyHealth.TakeDamage()`는 자체 서버·Spawn 검사를 하지 않는다. 활성·생존 상태의 양수 피해를 처리하므로 발사체 호출 측이 네트워크 권한을 보장해야 한다. 발사체의 float 피해량은 `Mathf.RoundToInt()`로 변환한다. 현재 터렛 Damage는 int에서 전달하므로 기존 정수 공격력은 유지된다. 같은 탄환의 중복 충돌 피해를 차단한다. Target이 죽거나 사거리를 벗어나면 다음 탐색에서 새 대상을 찾는다.
 
 #### Missile: 복수 대상을 지정하고 유도·범위 피해
 
@@ -451,7 +451,7 @@ Missile은 적 수가 부족하면 첫 Target을 다른 발사 슬롯에서도 �
 
 목표 예약은 PoC `EnemyController.IsTargeted`를 사용한다. 최초 탐색과 비행 중 재탐색에서 이미 예약된 적을 제외하고 선택한 적을 `true`로 설정한다. 기존 `Monster.isTargeted`는 더 이상 참조하지 않는다. 비활성화와 프리팹 교체 및 발사 전 사거리 이탈에서는 `ReleaseUnlaunchedTargets()`로 발사 전 예약을 `false`로 되돌린다. 발사 후에는 각 LV 스크립트가 Target 슬롯을 비우므로 비행 중인 미사일의 예약은 터렛 종료로 해제하지 않는다. 미사일은 폭발 처리에서 자신의 목표 예약을 해제한다. 적이 부족할 때 같은 목표를 여러 발에 배정하는 기존 동작은 유지하며 bool 예약이므로 한 발이 먼저 해제하면 다른 발이 추적 중이어도 다시 선택될 수 있다. 복수 발사체 예약의 개수 및 외부 Destroy 정리는 후속 과제다. 이 속성은 로컬 상태이며 네트워크 동기화 값이 아니다.
 
-폭발 피해는 Collider의 부모까지 `EnemyHealth`를 조회하고 동일 적은 한 번만 피해를 적용한다. 기존 Enemy Tag 대신 EnemyHealth 존재 여부를 피해 대상으로 사용한다. 충돌 및 수명 종료가 겹쳐도 동일 미사일의 폭발 처리는 한 번만 수행한다. 발사체 이동과 서버 전용 피해 API를 연결한 PoC이며 터렛 및 발사체 전체의 네트워크 동기화나 권한 구조를 완성한 것은 아니다. Host에서 Network Spawn된 적을 대상으로 추적과 HP 감소 및 사망 Despawn을 검증해야 한다. 기존 Monster만 있는 적은 더 이상 이 피해 API로 체력이 감소하지 않는다.
+폭발 피해는 Collider의 부모까지 `EnemyHealth`를 조회하고 동일 적은 한 번만 피해를 적용한다. 기존 Enemy Tag 대신 EnemyHealth 존재 여부를 피해 대상으로 사용한다. 충돌 및 수명 종료가 겹쳐도 동일 미사일의 폭발 처리는 한 번만 수행한다. 발사체 이동과 피해 API를 연결한 PoC이며 터렛 및 발사체 전체의 네트워크 동기화나 권한 구조를 완성한 것은 아니다. Host에서 Network Spawn된 적을 대상으로 추적과 HP 감소 및 사망 Despawn을 검증해야 한다. 기존 Monster만 있는 적은 더 이상 이 피해 API로 체력이 감소하지 않는다.
 
 ### 4.5 과열과 냉각
 

@@ -44,3 +44,11 @@ WeatherManager와 CountTick을 같은 GameObject에 구성합니다. WeatherMana
 실제 씬에서 초기 값, 연속 변경과 큐 길이, 일시정지, 구독 해제와 재진입, 표시 참조 누락을 확인하세요. 이번 동기화는 API 정적 확인과 문서 빌드이며 날씨 연출의 플레이 검증을 수행하지 않았습니다.
 
 [World / Spaceship — 공간·씬·진행 상태 목차](../world.md) · [통합 체크리스트](../integration.md)
+
+## 날씨 화면 효과 연결 — main d0922f0b
+
+**기준:** `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01) · **출처:** `Assets/Scripts/Map/WeatherManager.cs`, `ShaderTests.cs`.
+
+`WeatherManager.CallWeatherChange()`는 MainCamera의 `ShaderTests.ChangeWeatherFlag()`를 호출합니다. MainCamera 참조가 없으면 오류를 기록하고 반환합니다. ShaderTests는 Camera를 요구하며 MainCamera 태그가 없는 객체에서는 해당 Camera와 컴포넌트를 비활성화합니다. MainCamera와 사용할 날씨 Material 연결을 준비하세요.
+
+ShaderTests의 isRain·isThunder·isThunder1·isHeatWave는 읽기 전용 상태입니다. 화면 효과 전환 API의 존재가 기존 날씨 큐·저장 상태나 네트워크 복제를 자동으로 갱신한다는 계약은 아닙니다. 이 문서 갱신은 정적 API 확인이며 Unity 렌더링·카메라 결과를 검증한 것은 아닙니다.

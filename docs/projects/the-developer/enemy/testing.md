@@ -4,11 +4,11 @@ title: Enemy 검증과 제한 사항
 
 # Enemy 검증과 제한 사항
 
-**기준:** main `789f5b44` · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
+**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01, 공개 API 정적 대조) · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
 
 ## 검증 체크
 
-- Host와 Client 호출을 분리해 확인합니다.
+- Host와 Client 호출을 분리해 확인합니다. EnemyHealth 자체는 권한을 검사하지 않으므로 호출 측의 서버 검사를 확인합니다. Initialize 전·Deactivate 후에는 피해가 무시되는지 확인합니다. Died·DeathConfirmed와 Despawned를 통한 사망·추적 해제가 중복되지 않는지 확인합니다.
 - 분대 계획 수와 Executor 실제 생성 수를 비교합니다.
 - 타깃이 파괴/비활성/제거되면 다시 유효한 대상을 선택하는지 확인합니다.
 - [Player 탄환](../player.md)이 EnemyHealth와 Monster 양쪽에 중복 피해를 주지 않는지 확인합니다.
