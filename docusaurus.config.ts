@@ -45,7 +45,7 @@ const config: Config = {
   ],
   themeConfig: {
     colorMode: {
-      defaultMode: 'light',
+      defaultMode: 'dark',
       respectPrefersColorScheme: true,
     },
     image: 'img/teamhjd-social-card.png',
@@ -97,8 +97,8 @@ const config: Config = {
         </div>`,
     },
     prism: {
-      theme: {plain: {color: '#1f2937', backgroundColor: '#f8fafc'}, styles: []},
-      darkTheme: {plain: {color: '#d9f2ee', backgroundColor: '#102832'}, styles: []},
+      theme: {plain: {color: '#23332f', backgroundColor: '#f7f7f1'}, styles: []},
+      darkTheme: {plain: {color: '#f3f0e8', backgroundColor: '#13202c'}, styles: []},
     },
   } satisfies Preset.ThemeConfig,
 };
