@@ -1,14 +1,21 @@
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+const baseUrl = process.env.SITE_BASE_URL ?? '/';
+
 const config: Config = {
   title: 'TeamHJD Docs',
   tagline: '함께 일하는 방식을 기록하고, 더 잘 만드는 팀의 지식 기반',
   url: process.env.SITE_URL ?? 'https://docs.teamhjd.com',
-  baseUrl: process.env.SITE_BASE_URL ?? '/',
+  baseUrl,
   organizationName: 'Team-HJD-21',
   projectName: 'team-hjd-docs',
-  favicon: 'img/brand/favicon.png',
+  favicon: 'img/favicons/v1/docs/favicon.ico',
+  headTags: [
+    {tagName: 'link', attributes: {rel: 'icon', type: 'image/png', sizes: '32x32', href: `${baseUrl}img/favicons/v1/docs/favicon-32.png`}},
+    {tagName: 'link', attributes: {rel: 'icon', type: 'image/svg+xml', sizes: 'any', href: `${baseUrl}img/favicons/v1/docs/favicon.svg`}},
+    {tagName: 'link', attributes: {rel: 'apple-touch-icon', sizes: '180x180', href: `${baseUrl}img/favicons/v1/docs/apple-touch-icon.png`}},
+  ],
   trailingSlash: false,
   onBrokenLinks: 'throw',
   markdown: {
