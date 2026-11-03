@@ -95,3 +95,7 @@ Edit Mode의 `Add Turret Battlefield Input Source to Active Scene`은 실제 컴
 ## 다음에 읽을 문서
 
 [Spawn 판단과 당시 공간](spawn-inspection.md) · [공유용 캡처](timeline-and-sharing.md) · [World 공간 입력 API](../../../projects/the-developer/world/spatial-inputs.md)
+
+## 터렛 ID 표시 — main 9cf0e16b
+
+Scene 정점과 선택 전선 라벨은 T:01234567처럼 축약합니다. 선택 패널의 tooltip·Copy·Capture·요청 데이터는 전체 원본 ID를 유지하므로 짧은 라벨을 네트워크/저장 키로 사용하지 마세요. 배치를 복제했으면 재생 전에 Tools > TeamHJD > The Developer > Configure Turret Identities로 누락·중복 제작 키를 명시 정리합니다.

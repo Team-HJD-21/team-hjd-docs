@@ -131,3 +131,7 @@ if (FieldTurretInstanceRegistry.TryGet(id, out var turret))
 이는 공급자 구현을 위한 계약입니다. 일반 버튼·AI는 `RequestActivation`을 사용하고 전력을 별도로 소비하지 않습니다. 콘텐츠 업그레이드에 따른 예약 비용 변경 역시 터렛의 업그레이드 API에 맡깁니다.
 
 다음: [스냅샷과 상태 동기화](snapshots.md) · [검증과 제한 사항](testing.md)
+
+## Core Match의 논리 ID 연결 — main 9cf0e16b
+
+FieldTurretBase.TryGetEntityId(out EntityId)는 제작/등록 메타데이터를 읽고 FieldTurretController.OwnsTurret(turret)는 실제 전력 소유자를 확인합니다. InstanceId를 그대로 네트워크 요청에 넣지 않습니다. 동적 생성은 Factory가 실제 등록한 뒤 ITurretEntityRegistration으로 권위자가 정한 논리 ID를 연결하며 생성 실패 rollback도 Feature가 맡습니다. 승급/강등의 객체 교체는 기존 FieldTurret API를 사용합니다. [Core 명령·ID·표시 계약](../core/api-reference.md#공용-터렛-명령과-표시--main-9cf0e16b)을 확인하세요.

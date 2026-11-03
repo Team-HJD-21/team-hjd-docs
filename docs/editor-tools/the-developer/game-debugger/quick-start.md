@@ -64,3 +64,7 @@ Scene View의 **Gizmos**와 Battlefield의 **Scene layers**를 모두 켜고 `Fr
 ## 다음에 읽을 문서
 
 [창 구성·시간 제어](window-and-time.md) · [Encounter 반복 실험](encounter.md) · [문제 해결](troubleshooting.md)
+
+## Initial_Stage 연결 모드 — main 9cf0e16b
+
+원본 `Docs/tooling/game-debugger-guide.md`와 현재 네트워크 Scene 기준으로 SinglePlayerHost는 App 소유 연결→준비→Match 시작을 순서대로 실행합니다. 단계를 나누려면 재생 전 InitialStageCompositionRoot의 InitialStageNetworkBinding을 Manual로 바꾸고 재생 후 Inspector에서 Host/Client 연결→Host Match 준비→Host Match 시작을 사용합니다. 이 경로에서는 기존 Enemy Network Test 연결 버튼을 사용하지 않습니다. Game Debugger의 Encounter 버튼은 이미 시작한 Host Match에 요청할 뿐 서버 연결을 개설하지 않습니다. 기존 사진·영상은 촬영 당시 UI 예시이며 이 변경의 최신 실행 증거가 아닙니다.

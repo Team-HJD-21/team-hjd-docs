@@ -47,7 +47,11 @@ Scene 소유자는 `IAppMatchHost.CurrentMatchId`와 자신이 만든 ID를 비�
 
 ## 아직 완성되지 않은 경계
 
-`LocalAuthority`는 NGO Server나 Steam 인증 구현이 아닙니다. Host/Client 공통 명령 전송, ID 매핑, 상태 복제, 소유권과 중복 방지는 별도 합의 대상입니다. `CommandId`, 진단 `RequestId`, `NetworkObjectId`도 서로 다른 용도입니다.
+`LocalAuthority`는 NGO Server나 Steam 인증 구현이 아닙니다. main `9cf0e16b`에서 터렛 명령 gateway·논리 ID 대응·지역 및 표시 Frame 전송이 연결됐습니다. [현재 공용 터렛 계약](api-reference.md#공용-터렛-명령과-표시--main-9cf0e16b)을 따르며 원격 Player actor·실제 터렛 전투 복제는 별도입니다. `CommandId`, 진단 `RequestId`, `NetworkObjectId`도 서로 다른 용도입니다.
 
 Game Debugger의 수동·반복 요청은 테스트 명령입니다. 출시용 Director나 스테이지 진행 규칙으로 해석하지 않습니다. 자세한 조작법은 [Game Debugger](../../../editor-tools/the-developer/game-debugger/index.md)를 확인하세요.
 
+
+## 종료 오류와 재바인딩 — main 9cf0e16b
+
+Player adapter와 Scene은 해제 콜백 전에 이전 입력·소유 참조를 닫습니다. actor·지역·Feature·FieldTurret 정리를 끝까지 시도하고 오류를 합쳐 전달하며 설정 실패도 rollback합니다. Dispose/TryEndMatch가 오류를 던졌다고 이전 입력을 계속 사용할 수 있다는 의미는 아닙니다. 해제 도중 새 Match를 재바인딩하지 마세요. Unity/NGO 객체 제거가 프레임 끝에 확정되는 시점과 참조 해제 시점을 구분합니다.

@@ -4,7 +4,7 @@ title: Initial Stage UI 연동
 
 # Initial Stage UI 연동
 
-**기준:** 게임 main `6b4310dc` (#549, 2026-10-24) · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret·Core API.
+**기준:** 게임 main `9cf0e16b5924b6facfc35646184672c1d51e7b1a` (#570, 2026-11-02) · **원본:** `Docs/architecture/player-ui-api.md`, 공개 Player·Turret·Core API.
 
 이 문서는 상태 표시와 터렛 조작을 연결할 때 사용할 API 계약과 제한을 정리합니다. 프리팹 계층·배치·스타일 등 화면 제작 세부 사항은 다루지 않습니다. 원본도 최종 Unity PlayMode 외형·조작 검증은 별도라고 기록합니다.
 
@@ -16,9 +16,9 @@ title: Initial Stage UI 연동
 | CU 체력 | `ControlUnitHealth.CurrentHealth`, `MaxHealth`, `HealthChanged` | 현재 값을 즉시 읽고 `HealthChanged`를 구독합니다. |
 | CU 전력 | `FieldTurretController.Budget`의 `CurrentPower`, `MaximumPower`, `PendingRecovery` | 전력 예약·반환은 기존 API가 소유합니다. UI에서 예산을 직접 수정하지 않습니다. |
 
-초기 값이나 대상 오브젝트가 아직 준비되지 않았으면 대기 상태를 표시하고 다시 찾습니다. 다중 플레이어에서는 HUD가 로컬 플레이어의 `PlayerInfo`에 연결되도록 구성해야 합니다. 현재 연결은 플레이어 UI에 새로운 Match 동기화 계약을 추가하지 않습니다.
+초기 값이나 대상 오브젝트가 아직 준비되지 않았으면 대기 상태를 표시하고 다시 찾습니다. 다중 플레이어에서는 HUD가 로컬 플레이어의 `PlayerInfo`에 연결되도록 구성해야 합니다. 정식 Scene은 아래 actor 주입·명령/표시 Port를 사용합니다. Client의 초기 로컬 FieldTurret 값을 서버 확정 상태로 사용하지 않습니다.
 
-## 터렛 선택과 명령
+## 독립 Feature Scene의 로컬 터렛 선택과 명령
 
 - 터렛은 현재 씬의 등록 ID로 선택하고, 교체 후에도 같은 ID로 새 컴포넌트를 다시 조회합니다.
 - 활성화 요청은 `FieldTurretController.RequestActivation(instanceId, shouldActivate)`로 전달하고 `FieldTurretActivationResult`를 처리합니다. UI가 전력을 미리 소비하거나 직접 상태를 바꾸지 않습니다.
@@ -50,3 +50,16 @@ Presenter는 요청 직전에도 거리와 조작 허용 조건을 검사합니�
 `SnapshotChanged`는 객체 값 변경 알림에 사용하고, 이동 거리와 냉각 남은 시간처럼 시간·위치에 따라 달라지는 값은 별도로 갱신합니다. 스냅샷 이벤트만으로 냉각 종료나 이동을 감지한다고 가정하지 마세요.
 
 다음: [Player 체력·UI](health.md) · [터렛 API](../turret/api-reference.md) · [통합 체크리스트](../integration.md)
+
+## 정식 Scene의 actor·요청·표시 주입
+
+**출처:** main `9cf0e16b`의 `Docs/architecture/player-ui-api.md`, Core 공개 Port와 StageTurretCommandBinding.
+
+1. ILocalPlayerActorConsumer.PrepareLocalActor(matchId, playerId)로 대기 상태를 만들고, 같은 PlayerId의 PlayerActorIdentity·PlayerInfo를 가진 실제 로컬 actor를 BindLocalActor로 주입합니다. UnbindLocalActor는 같은 Match만 해제합니다. UI는 actor를 생성·파괴하지 않으며 대기 중 다른 Player를 대신 찾지 않습니다.
+2. BindTurretCommands(matchId, playerId, requester, presentation)로 요청과 Host 확정 표시 source를 주입합니다. 같은 Port의 재주입은 구독·대기 요청을 유지하며 다른 Port 교체는 명시 해제 뒤 수행합니다. 정식 Port가 없으면 로컬 FieldTurret 쓰기로 우회하지 않습니다.
+3. StageTurretPresenter는 TurretPresentationFrame의 논리 ID·정의·활성·강화·냉각 상태를 읽고 요청 의도를 만듭니다. StageTurretCommandBinding은 GUID로 요청한 뒤 해당 대상의 추가 입력을 잠급니다. 서버 결과와 그 확정 순번을 반영한 표시 Frame을 모두 받아야 해제합니다. ExecutionFailed도 부작용 가능성이 있어 최신 상태를 기다리고 거부는 즉시 표시합니다.
+4. HUD 비활성·재활성은 actor 주입과 대기 추적을 보존합니다. Match 해제·실제 파괴는 요청/표시 구독을 정리하며 다른 Match의 결과·해제를 적용하지 않습니다.
+
+CU 점령 수치는 표시 Frame의 모드·RegionGridId·RegionRevision이 현재 지역 Snapshot과 일치할 때만 결합합니다. 채널 도착 순서가 다르면 대기 안내를 표시하고 이전 지역 수치와 새 HUD 상태를 섞지 않습니다. Client는 오래된 로컬 터렛 사거리 원을 확정 표시로 사용하지 않습니다.
+
+PlayerControlState는 IPlayerInteractionActor로 XY·생존·CanAct를 제공합니다. 서버 actor 소유자가 RegisterAuthorityPlayerActor의 lease를 실제 actor 수명에 연결해야 하며 Client의 위치 주장을 주입하면 안 됩니다. 현재 자기 로컬 actor 생성과 Core 명령·표시 전송을 원격 Player 이동/공격·FieldTurret 전투 복제 완성으로 해석하지 않습니다. 원본의 자동 버튼/UTP·두 프로세스 검사 보고와 PL의 실제 마우스·해상도별 시각 인수는 별도이며, 이번 문서 작업은 실행 시험을 재수행하지 않았습니다.

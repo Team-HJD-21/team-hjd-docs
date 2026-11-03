@@ -26,3 +26,7 @@ title: Core 검증과 제한 사항
 [World의 공간 입력](../world.md) · [통합 검증](../integration.md)
 
 [Core — 세션·명령·이벤트 목차](../core.md) · [통합 체크리스트](../integration.md)
+
+## 네트워크 기반 변경의 확인 범위 — main 9cf0e16b
+
+원본 #570은 NGO/UTP 지역 Snapshot·Match 재시작, 터렛 명령/표시와 Windows 두 프로세스 검사를 보고합니다. 일부 Host interaction actor는 개발 fixture이며 실제 원격 Player actor·터렛 전투 복제, LAN/인터넷 지연·손실·수동 GUI 인수까지 증명하지 않습니다. 문서의 API 존재·원본 시험 보고·이번 사이트 검사/빌드 결과를 구분하세요. 이번 동기화에서 Unity 시험을 재실행하지 않았습니다.
