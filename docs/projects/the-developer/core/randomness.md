@@ -32,6 +32,7 @@ public sealed class WeatherRandomExample : MonoBehaviour, IRandomConsumer
 
 - 같은 Match Scene의 활성 `IRandomConsumer`는 Core가 Host 초기화 때 찾아 `BindRandom`을 호출하고 반환 lease를 보관·해제합니다.
 - 최초 추첨은 `BindRandom` 뒤, Host 권위 환경이 준비된 실제 기능 초기화 시점에 합니다. `Awake`·Client `Start`에서 먼저 뽑지 않습니다.
+- Unity `Start`도 주입 완료 신호가 아닙니다. `BindRandom`은 source를 **연결만** 하며, Weather의 첫 선택·예고 큐는 이후 환경 `BindAuthority`처럼 실제 Feature 시작을 보장하는 지점에서 만듭니다.
 - Client는 Host 결과 snapshot을 표시하며 권위 흐름을 직접 얻거나 같은 결과를 다시 뽑지 않습니다.
 - Core가 lease를 해제하면 `_random`은 `null`이 아니라 사용 불가 참조가 됩니다. 준비 여부는 `_random != null && _random.IsAvailable`로 확인합니다.
 
@@ -71,6 +72,16 @@ using (IDisposable binding = RandomBinding.Bind(
 ```
 
 계속 살아 있는 객체에 source를 전달했다면 작업 직후가 아니라 객체를 해제할 때 lease를 Dispose합니다. 동적 Feature는 Scene 조립부가 직접 Bind하고 lease를 소유합니다. `InitialStageCompositionRoot.Random` 및 `MatchSession.Random`도 초기화 전·Client에서는 `null`일 수 있으므로 Feature가 매 프레임 전역 검색하지 않습니다.
+
+### 호출이 안 될 때
+
+| 증상 | 확인할 것 |
+| --- | --- |
+| `_random`이 `null` | Core의 `BindRandom` 호출 전인지, 소비자가 같은 Match Scene에서 활성화됐는지 확인합니다. 중간 생성 객체는 소유 조립부가 직접 연결합니다. |
+| `IsAvailable`이 `false` | 해제된 연결이거나 Host 권한·Match 수명이 끝난 상태입니다. Client의 로컬 난수로 게임 판정을 대신하지 않습니다. |
+| 이미 연결됐다는 오류 | 자동 연결 외에 `Awake`·`Start`에서 중복 등록하지 않았는지 확인하고, 기존 반환값은 소유 조립부에서 해제합니다. |
+| `Chance`·`Choose`가 보이지 않음 | `using TeamHJD.Game.Application;`을 추가합니다. |
+| 범위·가중치 오류 | `min < max`, 빈 목록 아님, 항목/가중치 수 일치, 0보다 큰 가중치가 하나 이상인지 확인합니다. |
 
 ## 공통 추첨 API
 
@@ -161,5 +172,9 @@ requiredKeys.Add(randomWriter.Key); // core/random
 ## 적용 범위와 한계
 
 이 API만으로 Weather·Enemy·터렛·HUD의 기존 호출이 자동 교체되지는 않습니다. 각 담당자는 위 방식으로 Host 흐름 또는 App 연출 흐름을 연결한 뒤 실제 게임 흐름을 검증해야 합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
+
+## 검증
+
+Unity 6000.3.23f1에서 공용 바인딩 헬퍼의 수명·중복·재연결·권한·실패 rollback을 10/10으로 확인했고, 최종 Unity 컴파일은 오류 0으로 완료했습니다. 이 페이지와 README의 C# 예제 8개도 실제 Unity/Core DLL을 참조해 컴파일했습니다. 이는 기존 Weather·Enemy·터렛·HUD 호출부가 이미 교체됐다는 뜻은 아니며, 각 담당자의 실제 흐름 검증은 별도로 필요합니다.
 
 [Core 목차](../core.md) · [Core API 사용법](api-reference.md) · [Core 검증과 제한](testing.md)
