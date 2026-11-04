@@ -1,14 +1,41 @@
 ---
 title: Host 난수와 체크포인트 API
-description: 구현 브랜치에서 검토 중인 이름별 난수 흐름, 주입, 저장 복원 계약
-tags: [the-developer, core, randomness, review]
+description: 이름별 난수 흐름, 공용 주입 헬퍼, 저장 복원 계약
+tags: [the-developer, core, randomness]
 ---
 
 # Host 난수와 체크포인트 API
 
-> **상태: 구현 브랜치 기준 · PR 검토 중 · main 미반영**  
-> **적용 기준:** `e87bdf91cea8cbaac4def857ebd26cce1d817811` · 게임 구현 브랜치 `codex/core-random-presence-20261105`  
-> 이 페이지는 공개 API와 연결 방법을 검토하기 위한 문서입니다. 기존 게임 호출부는 이번 변경에서 아직 바꾸지 않았습니다.
+기존 게임 호출부는 아직 이 API로 교체되지 않았습니다. 날씨·적 생성·터렛·HUD 담당자는 아래 연결 방식과 호출 시점을 확인한 뒤 각 흐름을 적용합니다.
+
+## 바로 사용하기
+
+Feature에 새 부모 클래스를 붙이거나 등록·해제 클래스를 따로 만들지 않습니다. `IRandomConsumer`를 구현하고, 공용 정적 헬퍼로 필드를 한 번 연결합니다.
+
+```csharp
+using System;
+using TeamHJD.Game.Application;
+using TeamHJD.Game.Contracts;
+using UnityEngine;
+
+public sealed class WeatherRandomExample : MonoBehaviour, IRandomConsumer
+{
+    private IRandomSource _random;
+
+    public IDisposable BindRandom(IRandomStreams streams)
+        => RandomBinding.Bind(streams, "weather", ref _random);
+
+    public int DrawWeatherRoll(int totalWeight)
+        => _random.NextInt(0, totalWeight);
+}
+```
+
+- 같은 Match Scene의 활성 `IRandomConsumer`는 Core가 Host 초기화 때 찾아 `BindRandom`을 호출하고 반환 lease를 보관·해제합니다.
+- 최초 추첨은 `BindRandom` 뒤, Host 권위 환경이 준비된 실제 기능 초기화 시점에 합니다. `Awake`·Client `Start`에서 먼저 뽑지 않습니다.
+- Client는 Host 결과 snapshot을 표시하며 권위 흐름을 직접 얻거나 같은 결과를 다시 뽑지 않습니다.
+- Core가 lease를 해제하면 `_random`은 `null`이 아니라 사용 불가 참조가 됩니다. 준비 여부는 `_random != null && _random.IsAvailable`로 확인합니다.
+
+`RandomBinding.Bind`는 활성 연결을 덮어쓰지 않습니다. 같은 필드에 이미 연결돼 있으면 거부하며, 기존 lease를 해제한 뒤에는 같은 필드를 다시 연결할 수 있습니다. 이전 lease를 다시 Dispose해도 새 연결에는 영향을 주지 않습니다.
 
 ## 왜 별도 난수 서비스인가
 
@@ -28,52 +55,22 @@ flowchart LR
 
 게임 판정은 Host Match의 `IRandomStreams`, 로컬 HUD·연출은 App의 `PresentationRandom`에서 받습니다. 같은 API를 쓰더라도 두 수명과 상태를 섞지 않습니다.
 
-## 흐름 주입과 해제
+## 자동 Scene 연결과 직접 조립
 
-Scene 조립부는 활성 Feature의 `IRandomConsumer.BindRandom(IRandomStreams)`를 호출합니다. 소비자는 필요한 이름의 흐름을 한 번 받아 보관하고, 반환 lease를 Match 종료·조립 실패·교체 시 Dispose해 참조를 해제합니다.
+동적으로 나중에 생긴 Feature와 순수 C# 객체는 Scene 자동 검색 대상이 아닙니다. 이 경우에는 **조립부**가 같은 헬퍼를 호출하고 반환 lease를 객체 수명에 맞춰 보관·해제합니다. 짧은 작업만 위한 예제라면 다음처럼 해제할 수 있습니다.
 
 ```csharp
-using System;
-using TeamHJD.Game.Contracts;
-using UnityEngine;
-
-public sealed class WeatherRandomExample : MonoBehaviour, IRandomConsumer
+IRandomSource random = null;
+using (IDisposable binding = RandomBinding.Bind(
+    streams, "enemy/spawn-position", ref random))
 {
-    private IRandomSource _weatherRandom;
-
-    public IDisposable BindRandom(IRandomStreams streams)
-    {
-        if (_weatherRandom != null)
-            throw new InvalidOperationException("Weather random is already bound.");
-
-        var source = streams.GetStream("weather");
-        _weatherRandom = source;
-        return new BindingLease(() =>
-        {
-            if (ReferenceEquals(_weatherRandom, source)) _weatherRandom = null;
-        });
-    }
-
-    public int DrawWeatherRoll(int totalWeight)
-    {
-        if (_weatherRandom == null)
-            throw new InvalidOperationException("Bind Core random before choosing weather.");
-        return _weatherRandom.NextInt(0, totalWeight);
-    }
-
-    private sealed class BindingLease : IDisposable
-    {
-        private Action _release;
-        public BindingLease(Action release) => _release = release;
-        public void Dispose() { var release = _release; _release = null; release?.Invoke(); }
-    }
+    var offset = random.InsideUnitCircle();
+    // offset을 이 작업의 위치 계산에만 사용합니다.
 }
+// random.IsAvailable == false
 ```
 
-- 최초 추첨은 `BindRandom` 뒤, Host 권위 환경이 준비된 실제 기능 초기화 시점에 합니다. `Awake`·Client `Start`에서 먼저 뽑지 않습니다.
-- Client는 Host 결과 snapshot을 표시합니다. 권위 흐름을 직접 얻거나 같은 날씨를 다시 뽑지 않습니다.
-- 동적으로 나중에 생긴 Feature는 Scene 조립부가 직접 Bind하고 그 lease를 소유합니다. 기존 Scene 검색이 자동 연결해 주지 않습니다.
-- Match 종료 뒤 이전 source를 계속 사용하지 않습니다. `InitialStageCompositionRoot.Random` 및 `MatchSession.Random`도 초기화 전·Client에서는 `null`일 수 있습니다.
+계속 살아 있는 객체에 source를 전달했다면 작업 직후가 아니라 객체를 해제할 때 lease를 Dispose합니다. 동적 Feature는 Scene 조립부가 직접 Bind하고 lease를 소유합니다. `InitialStageCompositionRoot.Random` 및 `MatchSession.Random`도 초기화 전·Client에서는 `null`일 수 있으므로 Feature가 매 프레임 전역 검색하지 않습니다.
 
 ## 공통 추첨 API
 
@@ -83,7 +80,7 @@ public sealed class WeatherRandomExample : MonoBehaviour, IRandomConsumer
 using TeamHJD.Game.Application;
 using TeamHJD.Game.Contracts;
 
-IRandomSource random = streams.GetStream("feature/example");
+// random은 BindRandom으로 전달받은 IRandomSource입니다.
 
 // 기본 범위와 확률: 모두 상한 제외
 int index = random.NextInt(0, 10);
@@ -99,8 +96,7 @@ int[] order = { 0, 1, 2, 3 };
 random.Shuffle(order); // 호출자 배열을 제자리에서 변경
 
 // 원판 면적에 균일한 좌표
-IRandomSource spawn = streams.GetStream("enemy/spawn-position");
-var offset = spawn.InsideUnitCircle();
+var offset = random.InsideUnitCircle();
 ```
 
 `NextBool`, `NextUInt32`, `NextFloat()`·`NextDouble()`(0 이상 1 미만), `WeightedIndex`, `WeightedChoose`도 제공합니다. 빈 목록은 `Choose`할 수 없고, 가중치 0 항목은 선택 대상에서 제외됩니다. 동일 이름은 동일 상태를 공유하므로 해당 Feature 안의 호출 순서는 결과에 영향을 줍니다.
@@ -120,6 +116,18 @@ float offsetY = uiRandom.NextFloat(-1f, 1f) * shakeAmount;
 ```
 
 App 연출 난수는 체크포인트에 저장하지 않습니다. Match 난수는 `MatchConfig.RandomSeed`로 시작하며, 기능마다 `RandomService`를 새로 만들거나 프레임·InstanceId로 흐름 이름을 만들지 않습니다.
+
+일반 static 계산 함수는 `IRandomSource`를 매개변수로 받으면 됩니다. `IRandomConsumer`나 별도 부모 클래스가 필요하지 않습니다.
+
+```csharp
+public static class CombatRolls
+{
+    public static bool IsCritical(IRandomSource random, double chance)
+        => random.Chance(chance);
+}
+
+// Feature에서: CombatRolls.IsCritical(_random, 0.1);
+```
 
 ## 체크포인트 writer 등록
 
@@ -150,8 +158,8 @@ requiredKeys.Add(randomWriter.Key); // core/random
 
 주석 상태인 `FieldLaserTurret.cs` 난수와 `Guid.NewGuid()` 기반 ID 생성은 실행 추첨 교체 대상이 아닙니다. Cannon의 Transform X 누적 조준 동작도 난수 API 교체와 함께 임의로 고치지 않습니다.
 
-## 검증 범위와 한계
+## 적용 범위와 한계
 
-구현 브랜치 기준 Unity 6000.3.23f1에서 컴파일 오류 0, API·실제 PlayMode 포함 63/63 통과, 문서 코드 블록·README·PR 예제 7/7 실제 Unity/Core DLL 컴파일을 확인했습니다. 이는 Weather·Enemy·터렛·HUD 호출부 교체나 최종 멀티플레이 인수를 뜻하지 않습니다. 각 담당자가 위 연결을 적용한 뒤 실제 흐름 검증을 추가해야 합니다.
+이 API만으로 Weather·Enemy·터렛·HUD의 기존 호출이 자동 교체되지는 않습니다. 각 담당자는 위 방식으로 Host 흐름 또는 App 연출 흐름을 연결한 뒤 실제 게임 흐름을 검증해야 합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
 
 [Core 목차](../core.md) · [Core API 사용법](api-reference.md) · [Core 검증과 제한](testing.md)
