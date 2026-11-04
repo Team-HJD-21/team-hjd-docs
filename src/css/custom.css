@@ -128,3 +128,105 @@ body { background: var(--ifm-background-color); }
   .theme-doc-markdown { font-size: .97rem; }
   .theme-doc-markdown > h2 { margin-top: 2.6rem; }
 }
+
+
+/* Keep one document layout at every viewport width. */
+html:root { --doc-sidebar-width: min(300px, 70vw); --doc-sidebar-hidden-width: 30px; }
+aside.theme-doc-sidebar-container {
+  display: block;
+  width: var(--doc-sidebar-width);
+  flex: 0 0 auto;
+  margin-top: calc(-1 * var(--ifm-navbar-height));
+  border-right: 1px solid var(--team-line);
+  clip-path: inset(0);
+  transition: width 380ms cubic-bezier(.22, .61, .36, 1);
+}
+aside.theme-doc-sidebar-container[data-collapsed='true'] { width: var(--doc-sidebar-hidden-width); }
+aside.theme-doc-sidebar-container + main {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  max-width: none !important;
+}
+aside.theme-doc-sidebar-container + main > .container { max-width: none !important; }
+.team-doc-sidebar-desktop {
+  width: var(--doc-sidebar-width);
+  height: 100%;
+  transition: transform 380ms cubic-bezier(.22, .61, .36, 1), opacity 380ms ease, visibility 0s;
+}
+[data-collapsed='true'] .team-doc-sidebar-desktop {
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0s, 0s, 380ms;
+}
+.team-doc-sidebar-desktop > div {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--ifm-navbar-height);
+  width: var(--doc-sidebar-width);
+  height: 100%;
+}
+.team-doc-sidebar-desktop .menu { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: .5rem; }
+.team-doc-sidebar-desktop > div > button {
+  display: block !important;
+  flex: none;
+  height: 40px;
+  border: 1px solid var(--team-line);
+  border-radius: 0;
+  background: var(--docusaurus-collapse-button-bg);
+}
+.team-doc-sidebar-desktop > div > button svg { transform: rotate(180deg); }
+.team-doc-row { flex-wrap: nowrap; }
+.team-doc-row > .team-doc-article { flex: 1 1 0; min-width: 0; max-width: none !important; }
+.team-doc-row > .team-doc-outline { flex: 0 0 25%; max-width: 25%; }
+.team-doc-outline .theme-doc-toc-desktop { display: block; }
+.team-doc-outline { overflow-wrap: anywhere; }
+.team-doc-article .theme-doc-breadcrumbs { overflow-x: auto; }
+.team-doc-article .theme-doc-markdown h1 { overflow-wrap: anywhere; }
+.team-doc-article .leave-me-alone-entry { max-width: 100%; flex-wrap: wrap; }
+.team-doc-article .leave-me-alone-entry-logo { max-width: 100%; }
+.navbar { background: var(--ifm-background-color) !important; }
+.navbar .navbar__inner { flex-wrap: nowrap; gap: .5rem; }
+.navbar .navbar__items { flex-wrap: nowrap; min-width: 0; }
+.navbar .navbar__items:not(.navbar__items--right) { overflow-x: auto; scrollbar-width: thin; }
+.navbar .navbar__items--right { flex: 0 0 auto; }
+.navbar .navbar__items--right > div { display: flex !important; flex: none; }
+.navbar .navbar__brand, .navbar .navbar__item { flex: none; white-space: nowrap; }
+.navbar .navbar__item { display: inline-flex; align-items: center; }
+.navbar .navbar__toggle { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  aside.theme-doc-sidebar-container, .team-doc-sidebar-desktop { transition: none; }
+}
+
+/* AA text contrast in the light palette, including active and hover links. */
+html[data-theme='light'] {
+  --ifm-color-primary: #4e682f;
+  --ifm-color-primary-dark: #435b27;
+  --ifm-color-primary-darker: #3c5123;
+  --ifm-color-primary-light: #536c33;
+  --team-accent: #4e682f;
+}
+footer.footer {
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  --ifm-footer-title-color: var(--team-ink);
+  --ifm-footer-link-color: var(--team-muted);
+  --ifm-footer-link-hover-color: var(--team-accent);
+}
+.footer .footer-company { border-color: var(--team-line); color: var(--team-muted); }
+.footer .footer-business dt { color: var(--team-ink); }
+[data-theme='light'] .footer__col:nth-child(2) .footer__title { filter: brightness(.3); }
+
+@media (max-width: 640px) {
+  html:root { --doc-sidebar-hidden-width: 40px; }
+  .team-doc-row { flex-wrap: wrap; }
+  .team-doc-row > .team-doc-article { flex: 1 1 100%; max-width: 100%; }
+  .team-doc-row > .team-doc-outline { flex: 1 1 100%; max-width: 100%; margin-top: 2rem; }
+  .team-doc-outline .theme-doc-toc-desktop { position: static; max-height: none; }
+  .theme-doc-markdown h1 { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+  .navbar .navbar__logo { width: 120px; height: 19px; }
+  .navbar .navbar__link { padding-inline: .5rem; }
+  .navbar .navbar__brand { margin-right: .5rem; }
+  .team-doc-sidebar-desktop > div > button { height: 44px; }
+}

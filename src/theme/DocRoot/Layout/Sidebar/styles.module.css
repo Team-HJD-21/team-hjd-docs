@@ -1,0 +1,25 @@
+.viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.expand {
+  position: absolute;
+  top: var(--ifm-navbar-height);
+  bottom: 0;
+  inset-inline-start: 0;
+  width: var(--doc-sidebar-hidden-width);
+  padding: 0;
+  border: 0;
+  color: var(--team-muted);
+  background: var(--docusaurus-collapse-button-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.expand:hover, .expand:focus-visible {
+  color: var(--team-accent);
+  background: var(--docusaurus-collapse-button-bg-hover);
+}
+.expand:focus-visible { outline: 2px solid var(--team-accent); outline-offset: -2px; }
