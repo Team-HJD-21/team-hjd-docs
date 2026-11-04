@@ -1,14 +1,12 @@
 ---
 title: 우주선 출입 보고와 Core 정지 API
-description: 구현 브랜치에서 검토 중인 Host 위치 보고, 전원 내부 판정, Match 시계 연결 계약
-tags: [the-developer, core, presence, multiplayer, review]
+description: Host 위치 보고, 전원 내부 판정, Match 시계 연결 계약
+tags: [the-developer, core, presence, multiplayer]
 ---
 
 # 우주선 출입 보고와 Core 정지 API
 
-> **상태: 구현 브랜치 기준 · PR 검토 중 · main 미반영**  
-> **적용 기준:** `e87bdf91cea8cbaac4def857ebd26cce1d817811` · 게임 구현 브랜치 `codex/core-random-presence-20261105`  
-> SpaceshipEnter/Exit·Player NetworkBehaviour·포털 RPC에는 아직 이 연결을 적용하지 않았습니다.
+SpaceshipEnter/Exit·Player NetworkBehaviour·포털 RPC는 이 API와 별도 연결이 필요합니다.
 
 ## 무엇을 보고하는 API인가
 
@@ -89,8 +87,8 @@ IDisposable registration =
 
 이 API는 **Client → Host 포털 RPC를 제공하지 않습니다.** Client Trigger에서 `TryReportLocation`만 호출해도 서버로 전달되지 않습니다. Player·포털의 기존 네트워크 요청 경로에서 Host가 이동을 검증·완료한 뒤 Host actor로 이 API를 호출해야 합니다. 이 구현 배치에서는 Player NetworkBehaviour와 포털 RPC를 새로 추가·수정하지 않았습니다.
 
-## 검증 범위와 한계
+## 적용 범위와 한계
 
-구현 브랜치에서 컴파일 오류 0, API·실제 PlayMode 포함 63/63 통과, 문서 코드 블록·README·PR 예제 7/7 실제 Unity/Core DLL 컴파일을 확인했습니다. 실제 authored 포털 이동, 원격 Player 생성, Client→Host RPC 연결의 인수 완료를 뜻하지 않습니다. 해당 Feature가 Host 경로를 붙인 뒤 별도 통합 검증이 필요합니다.
+이 API는 실제 authored 포털 이동, 원격 Player 생성, Client→Host RPC 연결을 대신하지 않습니다. 해당 Feature가 기존 Host 경로를 붙인 뒤 별도 통합 검증이 필요합니다.
 
 [Core 목차](../core.md) · [Core 호출·소유권 계약](contracts.md) · [Core 검증과 제한](testing.md)

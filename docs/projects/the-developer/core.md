@@ -15,15 +15,13 @@ Core README의 설명과 코드를 함께 대조했습니다. 기존 `Global`·`
 | --- | --- |
 | Core 빠른 시작 | [Core 빠른 시작](core/quick-start.md) |
 | Core API 사용법 | [Core API 사용법](core/api-reference.md) |
-| Host 난수·체크포인트 (검토 중) | [Host 난수와 체크포인트 API](core/randomness.md) |
-| 우주선 출입·정지 (검토 중) | [우주선 출입 보고와 Core 정지 API](core/presence-reporting.md) |
+| Host 난수·체크포인트 | [Host 난수와 체크포인트 API](core/randomness.md) |
+| 우주선 출입·정지 | [우주선 출입 보고와 Core 정지 API](core/presence-reporting.md) |
 | 모듈 연결과 소유권 | [Core 호출·소유권 계약](core/contracts.md) |
 | 이벤트 구독과 세션 수명 | [이벤트 구독과 세션 수명](core/events.md) |
 | 지역 Grid와 Encounter 요청 | [지역·Encounter 연동](core/regions-encounters.md) |
 | Core 검증과 제한 사항 | [Core 검증과 제한 사항](core/testing.md) |
 
 게임 저장소의 공개 계약을 목적별 페이지로 나누었습니다. 지역·Encounter API 페이지는 공개 호출 계약만 요약하며 회의록·기획·원본 에셋은 포함하지 않습니다. 문서 동기화는 새 기능 구현이나 Unity 플레이 검증을 뜻하지 않습니다.
-
-난수·출입 보고 페이지는 게임 `main` 기준 문서와 다릅니다. 구현 브랜치 `codex/core-random-presence-20261105`의 `e87bdf91cea8cbaac4def857ebd26cce1d817811`을 기준으로 한 **PR 검토 중 계약**이며, main에 이미 연결된 기능으로 취급하지 않습니다.
 
 [The Developer 목차](index.md) · [통합 체크리스트](integration.md)
