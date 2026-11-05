@@ -1,28 +1,30 @@
-import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import path from 'node:path';
-const root = path.resolve(import.meta.dirname, '..');
-await mkdir(path.join(root, 'static'), {recursive: true});
-const projectsRoot = path.join(root, 'docs/projects');
-async function collect(directory, prefix = '') {
-  const pages = [];
-  for (const entry of (await readdir(directory, {withFileTypes: true})).sort((a, b) => a.name.localeCompare(b.name))) {
-    const relative = `${prefix}${entry.name}`;
-    if (entry.isDirectory()) pages.push(...await collect(path.join(directory, entry.name), `${relative}/`));
-    else if (entry.name.endsWith('.md')) {
-      const content = await readFile(path.join(directory, entry.name), 'utf8');
-      const slug = relative.replace(/\.md$/, '').replace(/(^|\/)index$/, '');
-      const title = content.match(/^title:\s*(.+)$/m)?.[1] || entry.name;
-      const body = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
-      pages.push({title, slug, text: body.replace(/```\w*/g, '').replace(/[#|*]/g, '')});
+const root=path.resolve(import.meta.dirname,'..');
+async function collect(dir,project,base,relative='') {
+  const result=[];
+  for(const entry of (await readdir(dir,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))) {
+    const name=relative+entry.name;
+    if(entry.isDirectory())result.push(...await collect(path.join(dir,entry.name),project,base,name+'/'));
+    else if(/\.mdx?$/.test(name) && !/(^|\/)(api-search|search|archive-search)\.mdx?$/.test(name)) {
+      const raw=await readFile(path.join(dir,entry.name),'utf8');
+      const front=raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      const body=raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/,'');
+      const title=(front?.[1].match(/^title:\s*(.+)$/m)?.[1] || body.match(/^# (.+)$/m)?.[1] || entry.name).replace(/^['"]|['"]$/g,'');
+      const slug=name.replace(/\.mdx?$/,'').replace(/(^|\/)index$/,'');
+      const archive=name.startsWith('archive/');
+      result.push({project,archive,title,url:base+(slug?'/'+slug:''),category:archive?'보관 기록':name.includes('/')?name.split('/')[0]:'프로젝트 안내',text:body.replace(/import .*?;\r?\n/g,'').replace(/[#|*]/g,'')});
     }
   }
-  return pages;
+  return result;
 }
-for (const project of await readdir(projectsRoot, {withFileTypes: true})) {
-  if (!project.isDirectory()) continue;
-  const pages = (await collect(path.join(projectsRoot, project.name))).map(({slug, ...page}) => ({
-    ...page, url: `/docs/projects/${project.name}${slug ? `/${slug}` : ''}`,
-  }));
-  await writeFile(path.join(root, 'static', `${project.name}-search.json`), JSON.stringify(pages), 'utf8');
-  console.log(`Built ${project.name}: ${pages.length} local pages; no game repository access.`);
+await mkdir(path.join(root,'static'),{recursive:true});
+for(const project of ['the-developer','leave-me-alone']) {
+  const pages=await collect(path.join(root,'docs/projects',project),project,'/docs/projects/'+project);
+  if(project==='the-developer')pages.push(...await collect(path.join(root,'docs/editor-tools/the-developer'),project,'/docs/editor-tools/the-developer'));
+  for(const archive of [false,true]) {
+    const selected=pages.filter(p=>p.archive===archive);
+    await writeFile(path.join(root,'static',project+(archive?'-archive-search.json':'-search.json')),JSON.stringify(selected));
+    console.log(project+(archive?' archive: ':' current: ')+selected.length);
+  }
 }

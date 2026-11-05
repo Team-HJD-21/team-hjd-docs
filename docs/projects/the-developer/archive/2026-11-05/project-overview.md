@@ -1,0 +1,53 @@
+---
+title: 2026-11-05 교체 전 프로젝트 안내
+sidebar_position: 1
+---
+
+:::warning 과거 기록
+사이트 커밋 5274d31의 교체 전 문서입니다. [현재 프로젝트 안내](/docs/projects/the-developer)를 기준으로 읽으세요.
+:::
+
+# The Developer 개발 문서
+
+:::info 기준과 공개 범위
+2026-10-25 확인한 게임 `main` 최신 커밋은 `4ff1e77d524abff9126c010ad99ef075ecef2069` (#537)입니다. Player·터렛 연동은 `6b4310dc` (#549), Enemy NavMesh 이동은 `38ea2595` (#534), Map 날씨 큐는 `4ff1e77d`의 공개 문서 및 코드를 대조했습니다. Core 지역·Encounter의 동작 기준은 `7f22b9ca`를 유지합니다. 기능 문서에는 실제 검토한 원본 커밋을 개별 표시합니다. 회의록·기획·게임 코드·원본 에셋은 사이트로 복사하지 않습니다. 이 사이트는 공개 계약과 사용법을 정리하며 Unity 플레이 검증이나 출시 기능의 보증을 뜻하지 않습니다. 이 문서 사이트는 팀원 접근용입니다.
+:::
+
+## 필요한 영역부터 읽기
+
+| 영역 | 담당 영역 기준 | 시작 문서 | 다른 영역과의 연결 |
+| --- | --- | --- | --- |
+| Core / UI | 양현석 | [세션·명령·이벤트](/docs/projects/the-developer/core) | 모든 모듈의 수명과 공간 입력 |
+| Player | 이영빈 | [입력·전투·피해](/docs/projects/the-developer/player) | EnemyHealth, Core 입력 경계 |
+| World / Spaceship | 김진태 | [공간·씬 왕복·진행 상태](/docs/projects/the-developer/world) | 터렛 배치, Player, 저장 실험 |
+| Turret / Power | 황재동 | [터렛 빠른 시작](/docs/projects/the-developer/turret/quick-start) | Enemy 타깃, Core 공간, 전력 |
+| Enemy / Encounter | 조수빈 | [스폰·타깃·피해](/docs/projects/the-developer/enemy) | Player·Turret 타깃, 서버 권한 |
+
+담당 구분은 게임의 `Docs/team/TEAM_ROLE_OWNERSHIP.md`를 참고했습니다. 장기 책임 영역을 현재 구현 완료 상태로 해석하지 마세요.
+
+## 현재 구현과 계획을 구분하기
+
+- **main 구현 확인:** Core 세션 수명·공간 snapshot, Player 입력·탄환·8방향 표시·스패너 공격/수리·씬 스킬 HUD·임시 터렛 설치 미리보기, 터렛 controller/registry/snapshot/명령, 공간 분산 기반 적 스폰·서버 피해·NavMesh 경로 이동, Spaceship 씬/JSON 실험, Map 날씨 큐와 변경 알림.
+- **전환 중:** Player/Spaceship의 기존 Manager 접근과 새 Core 계약이 함께 있습니다. 서로 자동 연결됐다고 가정하지 않습니다.
+- **미완료·미확정:** Core 명령의 실제 전투 처리, 최종 승패·보상 정책, 완성된 협동 플레이, 영구 저장 계약, Laser의 새 터렛 구조 이식.
+- **브랜치 경계:** 검토 중인 브랜치의 추가 API는 main 사용법에 섞지 않습니다. 자동 활성화 재배분과 셀 거리 기반 터렛 해금은 main에 병합된 범위만 문서화합니다.
+
+## 연결 흐름
+
+```mermaid
+flowchart LR
+  Player[Player 입력과 전투] --> Enemy[Enemy 피해와 서버 권한]
+  Turret[Turret 상태와 배치] --> Target[Enemy 타깃 평가]
+  Turret --> Core[Core 전장 snapshot]
+  Enemy --> Core
+  World[World와 Scene 조립] --> Core
+  Core --> View[UI와 디버그 조회]
+```
+
+처음 연동할 때는 [통합 체크리스트](/docs/projects/the-developer/integration)를 사용하세요. 타입 이름을 알고 있다면 [API 찾기](/docs/projects/the-developer/api-search)를 이용하세요. 각 모듈 목차에서 준비·API·실행 흐름·검증 등 필요한 하위 문서를 선택할 수 있습니다.
+
+## 문서 업데이트
+
+Game Debugger와 Scene 표시·반복 실험의 조작법은 [에디터 도구 — The Developer](/docs/editor-tools/the-developer)에서 확인합니다. 도구 문서의 확인 버전은 이 API 문서의 main 기준과 별도로 표시합니다.
+
+게임의 main 변경은 매일 동기화 작업에서 확인합니다. 공개 계약이 바뀌면 해당 프로젝트 문서와 확인한 기준 커밋을 `team-hjd-docs`에서 함께 갱신하고 실제 배포까지 검증합니다. [문서 기여 가이드](/docs/team/document-contribution)를 따르세요.
