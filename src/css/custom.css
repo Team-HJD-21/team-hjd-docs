@@ -230,3 +230,8 @@ footer.footer {
   .navbar .navbar__brand { margin-right: .5rem; }
   .team-doc-sidebar-desktop > div > button { height: 44px; }
 }
+
+.search-markdown-preview { margin-top: .65rem; max-height: 18rem; overflow: auto; border-left: 2px solid var(--ifm-color-emphasis-300); padding-left: 1rem; }
+.search-markdown-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; }
+.search-markdown-preview table { font-size: .85rem; }
+.search-markdown-preview p:last-child { margin-bottom: .5rem; }
