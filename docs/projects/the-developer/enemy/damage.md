@@ -4,7 +4,7 @@ title: 서버 피해와 네트워크
 
 # 서버 피해와 네트워크
 
-**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01) · **원본:** `Assets/Scripts/Features/Enemy/Monster/EnemyHealth.cs`, `Networking/EnemyNetworkController.cs`, `Spawning/EnemySpawnExecutor.cs`, `Monster/EnemyCloseRangeAttack.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## 체력과 네트워크 수명
 
@@ -25,7 +25,7 @@ void ApplyServerHit(EnemyNetworkController driver, EnemyHealth health, int damag
 
 ## Enemy가 대상에 주는 피해
 
-`EnemyCombat.TryAttack()`은 쿨타임·유효 타깃과 `EnemyAttack.Execute` 성공을 확인합니다. `EnemyCloseRangeAttack`은 Turret에 `TargetableComponent.TryApplyDamage(int)`를 호출하고, Player에는 부모의 `PlayerInfo.TakeDamage(int)`를 호출합니다. 타깃을 찾지 못하거나 피해가 양수가 아니면 실패합니다. CU의 `ControlUnitHealth`가 제공하는 HealthChanged·Destroyed와 게임 종료 연결은 별도로 확인합니다.
+`EnemyAbility.TryUse()`는 활성·실행 중·쿨타임·CheckCondition과 Activate 성공을 확인합니다. `EnemyCloseRangeAbility`는 Turret에 `TargetableComponent.TryApplyDamage(int)`를 호출하고, Player에는 부모의 `PlayerInfo.TakeDamage(int)`를 호출합니다. 타깃을 찾지 못하거나 피해가 양수가 아니면 실패합니다. CU의 `ControlUnitHealth`가 제공하는 HealthChanged·Destroyed와 게임 종료 연결은 별도로 확인합니다.
 
 이 문서는 main 공개 계약의 정적 대조입니다. Unity 컴파일·실제 Host/Client 전투 검증을 수행한 기록은 아닙니다.
 

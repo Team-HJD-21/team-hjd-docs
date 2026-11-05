@@ -92,3 +92,10 @@ IDisposable registration =
 이 API는 실제 authored 포털 이동, 원격 Player 생성, Client→Host RPC 연결을 대신하지 않습니다. 해당 Feature가 기존 Host 경로를 붙인 뒤 별도 통합 검증이 필요합니다.
 
 [Core 목차](../core.md) · [Core 호출·소유권 계약](contracts.md) · [Core 검증과 제한](testing.md)
+
+
+## 현재 Feature 연결 구분 — main 1a03e9a9
+
+`PlayerLocationState`는 로컬 카메라 날씨 효과 표시를 위한 위치 상태이며, Host의 `PlayerMatchPresence` 보고와 동일한 권한 원본이 아닙니다. `PlayerWeatherEffectBinding`이 우주선 안에서 화면 효과를 숨기는 것을 전원 우주선 판정·필드 AI/전력/예약 정지 완료로 해석하지 않습니다.
+
+공용 정지/읽기 시간의 Core 계약은 main에 있지만 실제 Feature의 필드 시간 소비와 포털·원격 actor 연결은 별도로 확인해야 합니다. [현재 Map 구현](../world/progress.md)과 [시간 API](api-reference.md#공용-시간과-예약)를 함께 읽으세요.

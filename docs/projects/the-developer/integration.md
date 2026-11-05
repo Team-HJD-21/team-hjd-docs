@@ -41,3 +41,14 @@ sidebar_position: 7
 ## 공개 문서 검증 범위
 
 이 사이트의 build/check는 문서 경로·검색·출처 경계와 사이트 빌드를 확인합니다. API 심볼은 별도로 기준 main의 코드와 정적으로 대조했습니다. 게임 컴파일, 플레이, 서버/클라이언트 통합 시험은 별도의 게임 검증입니다. API 변경 시 새 기준 커밋과 원본 경로도 함께 갱신합니다.
+
+
+## 최신 기반 연결 확인 — main 1a03e9a9
+
+- App 위치·Network 준비·Match 규칙 상태를 구분하고 Mission Scene 조립 실패/취소를 처리합니다.
+- Feature가 실제로 구현한 난수·시간·환경·Spawn consumer만 조립합니다. 현재 Map의 Unity Random/CountTick을 Core scheduler 이관 완료로 표시하지 않습니다.
+- 체크포인트는 실제 writer와 필수 키, 참조 복원, stale 비동기 결과, 전체 재실행 흐름을 함께 확인합니다.
+- Player의 새 LMB 소비·Space 대시·무기 선택과 Enemy AssignTarget/EnemyAbility, 터렛 파괴 반환·자동 활성화 우선순위는 동일한 main 기준으로 연결합니다.
+- Source Docs에 남은 과거 실험·보류 문구와 실제 main 심볼이 다르면 현재 코드의 연결 상태를 확인하고, 실행 검증은 따로 기록합니다.
+
+이번 동기화의 출처·제외 범위·검사 결과는 저장소의 `planning/source-sync-2026-11-05.md`에 기록합니다.

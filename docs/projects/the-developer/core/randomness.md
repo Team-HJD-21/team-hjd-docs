@@ -260,3 +260,8 @@ requiredKeys.Add(randomWriter.Key); // core/random
 Unity 6000.3.23f1에서 공용 바인딩 헬퍼의 수명·중복·재연결·권한·실패 rollback을 10/10으로 확인했고, 최종 Unity 컴파일은 오류 0으로 완료했습니다. 이 페이지와 README의 C# 예제 8개도 실제 Unity/Core DLL을 참조해 컴파일했습니다. 이는 기존 Weather·Enemy·터렛·HUD 호출부가 이미 교체됐다는 뜻은 아니며, 각 담당자의 실제 흐름 검증은 별도로 필요합니다.
 
 [Core 목차](../core.md) · [Core API 사용법](api-reference.md) · [Core 검증과 제한](testing.md)
+
+
+## main 대조 상태 — 2026-11-05
+
+기준 `1a03e9a9`에서 Core의 Random 서비스·바인딩 및 조립 계약이 main에 존재합니다. 위 가중 Weather 예제는 공개 API 사용 예제입니다. 현재 `Map.WeatherManager.GetWeather`는 여전히 `UnityEngine.Random.Range`를 사용하며 실제 Map Feature에 IRandomConsumer 구현이 연결되지 않았습니다. 이 페이지의 예제나 source 저장 계약을 실제 Weather 난수·전체 저장 이관 완료로 표시하지 않습니다.

@@ -4,25 +4,14 @@ title: Enemy 빠른 시작
 
 # Enemy 빠른 시작
 
-**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01, 공개 API 정적 대조) · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
-## 빠른 시작
+1. Scene에 NGO NetworkManager와 EnemySpawnExecutor, 실제 catalog·분대 preset·SpawnPoint를 준비합니다. 정식 네트워크 생성은 Spawn된 Host/Server에서 수행합니다.
+2. 공통 `Assets/Prefabs/Enemies/Base/EnemyRoot.prefab`을 기반으로 NetworkObject·체력·Targeting·Animation·서버 수명 참조를 확인합니다.
+3. 이동형은 MovingEnemyController·EnemyMovement와 실제 EnemyAbility를 연결합니다. MeleeEnemy 기반에는 EnemyCloseRangeAbility, 원거리/폭발형은 각 능력과 발사/Animation Event 참조가 필요합니다.
+4. Runtime catalog의 실제 프리팹 경로를 확인합니다. `Runtime/Melee/Slime.prefab`과 예전 `Runtime/Slime.prefab`, Testing 프리팹은 같은 연결이 아닙니다.
+5. Player/Turret에 유효한 TargetableComponent를 연결하고 NavMesh·Rigidbody2D·몸통 Collider를 확인합니다. 생성·추적·Despawn은 Executor/서버 수명으로 관리합니다.
 
-1. Scene에 NGO NetworkManager와 `EnemySpawnExecutor`를 준비하고 Host/Server로 실행합니다.
-2. Executor의 Enemy catalog·분대 프리셋·자식 SpawnPoint를 구성합니다.
-3. 스폰할 Prefab의 `NetworkObject`, `EnemyController`, `EnemyNetworkController`와 `EnemyTargeting`·`EnemyMovement`·`EnemyCombat`·`EnemyAnimation`·공격 구현(`EnemyCloseRangeAttack`)를 확인합니다. 피해 대상에는 `EnemyHealth`도 필요합니다.
-4. Player/Turret에 유효한 `TargetableComponent`를 연결합니다.
-5. Enemy 생성과 추적 목록은 Executor를 통해 관리합니다. 단순 Instantiate만으로 NGO 적 생성이 완료되지 않습니다.
+EnemyController는 추상 기반이며 타깃 전달은 AssignTarget입니다. 능력 조건·공통 쿨타임·실행 중 상태와 네트워크 사망/제거를 구분합니다. 단순 Instantiate나 테스트 파일의 존재로 NGO 전체 생성·Stage 1 밸런스·실제 두 프로세스 플레이가 검증됐다고 설명하지 않습니다.
 
-## NavMesh 이동 준비 — main 38ea2595
-
-#534의 현재 경로는 `Assets/Scripts/Features/Enemy/Routing/EnemyNavMeshPathfinder.cs`와 `Monster/EnemyController.cs`입니다.
-
-- 이동할 XY 평면에 맞는 NavMesh와 연결된 보행 영역을 준비합니다. 경로 래퍼는 시작·목표의 Z를 0으로 두고 반경 3 안에서 NavMesh 위치를 찾습니다.
-- Enemy에는 Rigidbody2D·Animator와 활성 비 Trigger 몸통 Collider를 준비합니다. 이동은 Transform 직접 이동 대신 Rigidbody2D.linearVelocity를 사용합니다.
-- EnemyNetworkController는 Spawn 완료된 서버에서만 FixedUpdate로 AI를 실행합니다. 독립 테스트 드라이버를 네트워크 AI와 중복 실행하지 않습니다.
-- 목표 전달은 `EnemyController.SetTargetAndDestination(Transform)`으로 합니다. 경로 계산 실패 또는 경로 소진 시 이동을 멈추며 직선 추적 폴백을 보장하지 않습니다.
-
-[경로 계산·공격 거리 계약](targeting.md#navmesh-경로와-공격-거리)과 [실행 확인 항목](testing.md)을 확인하세요.
-
-[Enemy / Encounter — 스폰·타깃·피해 목차](../enemy.md) · [통합 체크리스트](../integration.md)
+[스폰·능력 API](api-reference.md) · [타깃과 이동](targeting.md) · [Enemy 목차](../enemy.md)

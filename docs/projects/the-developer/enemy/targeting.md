@@ -4,29 +4,24 @@ title: 타깃 제공과 선택
 
 # 타깃 제공과 선택
 
-**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01, 공개 API 정적 대조) · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
-## 타깃 제공 계약
+## 타깃 제공
 
-`ITargetable`은 `TargetTransform`, `TargetType`, `HealthRatio`, `FirepowerRatio`, `CanBeTargeted`를 제공합니다. Enemy가 다른 영역의 체력 필드를 직접 수정하는 계약이 아닙니다.
+`ITargetable`은 TargetTransform·TargetType·HealthRatio·FirepowerRatio·CanBeTargeted를 제공합니다. `DamageableTargetAdapter`가 IDamageableTarget을 읽어 TargetableComponent에 투영합니다. CU는 생존 중, 무기 터렛은 현행 adapter의 활성·생존 조건에서 대상이 됩니다. 문서의 향후 OFF/잠금 타기팅 요구를 구현 완료로 가져오지 않습니다.
 
-`DamageableTargetAdapter`는 부모의 `IDamageableTarget`에서 체력·파괴 상태를 읽어 `TargetableComponent`에 전달합니다. 무기 터렛은 활성 상태이고 생존할 때, CU는 생존하는 동안 선택 대상입니다. CU는 터렛 Registry와 전력 예약에 포함되지 않습니다. 과열 중이라도 활성 무기 터렛은 대상이 될 수 있습니다.
+FirepowerRatio는 호환 이름이며 현행 DpsPerPower 값입니다. 유효 공격력 × 발사율 × 발사당 최대 탄환 수 / 전력을 계산하고 전력 0/CU는 0입니다. 0–1 비율, 실제 명중률·폭발 총 피해와 구분합니다. 자동 활성화의 공격력/전력 동점 비교값과도 다릅니다.
 
-`FirepowerRatio`는 호환 이름이며 실제 값은 `DpsPerPower`입니다. 이론 DPS는 유효 공격력 × 초당 발사 횟수 × 발사당 최대 탄환 수입니다. 전력 0과 CU의 효율은 0이며 과열·명중률·폭발 다중 피해는 제외합니다. 0~1 범위로 제한하지 않습니다.
+## AssignTarget과 행동
 
-## NavMesh 경로와 공격 거리
+`EnemyController`는 공통 참조·`AssignTarget(Transform)`·`ExecuteBehavior`를 가진 추상 기반입니다. AssignTarget은 Targeting을 갱신한 뒤 하위 OnTargetChanged를 호출합니다. `MovingEnemyController`가 실제 이동 목적지/경로를 갱신하며 null 대상은 해제합니다. 이전 `SetTargetAndDestination` 호출은 AssignTarget으로 옮깁니다.
 
-**추가 기준:** main `38ea25959be48810b1a68427524a09861c12460a` (#534) · **원본:** `Assets/Scripts/Features/Enemy/Routing/EnemyNavMeshPathfinder.cs`, `Monster/EnemyController.cs`, `Networking/EnemyNetworkController.cs`, `EnemyNetworkAnimator.cs`.
+MovingEnemyController는 능력 실행 중이거나 CheckCondition이 참이면 정지하고 능력을 시도합니다. 조건은 쿨타임과 독립적이어서 조건 충족 중 쿨타임 대기도 정지 상태일 수 있습니다. 대상·경로가 없으면 정지하고, 이동은 EnemyMovement의 Rigidbody2D 경로를 사용합니다. Spawn된 서버 드라이버가 FixedUpdate 행동을 실행합니다.
 
-| 공개 API / 실행 경계 | 계약 |
-| --- | --- |
-| `EnemyNavMeshPathfinder.TryCalculatePath(Vector3 start, Vector3 target, out Vector3[] corners)` | bool. 시작·목표의 Z를 0으로 두고 반경 3, AllAreas로 SamplePosition 후 완전한 경로만 허용 |
-| 실패 반환 | 샘플 실패·부분/무효 경로는 false와 null corners. 호출 측이 실패를 처리 |
-| `EnemyController.SetTargetAndDestination(Transform)` | 목표 Collider 목록과 경로 인덱스를 다시 설정하고 현재 목표 위치까지 경로 계산. null이면 목표·경로 해제 |
-| `EnemyNetworkController` | Spawn된 서버만 FixedUpdate에서 EnemyController.ExecuteBehavior 실행 |
+## 거리·경로·능력 확장
 
-EnemyController가 조율하는 EnemyMovement는 도착한 코너를 건너뛰고 다음 코너 방향으로 Rigidbody2D 속도를 설정합니다. 경로가 없거나 소진되면 정지합니다. 경로 계산은 SetTargetAndDestination 호출 때 수행하므로 이동 표적·지형 변경의 재탐색은 실제 호출 주기로 확인해야 하며 자동 NavMeshAgent 재계산 계약으로 해석하지 않습니다.
+기존 EnemyNavMeshPathfinder는 XY/Z0에서 유효한 전체 경로를 반환하며 실패 bool을 처리해야 합니다. 표적 이동/지형 변경의 재탐색은 실제 AssignTarget/이동 경로 갱신 주기를 확인합니다.
 
-공격 거리는 Transform 중심이 아니라 Enemy의 비 Trigger 몸통과 목표 자식의 활성·활성화된 비 Trigger Collider 사이 거리입니다. 몸통 참조가 없으면 범위 판정은 실패합니다. 공격 시 목표 쪽을 바라보고 EnemyNetworkAnimator는 서버 공격 RPC에 방향 값을 함께 전달합니다. 이 변경이 타깃 점수·권한·스폰 계약을 새로 완성한 것은 아닙니다.
+능력 공통 기반 `EnemyAbility`는 CheckCondition·TryUse·IsExecuting과 protected Activate를 분리합니다. CheckCondition은 위치/상태, TryUse는 활성·실행 중·쿨타임·조건을 검사하고 Activate 성공 때만 공통 쿨타임을 시작합니다. 근접 능력은 실제 Collider 표면 거리를 사용하고 유효 TargetableComponent와 양수 피해를 요구합니다. 몸통을 명시 연결한 경우와 자동으로 비 Trigger 몸통을 찾는 경우를 구분하세요.
 
-[Enemy / Encounter — 스폰·타깃·피해 목차](../enemy.md) · [통합 체크리스트](../integration.md)
+이전 EnemyCombat/EnemyAttack/EnemyCloseRangeAttack을 새 능력 구조에 중복 연결하지 않습니다. [현재 능력·투사체 API](api-reference.md)를 확인하세요. 정적 구조 확인은 실제 AI·네트워크 플레이·밸런스 검증이 아닙니다.

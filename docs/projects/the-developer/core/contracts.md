@@ -4,7 +4,7 @@ title: Core 호출·소유권 계약
 
 # Core 호출·소유권 계약
 
-기준: 게임 main `789f5b44` · 원본: `Docs/architecture/core-api-usage.md`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임입니다. 기존 `Global` 계열과의 대응은 책임을 이해하기 위한 설명이며 상속·호환 계보가 아닙니다.
 
@@ -55,3 +55,12 @@ Game Debugger의 수동·반복 요청은 테스트 명령입니다. 출시용 D
 ## 종료 오류와 재바인딩 — main 9cf0e16b
 
 Player adapter와 Scene은 해제 콜백 전에 이전 입력·소유 참조를 닫습니다. actor·지역·Feature·FieldTurret 정리를 끝까지 시도하고 오류를 합쳐 전달하며 설정 실패도 rollback합니다. Dispose/TryEndMatch가 오류를 던졌다고 이전 입력을 계속 사용할 수 있다는 의미는 아닙니다. 해제 도중 새 Match를 재바인딩하지 마세요. Unity/NGO 객체 제거가 프레임 끝에 확정되는 시점과 참조 해제 시점을 구분합니다.
+
+
+## 기반 수명과 실제 Feature 연결 — main 1a03e9a9
+
+App의 위치, 네트워크 준비·시작, Match 규칙 상태를 구분합니다. Initial_Stage는 실제 터렛 Match lease를 먼저 연결한 뒤 Session·공용 시간·난수·환경·actor·지역·Encounter를 조립하고, 초기화 실패 시 소유한 바인딩을 rollback합니다.
+
+Match/Scene 종료 시 RandomConsumerScope·환경·actor·지역/터렛·입력 구독·시간 서비스를 해제합니다. 체크포인트 scope의 필수 writer 목록은 조립 계약에서 정하며 실제 등록 목록으로 자동 추정하지 않습니다. 상세한 [시간·저장·화면 API](api-reference.md#공용-시간과-예약)를 확인하세요.
+
+현재 Feature 디렉터리와 Map에는 IRandomConsumer·IFieldSimulationConsumer·IMatchScheduledEnvironmentFeature·ICheckpointParticipant의 실제 구현이 확인되지 않습니다. Core 쪽 자동 탐색/Port가 있다고 실제 날씨·전투·저장 연결까지 완료된 것은 아닙니다.

@@ -5,9 +5,9 @@ sidebar_position: 4
 
 # World / Spaceship 연동 가이드
 
-**기준:** main `789f5b44` · **영역:** 김진태 · **원본:** `Assets/PoC/Spaceship/Scripts/MutiScene/`, `Assets/PoC/Core/Contracts/IBattlefieldTurretInputSource.cs`, `IBattlefieldEnemyPositionSource.cs`, `Bootstrap/SceneComposition/InitialStageCompositionRoot.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
-별도 World API 문서가 없어 코드에서 현재 연결 지점을 정리했습니다. 저작된 맵·Collider 배치와 Core 공간 계산, Spaceship 저장 실험은 서로 다른 책임입니다.
+현재 main의 Map 구현과 Core Scene·시간·환경·저장 API의 연결 경계를 함께 대조했습니다. 저작된 맵·Collider 배치와 Core 공간 계산, Spaceship 저장 실험은 서로 다른 책임입니다.
 
 ## 필요한 작업부터 읽기
 

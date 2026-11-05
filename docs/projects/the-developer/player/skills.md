@@ -4,7 +4,7 @@ title: 임시 터렛 스킬과 HUD 연동
 
 # 임시 터렛 스킬과 HUD 연동
 
-**기준:** 게임 main `6b4310dc` (#549, 2026-10-24) · **영역:** 이영빈 · **원본:** `Docs/architecture/player-skill-review.md`, `player-skill-hud-api.md`와 `Assets/Scripts/Features/Player/PlayerSkills/`의 공개 계약.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## 선택과 실행 계약
 
@@ -79,3 +79,16 @@ F 회수는 본인이 설치한 살아 있는 임시 터렛과의 XY 거리를 �
 HUD 소유자 선택은 서버 권한이나 스킬 실행 RPC를 추가하지 않습니다. 실제 씬·마우스 조작·재연결은 [검증 안내](testing.md)를 따릅니다.
 
 [Core 명령과의 차이](../core.md) · [Player 목차](../player.md) · [통합 체크리스트](../integration.md)
+
+
+## 클릭 설치·무기·대시 HUD — main 1a03e9a9
+
+`IsPlacingSkill`은 터렛 외에 폭탄·비콘·방벽 첫/둘째 배치도 포함합니다. Q/E는 설치 문맥을 예약하고 LMB 확정은 UI·포탑 선택·공격과 같은 클릭을 공유하지 않습니다. 폭탄·비콘·방벽 첫 본체는 Player 중심 반경 12, 방벽 둘째 본체는 고정된 첫 위치 중심 반경 13.5에서 판정합니다. 실패 클릭은 소비하지만 비용을 쓰지 않고, 방벽 둘째 실패는 첫 위치를 유지해 재시도합니다. 취소·스킬 전환은 기존 미리보기를 정리합니다.
+
+씬의 기존 Canvas에 Weapon Hotbar 4슬롯(1 스패너 / 2 기본총 / 3 냉각총 / 4 스나이퍼)과 Dash Slot이 배치됩니다. `PlayerWeaponHud`는 기존 HUD Owner의 `PlayerWeaponSelection.WeaponChanged`를 구독하고 소유자 교체·비활성화 때 해제합니다. 버튼·숫자키·휠은 같은 선택 API를 사용하며 장비 누락/입력 차단 시 비활성화합니다. `PlayerDashHud`는 대시 준비·남은 시간만 표시하며 Q/E 스킬 선택 카드가 아닙니다.
+
+회수 안내는 `Canvas.preWillRenderCanvases`에서 최종 카메라 좌표로 갱신하고 수명에 맞게 구독·해제합니다. `InitialStagePlayerHUD.IsTurretPanelOpen`과 `PlayerCombatHudSlideController`는 포탑 창과 하단 HUD 표시를 연결합니다.
+
+`PlayerDeviceBodyCollision`은 설치 시 처음 겹친 Player의 탈출만 허용하고 재진입을 막습니다. `PlayerDeviceContactQuery`는 실제 몸통·장비 표면 접촉 거리를 조회하며, `PlayerDeviceSortingOrder`는 설치자 발과 장비 접지점 Y로 앞뒤 표시를 정합니다. 표시 순서와 피해·권한은 별개입니다.
+
+**출처:** `player-primary-input-api.md`, `player-skill-hud-api.md`, `player-device-collision-and-depth.md`, `player-class-responsibilities.md`. 프리팹·원본 그림은 사이트에 복사하지 않았으며 실제 조작 검증은 별도입니다.
