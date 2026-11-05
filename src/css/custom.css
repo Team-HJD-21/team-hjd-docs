@@ -235,3 +235,6 @@ footer.footer {
 .search-markdown-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; }
 .search-markdown-preview table { font-size: .85rem; }
 .search-markdown-preview p:last-child { margin-bottom: .5rem; }
+
+.search-hit { color: #242000; background: #ffe480; border-radius: .18em; padding: 0 .1em; box-decoration-break: clone; }
+[data-theme='dark'] .search-hit { color: #fff5ce; background: #67500b; outline: 1px solid #b49132; }

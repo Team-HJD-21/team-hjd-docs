@@ -27,3 +27,18 @@ export function markdownExcerpt(markdown,query) {
   if(fences.length%2)result+='\n'+fences[0].trim().match(/^(`{3,}|~{3,})/)[0];
   return result;
 }
+
+export function highlightParts(value,query) {
+  const terms=[...new Set(query.trim().split(/\s+/).filter(Boolean))].sort((a,b)=>b.length-a.length);
+  if(!terms.length)return [{text:value,match:false}];
+  // Literal terms only: punctuation in an API identifier is not a regular expression.
+  const escaped=terms.map(t=>Array.from(t).map(c=>('^$.*+?()[]{}|'.includes(c)||c.charCodeAt(0)===92)?String.fromCharCode(92)+c:c).join(''));
+  const regex=new RegExp(escaped.join('|'),'giu');
+  const parts=[];let start=0;
+  for(const match of value.matchAll(regex)) {
+    if(match.index>start)parts.push({text:value.slice(start,match.index),match:false});
+    parts.push({text:match[0],match:true});start=match.index+match[0].length;
+  }
+  if(start<value.length)parts.push({text:value.slice(start),match:false});
+  return parts;
+}

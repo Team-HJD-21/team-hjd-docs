@@ -36,3 +36,12 @@ assert(html.includes('href="/docs/projects/the-developer/core"'));
 assert(!html.includes('<script>'));
 assert(!renderToStaticMarkup(React.createElement(Markdown,{children:'[bad](javascript:alert%281%29)'})).includes('href="javascript:'));
 console.log('PASS safe rendered Markdown formatting, links, tables and script rejection');
+
+const {highlightParts}=await import('./search-contract.mjs');
+assert.deepEqual(highlightParts('전력 반환, POWER','전력 power').filter(p=>p.match).map(p=>p.text),['전력','POWER']);
+assert.equal(highlightParts('a.b aXb','a.b').filter(p=>p.match).length,1);
+assert.equal(highlightParts('TryUse() [Target]','TryUse() [Target]').filter(p=>p.match).length,2);
+assert.equal(highlightParts('MatchSession','Match MatchSession').filter(p=>p.match)[0].text,'MatchSession');
+assert.deepEqual(highlightParts('plain',''),[{text:'plain',match:false}]);
+assert.equal(highlightParts('<script>','script').map(p=>p.text).join(''),'<script>');
+console.log('PASS literal multi-term highlights, Korean, case, punctuation and overlapping API names');
