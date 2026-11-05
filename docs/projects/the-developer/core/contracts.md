@@ -11,7 +11,7 @@ Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임
 | 호출자 | 사용할 계약 | 직접 하지 않을 일 |
 | --- | --- | --- |
 | Scene 조립부 | `IAppMatchHost.StartMatch(...)`로 세션 생성·주입 | `AppServices`를 서비스 검색기로 공개하거나 static Instance 사용 |
-| Player 입력 | `PlayerSceneAdapter.Bind(session)` → `Submit(GameCommand)` | `MatchState` 직접 변경 또는 명령 성공 추정 |
+| Player 수명/입력 | `PlayerSceneAdapter.Bind/BindNetworkMatch/Unbind`로 수명 연결. 입력 실행은 Player Feature/Host 경계 | 삭제된 범용 Submit 호출 또는 MatchState HP를 실제 원본으로 간주 |
 | Turret 입력 | `CaptureTurretLayout()` → `UpdateBattlefieldTurretLayout(...)` | `FieldTurretBase`·Transform을 Core snapshot에 보관 |
 | Player·Enemy 위치 | `BattlefieldDynamicSpatialInput` → `UpdateBattlefieldParticipants(...)` | 별도 전역 Grid나 두 번째 위치 권위 모델 생성 |
 | Encounter 소비자 | `BindMatch(matchId, snapshotProvider)` | Battlefield 분석 재구현 또는 과거 Match provider 재사용 |
@@ -21,13 +21,14 @@ Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임
 
 ## Command·Query·Event
 
-- Command는 수행 의도입니다. `MatchSession.Submit` 결과의 `Accepted / Rejected / Unauthorized / NotHandled`를 구분합니다. `NotHandled`를 성공으로 표시하지 않습니다.
+- Command는 수행 의도입니다. 터렛은 `TurretCommandGateway/Service`, 스폰은 `EncounterRequestService`의 요청/결과를 사용합니다. 각 경계가 Match·실제 발신자·권한·중복을 검증합니다. 처리기가 없던 범용 Submit과 전용 타입은 제거했습니다.
 - Query는 조회입니다. `MatchSession.Battlefield`의 immutable 결과를 평가 시점에 읽고 `MatchId`, `Revision`, Grid 설정을 함께 해석합니다.
 - Event는 이미 발생한 사실입니다. `Subscribe`가 돌려준 `IDisposable`을 구독자가 해제합니다. 요청 수와 실제 생성·사망·제거 수를 구분합니다.
 
 ```csharp
+// 조립부가 수명을 연결한다. 실제 이동/공격은 Player Feature가 처리한다.
 playerAdapter.Bind(session);
-CommandSubmissionResult result = playerAdapter.Submit(command);
+// Scene/Match 종료 때 조립부가 playerAdapter.Unbind()를 호출한다.
 
 session.UpdateBattlefieldTurretLayout(
     turretSource.CaptureTurretLayout());
@@ -47,7 +48,7 @@ Scene 소유자는 `IAppMatchHost.CurrentMatchId`와 자신이 만든 ID를 비�
 
 ## 아직 완성되지 않은 경계
 
-`LocalAuthority`는 NGO Server나 Steam 인증 구현이 아닙니다. main `9cf0e16b`에서 터렛 명령 gateway·논리 ID 대응·지역 및 표시 Frame 전송이 연결됐습니다. [현재 공용 터렛 계약](api-reference.md#공용-터렛-명령과-표시--main-9cf0e16b)을 따르며 원격 Player actor·실제 터렛 전투 복제는 별도입니다. `CommandId`, 진단 `RequestId`, `NetworkObjectId`도 서로 다른 용도입니다.
+범용 로컬 권한 객체는 제거했습니다. 실제 Host/참가자 검증은 네트워크 및 각 Feature 요청 경계가 수행합니다. main `9cf0e16b`에서 터렛 명령 gateway·논리 ID 대응·지역 및 표시 Frame 전송이 연결됐습니다. [현재 공용 터렛 계약](api-reference.md#공용-터렛-명령과-표시--main-9cf0e16b)을 따르며 원격 Player actor·실제 터렛 전투 복제는 별도입니다. `MatchRequestContext.RequestId`, 진단 `RequestId`, `NetworkObjectId`도 서로 다른 용도입니다.
 
 Game Debugger의 수동·반복 요청은 테스트 명령입니다. 출시용 Director나 스테이지 진행 규칙으로 해석하지 않습니다. 자세한 조작법은 [Game Debugger](../../../editor-tools/the-developer/game-debugger/index.md)를 확인하세요.
 

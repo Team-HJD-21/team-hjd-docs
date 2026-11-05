@@ -4,7 +4,7 @@ title: 이벤트 구독과 세션 수명
 
 # 이벤트 구독과 세션 수명
 
-**기준:** main `789f5b44` · **영역:** 양현석 · **원본:** `Assets/PoC/Core/README.md`, `Application/MatchSession.cs`, `Application/IAppMatchHost.cs`, `Contracts/IMatchEventStream.cs`, `Domain/Match/MatchSimulation.cs`.
+**기준:** 2026-11-05 Core API 정리 · **영역:** 양현석 · **원본:** `Assets/Scripts/Core/README.md`, `Application/MatchSession.cs`, `Application/IAppMatchHost.cs`, `Contracts/IMatchEventStream.cs`.
 
 ## 구독 예제
 

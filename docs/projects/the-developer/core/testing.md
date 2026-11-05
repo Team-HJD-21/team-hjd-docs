@@ -6,22 +6,21 @@ title: Core 검증과 제한 사항
 
 **기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
-## 명령이 전투를 실행하지 않을 때
+## 실제 요청 경계와 삭제한 골격
 
-현재 `MatchSimulation.Execute()`는 `SimulationStatus.NotHandled`를 반환하는 골격입니다. 따라서 `FireCommand`·`ActivateTurretCommand`라는 타입이 존재한다고 실제 Player 사격이나 터렛 활성화가 처리되는 것은 아닙니다.
+처리기가 없던 MatchSession/PlayerSceneAdapter의 범용 Submit 두 개와 전용 타입13개를 제거했습니다. 존재하지 않는 명령 API를 호출하거나 이를 위해 별도 처리기를 추가하지 마세요.
 
-`MatchSession.Submit()`은 Authority를 검사하고 `Unauthorized`, `NotHandled`, `Rejected`, `Accepted`로 결과를 나눕니다. 이 경계를 무시해 UI에서 성공 처리하지 마세요. [터렛 명령 API](../turret/api-reference.md)는 별도의 현재 런타임 호출입니다.
+터렛은 `TurretCommandGateway/Service`, 스폰은 `EncounterRequestService`, Player 이동/공격은 해당 Feature/Host 경계를 사용합니다. 요청 전달·수락·실제 적용 결과를 구분합니다. MatchSession은 한 판 수명·상태·확정 결과를 관리합니다.
 
-`InitialStagePocModeRules`의 `IsVictory`와 `IsDefeat`는 현재 false를 반환하고 보상 영수증은 빈 통화 변경으로 생성됩니다. 출시 승패·경제 계약으로 재사용하지 않습니다.
-
+AppServices/MatchSessionFactory에서도 삭제한 범용 권한 객체의 주입을 없앴습니다. 실제 Host/참가자 검증과 PlayerSceneAdapter의 Bind/Unbind·실패 정리는 유지합니다.
 
 ## 수명과 검증
 
 1. Scene 조립자가 세션을 한 번 연결했는지 확인합니다.
-2. `PlayerSceneAdapter.Bind(session)` 전에 `Submit()`을 호출하면 예외가 발생합니다.
+2. Bind/BindNetworkMatch 전에 Player Feature가 Match 소유권을 가진다고 가정하지 않습니다. 실제 초기화와 해제를 조립부에서 연결합니다.
 3. 다른 Match ID의 이벤트·결과는 허용되지 않습니다.
 4. 구독과 Match 종료를 함께 정리합니다. 폐기한 세션 호출은 `ObjectDisposedException`입니다.
-5. Player V2와 새 Command 경계가 완전히 통합됐다고 표시하지 않습니다.
+5. Host 수동 확인과 실제 Client Player/HUD·전투 복제 인수를 구분합니다.
 
 [World의 공간 입력](../world.md) · [통합 검증](../integration.md)
 
@@ -38,4 +37,4 @@ title: Core 검증과 제한 사항
 
 이번 작업에서 Unity 컴파일·PlayMode·Initial_Stage 직접 조작·다중 프로세스 게임 인수는 실행하지 않았습니다. 소스 문서의 이전 실험 시험 수치와 이번 사이트 check/build는 서로 다른 증거입니다. 특히 실제 Feature의 시간·환경·난수·체크포인트 writer, 원격 Player/포털·공동 Scene 이동은 계약 존재와 별도로 확인합니다.
 
-MatchCoordinator의 CU 읽기/완료 경계와 순수 MatchSimulation.Execute의 NotHandled 골격을 같은 실행 경로로 취급하지 않습니다.
+MatchCoordinator의 CU 읽기/완료 경계와 각 Feature의 실제 전투 실행을 구분합니다. 삭제한 범용 Simulation/Submit 골격은 현재 실행 경로가 아닙니다.
