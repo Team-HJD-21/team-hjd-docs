@@ -1,6 +1,17 @@
 import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
+function previewMarkdown(body,name,base) {
+  return body.replace(/import .*?;\r?\n/g,'').replace(/(!?\[[^\]]*\])\(([^)\s]+)\)/g,(all,label,target)=>{
+    if (/^(?:\w+:|\/)/.test(target))return all;
+    if(target.startsWith('#')) {
+      const slug=name.replace(/\.mdx?$/,'').replace(/(^|\/)index$/,'');
+      return label+'('+base+(slug?'/'+slug:'')+target+')';
+    }
+    const resolved=path.posix.normalize(path.posix.dirname(name)+'/'+target).replace(/\.mdx?(#|$)/,'$1').replace(/(^|\/)index(#|$)/,'$1');
+    return label+'('+base+'/'+resolved+')';
+  });
+}
 async function collect(dir,project,base,relative='') {
   const result=[];
   for(const entry of (await readdir(dir,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))) {
@@ -13,7 +24,7 @@ async function collect(dir,project,base,relative='') {
       const title=(front?.[1].match(/^title:\s*(.+)$/m)?.[1] || body.match(/^# (.+)$/m)?.[1] || entry.name).replace(/^['"]|['"]$/g,'');
       const slug=name.replace(/\.mdx?$/,'').replace(/(^|\/)index$/,'');
       const archive=name.startsWith('archive/');
-      result.push({project,archive,title,url:base+(slug?'/'+slug:''),category:archive?'보관 기록':name.includes('/')?name.split('/')[0]:'프로젝트 안내',text:body.replace(/import .*?;\r?\n/g,'').replace(/[#|*]/g,'')});
+      result.push({project,archive,title,url:base+(slug?'/'+slug:''),category:archive?'보관 기록':name.includes('/')?name.split('/')[0]:'프로젝트 안내',markdown:previewMarkdown(body,name,base),text:body.replace(/import .*?;\r?\n/g,'').replace(/[#|*]/g,'')});
     }
   }
   return result;

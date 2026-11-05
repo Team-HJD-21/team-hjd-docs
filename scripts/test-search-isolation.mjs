@@ -16,3 +16,32 @@ assert.equal(searchPages([{project:'the-developer',archive:false,url:'/docs/proj
 assert.equal(searchPages(pool,'the-developer',false,'this-query-does-not-exist-490328').length,0);
 assert(searchPages(pool,'the-developer',false,'MatchSession').length>0);
 console.log('PASS project and archive isolation, tool coverage and empty queries');
+
+const {markdownExcerpt}=await import('./search-contract.mjs');
+assert.equal(markdownExcerpt('# Heading\n\nUse **bold** and [link](https://example.com) with `API`.','API'),'Use **bold** and [link](https://example.com) with `API`.');
+assert(markdownExcerpt('Text\n\n| Key | Value |\n| --- | --- |\n| API | value |','API').startsWith('| Key'));
+const code='```csharp\n'+('API line\n'.repeat(400))+'```';
+assert(markdownExcerpt(code,'API').endsWith('```'));
+console.log('PASS Markdown excerpts preserve emphasis, links, tables and fenced code');
+
+const React=await import('react');
+const {renderToStaticMarkup}=await import('react-dom/server');
+const {default:Markdown}=await import('react-markdown');
+const {default:gfm}=await import('remark-gfm');
+const html=renderToStaticMarkup(React.createElement(Markdown,{remarkPlugins:[gfm],skipHtml:true,children:'**전력**와 `MatchSession`\n\n[원문](/docs/projects/the-developer/core)\n\n| A | B |\n| --- | --- |\n| 1 | 2 |\n\n<script>alert(1)</script>'}));
+assert(html.includes('<strong>전력</strong>'));
+assert(html.includes('<code>MatchSession</code>'));
+assert(html.includes('<table>'));
+assert(html.includes('href="/docs/projects/the-developer/core"'));
+assert(!html.includes('<script>'));
+assert(!renderToStaticMarkup(React.createElement(Markdown,{children:'[bad](javascript:alert%281%29)'})).includes('href="javascript:'));
+console.log('PASS safe rendered Markdown formatting, links, tables and script rejection');
+
+const {highlightParts}=await import('./search-contract.mjs');
+assert.deepEqual(highlightParts('전력 반환, POWER','전력 power').filter(p=>p.match).map(p=>p.text),['전력','POWER']);
+assert.equal(highlightParts('a.b aXb','a.b').filter(p=>p.match).length,1);
+assert.equal(highlightParts('TryUse() [Target]','TryUse() [Target]').filter(p=>p.match).length,2);
+assert.equal(highlightParts('MatchSession','Match MatchSession').filter(p=>p.match)[0].text,'MatchSession');
+assert.deepEqual(highlightParts('plain',''),[{text:'plain',match:false}]);
+assert.equal(highlightParts('<script>','script').map(p=>p.text).join(''),'<script>');
+console.log('PASS literal multi-term highlights, Korean, case, punctuation and overlapping API names');
