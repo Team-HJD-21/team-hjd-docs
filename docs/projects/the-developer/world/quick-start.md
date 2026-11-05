@@ -4,7 +4,7 @@ title: Spaceship 씬 왕복
 
 # Spaceship 씬 왕복
 
-**기준:** main `789f5b44` · **영역:** 김진태 · **원본:** `Assets/PoC/Spaceship/Scripts/MutiScene/`, `Assets/PoC/Core/Contracts/IBattlefieldTurretInputSource.cs`, `IBattlefieldEnemyPositionSource.cs`, `Bootstrap/SceneComposition/InitialStageCompositionRoot.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## Spaceship 왕복 준비
 
@@ -17,3 +17,10 @@ title: Spaceship 씬 왕복
 씬 진입/출구는 Trigger로 실행됩니다. 외부에서 `EnterSpaceship()`이나 `TryExit()`를 호출하는 public API는 아닙니다. 필드 이름·Scene 이름이 잘못되면 Console 오류와 함께 전환이 중단됩니다.
 
 [World / Spaceship — 공간·씬·진행 상태 목차](../world.md) · [통합 체크리스트](../integration.md)
+
+
+## App Scene 전환과 임시 방문 구분 — main 1a03e9a9
+
+`GameFlowController.ReturnToSpaceshipAsync`는 Match를 종료하는 정식 귀환입니다. 전투 중 임시 방문에는 이 API를 재사용하지 않습니다. `SceneFlowController.LoadAsync / ReplaceAsync / UnloadAsync`와 소유자별 입력 잠금, 단독 Host의 NGO 전환 제한은 [Scene·화면 API](../core/api-reference.md#scene화면과-입력-잠금)를 확인하세요.
+
+실제 Host 이동 완료 뒤의 위치 보고는 [출입 API](../core/presence-reporting.md)를 따릅니다. 로컬 PlayerLocationState로 카메라 날씨 효과를 숨기는 것과 전체 참가자 출입/필드 정지는 같은 경로가 아닙니다. Actor 생성은 PlayerStart가 속한 Scene을 사용하며 부모 Transform도 같은 Scene이어야 합니다.

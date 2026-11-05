@@ -4,7 +4,7 @@ title: Enemy 검증과 제한 사항
 
 # Enemy 검증과 제한 사항
 
-**기준:** main `d0922f0bf86e0348bed1acbfd5ae6231a1202f63` (2026-11-01, 공개 API 정적 대조) · **영역:** 조수빈 · **원본:** `Assets/Scripts/Features/Enemy/Spawning/`, `Monster/EnemyHealth.cs`, `Targeting/ITargetable.cs`, `Targeting/DamageableTargetAdapter.cs`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## 검증 체크
 
@@ -26,3 +26,10 @@ title: Enemy 검증과 제한 사항
 NGO PoC 코드의 존재는 출시 협동 모드 지원의 확정을 뜻하지 않습니다.
 
 [Enemy / Encounter — 스폰·타깃·피해 목차](../enemy.md) · [통합 체크리스트](../integration.md)
+
+
+## 능력 구조·Stage 1 변형 확인 — main 1a03e9a9
+
+공통 EnemyRoot → 이동/능력 기반 → Runtime 프리팹 연결과 catalog의 실제 참조를 확인합니다. AssignTarget 후 이동/정지, 능력 조건과 쿨타임 분리, 원거리 발사 Animation Event의 1회 실행, 비활성화 시 예약 취소, 폭발 제거 요청과 서버 Despawn, 탄환의 유효 서버 생성·충돌 중복 방지를 별도로 확인하세요.
+
+검증용 프리팹을 Runtime catalog로 오인하지 않고, 능력·투사체 테스트 코드가 있다는 이유로 네트워크 전체·밸런스·실제 두 프로세스 플레이를 인수 완료로 표시하지 않습니다. 이번 문서 동기화는 Unity 시험을 실행하지 않았습니다.

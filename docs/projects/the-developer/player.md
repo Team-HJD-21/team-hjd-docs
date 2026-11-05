@@ -20,6 +20,6 @@ Player V2의 Manager 기반 런타임과 Core adapter를 구분합니다. Initia
 | 임시 터렛 미리보기·선택 슬롯·씬 HUD | [임시 터렛 스킬과 HUD 연동](player/skills.md) |
 | Player 검증과 제한 사항 | [Player 검증과 제한 사항](player/testing.md) |
 
-무기·모션·스킬 HUD·설치 미리보기와 일반 터렛 선택/조작은 #549의 공개 계약을 반영합니다. 기존 체력 문서는 개별 기준을 유지합니다. 문서 갱신은 Unity PlayMode·Test Runner 검증 완료를 뜻하지 않습니다.
+최신 입력·선택은 #575의 LMB 클릭 소비·Space 대시·4무기·분리 외형·장비 충돌·HUD 계약을 반영합니다. 기존 체력 문서는 개별 기준을 유지합니다. 문서 갱신은 Unity PlayMode·Test Runner 검증 완료를 뜻하지 않습니다.
 
 [The Developer 목차](index.md) · [통합 체크리스트](integration.md)

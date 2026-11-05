@@ -5,9 +5,9 @@ sidebar_position: 2
 
 # Core 연동 가이드
 
-**기준:** main `7f22b9ca` (#530) · **원본:** `Docs/architecture/core-api-usage.md`, `Docs/architecture/core-sprint-region-and-request-api.md`와 실제 공개 계약.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
-Core README의 설명과 코드를 함께 대조했습니다. 기존 `Global`·`Game`·`GeneralManager`와 새 `TeamHJD.Game.*` 계약이 자동 호환되는 구조는 아닙니다.
+Core의 실제 main 조립과 공개 API를 함께 대조했습니다. App·시간·저장·화면의 최신 계약은 [Core API](core/api-reference.md#appmatch-기반-api--main-1a03e9a9)를 확인하세요. 기존 `Global`·`Game`·`GeneralManager`와 새 `TeamHJD.Game.*` 계약이 자동 호환되는 구조는 아닙니다.
 
 ## 필요한 작업부터 읽기
 

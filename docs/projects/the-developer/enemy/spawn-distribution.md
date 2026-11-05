@@ -4,7 +4,7 @@ title: 공간 기반 스폰 분산
 
 # 공간 기반 스폰 분산
 
-기준: 게임 main `789f5b44` · 원본: `Docs/architecture/spatial-spawn-distribution.md`.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 스폰 분산은 스포너 개수가 아니라 적합한 Grid 셀의 공간 분포를 기준으로 합니다. 같은 셀에 Spawn Point가 여러 개 있어도 그 셀이 배수의 생성 비중을 얻지 않습니다.
 
@@ -41,3 +41,12 @@ Statistics의 **Spawn decisions / distribution**에서 요청 당시 셀의 적 
 
 자세한 화면 사용법은 [Spawn 판단과 분포 검사](../../../editor-tools/the-developer/game-debugger/spawn-inspection.md)를 확인하세요.
 
+
+
+## 확장 origin 계약과 현재 실행 경계 — main 1a03e9a9
+
+Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·WorldPoint·WorldArea를 구분합니다. `CauseEventId`는 요청 GUID와 별도이며 의도/전달 방식도 재전송 충돌 비교에 포함됩니다. `IEncounterSpawnSourceRegistry.Register`의 lease는 source 수명 동안 보관하고, 이동은 TryUpdate, 제거는 Dispose로 처리하는 계약입니다.
+
+명시 origin 실행은 `IOriginAwareEncounterExecutor`와 권위 resolver, 환경은 `IEncounterEnvironmentConsumer`, source/지연은 `IEncounterSpawnContextConsumer` 등 실제 Feature 연결을 요구합니다. **현재 main의 Enemy Feature가 이 확장 소비자를 구현한 것은 아닙니다.** 기존 Battlefield 자동 Spawn 경로를 유지하며 미지원 요청을 임의의 즉시 생성으로 대체하지 않습니다. 지면 출현·공중 투하·실제 source 지연 생성·날씨별 스폰이 현재 게임에 완성됐다고 표시하지 않습니다.
+
+확장 계약 출처는 `Docs/architecture/encounter-spawn-origin-api.md`와 현재 Core/Enemy 조립부입니다. 문서에 남은 과거 실험의 생성 성공·시험 수치는 현재 Feature 인수로 사용하지 않습니다.

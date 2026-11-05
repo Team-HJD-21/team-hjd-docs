@@ -4,11 +4,11 @@ title: 무기·스패너·Enemy 피해
 
 # 무기·스패너·Enemy 피해
 
-**기준:** 게임 main `6b4310dc` (#549, 2026-10-24) · **원본:** `Docs/architecture/player-combat-api.md`, `player-weapon-api.md`, `player-motion-api.md`와 `Assets/Scripts/Features/Player/PlayerWeapon/`의 공개 계약.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## 탄환 초기화와 Enemy 피해
 
-`PlayerAttack.CurrentWeapon`을 조회하고 `SelectNextWeapon()`으로 기본 총 → 냉각총 → 스패너를 순환합니다. 스패너 프리팹이 없으면 두 원거리 무기만 순환합니다. `TryFire()`는 장착 무기의 공격 시도이며 적중 보장이 아닙니다. 원거리 공격은 발사 가능 상태·간격·프리팹·같은 Player 소유 총구·조준 방향을 검사합니다. 스패너는 탄환과 총구 없이 공격합니다.
+장착 선택은 `PlayerWeaponSelection.CurrentWeapon`과 `TrySelectWeaponSlot`/`TrySelectWeapon`/`SelectAdjacentWeapon`/`SelectNextWeapon`이 소유합니다. 숫자 슬롯은 1 스패너·2 기본총·3 냉각총·4 스나이퍼이며 없는 장비는 선택하지 않습니다. `PlayerAttack`은 선택한 장비로 공격을 수행합니다. `TryFire()`는 장착 무기의 공격 시도이며 적중 보장이 아닙니다. 원거리 공격은 발사 가능 상태·간격·프리팹·같은 Player 소유 총구·조준 방향을 검사합니다. 스패너는 탄환과 총구 없이 공격합니다.
 
 ```csharp
 using UnityEngine;
@@ -69,6 +69,6 @@ main `d0922f0b`에서 `EnemyHealth` 자체 서버 검사는 제거됐습니다. 
 
 8방향은 필요한 클립이 구성된 경우에 사용합니다. 이동 시작·정지와 방향 전환 중에는 행동 진행률을 유지하고 공격·타격 예약을 다시 시작하지 않습니다. Sprite 키·반복·재생 길이는 AnimationClip이 소유하며 이전 Frames / Sample 조회는 사용하지 않습니다.
 
-몸체가 무기를 포함하면 별도 총·스패너 SpriteRenderer를 숨기되 총구는 유지합니다. 자세별 총구는 PlayerWeaponRig, 비행·명중 표시는 PlayerProjectileView, 발사 섬광은 PlayerMuzzleFlash.Show(Color)가 담당합니다. 실제 Unity 재생·타격 타이밍·서버 피해는 별도 검증합니다.
+현재 몸체와 무기는 분리 Sprite입니다. PlayerWeaponAppearance.TryGetFrame이 몸체 프레임별 무기·좌표를 조회하고 PlayerWeaponVisual이 Animator 이후 LateUpdate에 표시합니다. TryGetMuzzlePosition은 외형의 총구를 제공하며 PlayerWeaponRig가 없을 때의 기존 자세별 총구를 보완합니다. 총구 섬광·비행/명중 표시와 실제 피해 판정을 구분합니다. 실제 Unity 재생·타격 타이밍·서버 피해는 별도 검증합니다.
 
 [Player — 입력·전투·피해 목차](../player.md) · [통합 체크리스트](../integration.md)

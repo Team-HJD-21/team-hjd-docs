@@ -4,7 +4,7 @@ title: 터렛 API 사용법
 
 # 터렛 API 사용법
 
-기준: 게임 main `56fed4c3` (2026-10-27). 지속 수리와 FieldTurret 명칭 변경은 `beea8f0d` (#547)의 코드·Docs를 대조했습니다. 기본 네임스페이스는 `TeamHJD.Game.FieldTurrets`, 콘텐츠 정의는 `TeamHJD.Game.Content`, 전력 계약은 `TeamHJD.Game.FieldTurrets.Contracts`입니다.
+**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 
 ## 상태 변경 API
 
@@ -135,3 +135,19 @@ if (FieldTurretInstanceRegistry.TryGet(id, out var turret))
 ## Core Match의 논리 ID 연결 — main 9cf0e16b
 
 FieldTurretBase.TryGetEntityId(out EntityId)는 제작/등록 메타데이터를 읽고 FieldTurretController.OwnsTurret(turret)는 실제 전력 소유자를 확인합니다. InstanceId를 그대로 네트워크 요청에 넣지 않습니다. 동적 생성은 Factory가 실제 등록한 뒤 ITurretEntityRegistration으로 권위자가 정한 논리 ID를 연결하며 생성 실패 rollback도 Feature가 맡습니다. 승급/강등의 객체 교체는 기존 FieldTurret API를 사용합니다. [Core 명령·ID·표시 계약](../core/api-reference.md#공용-터렛-명령과-표시--main-9cf0e16b)을 확인하세요.
+
+
+## 파괴 전력 반환·우선순위 — main 1a03e9a9
+
+| 공개 API / 값 | 계약 |
+| --- | --- |
+| `FieldTurretController.DestructionPowerReturnPercent` | 0–100% 파괴 반환 비율 조회, 기본 50%. |
+| `TrySetDestructionPowerReturnPercent(float percent)` | 유효 범위만 적용하고 잘못된 값은 false로 거부합니다. 이미 파괴된 터렛을 재정산하지 않습니다. |
+| `FieldTurretBase.ReservedPower` | 해당 터렛이 소유한 예약 전력. 가용량·반환 대기량과 구분합니다. |
+| `AutoActivationCandidate.FirepowerEfficiency` | 버튼 시점의 유효 공격력 / 활성화 전력량. 전력 0은 0이며 DpsPerPower와 다른 동점 비교값입니다. |
+
+ON 상태 파괴는 실제 예약량에 반환 비율을 적용해 정수 내림한 몫만 반환 대기로 넘기고 나머지는 터렛에 예약합니다. 파괴된 터렛의 ON/OFF는 모두 Destroyed이며 OFF로 잔여 예약을 회수하지 못합니다. Restore 성공 또는 실제 객체 제거 시 잔여분을 정리합니다. 일반 OFF는 즉시 비활성화·반환을 시작하고 남은 과열을 동시에 냉각합니다. 반환 대기는 기존 0.1초당 전력 1 회복 경로이며 즉시 전량 충전이 아닙니다.
+
+#617 자동 활성화는 버튼 시점의 적 수(또는 명시 ScoreProvider) 내림차순 → FirepowerEfficiency 내림차순 → InstanceId 오름차순으로 고정합니다. 현재 ON 터렛을 끈 뒤 다음 후보의 냉각/회복을 기다려 순서를 보존합니다. 현재 가용량 + 반환 예정량으로도 비용을 충족할 수 없는 후보와 잠금·파괴·비활성·등록 해제 후보만 건너뜁니다. 새 후보 추가/재정렬은 하지 않습니다. 수동 조작 제한과 60초 쿨타임은 유지합니다.
+
+**출처:** `Docs/architecture/turrets/api-reference.md`, 현재 `FieldTurretController` 및 `FieldTurretBase`. 성장 트리 초안·회의 타기팅 요구는 공개 구현 API로 가져오지 않았습니다.

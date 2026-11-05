@@ -61,7 +61,7 @@ Canon과 Missile은 CU를 직접 찾지 않는다. 전력은 `FieldTurretControl
 
 `ControlUnitHealth`는 CU 체력, 피격, 접근 지점과 상태 이벤트만 담당한다. 최대 체력은 `ControlUnit.asset`의 `FieldTurretDefinition`에서 읽으며 `DataManager`의 CU 수치를 사용하지 않는다. CU와 `FieldTurretBase`는 모두 `IDamageableTarget`을 구현하므로 Enemy는 구체 타입이나 Registry를 확인하지 않고 같은 `ApplyDamage(int)` 계약으로 피해를 준다. Definition의 `TurretRole.ControlUnit`은 CU를 무기 터렛과 구분한다.
 
-CU는 Enemy의 `TargetType.Turret` 후보에는 포함되지만 `FieldTurretBase`를 상속하거나 `FieldTurretInstanceRegistry`에 등록되지 않는다. 따라서 터렛 등록 수, 전력 예약, 자동 활성화, 개별 터렛 UI에는 포함되지 않는다. 터렛 전력은 `DataManager`와 CU 컴포넌트를 거치지 않고 `FieldTurretController`가 직접 소유한다. CU 파괴 시 `Destroyed` 이벤트를 한 번 발행한다. `HealthChanged`는 체력 변경을 전달한다. 레거시 `InGameManager`와 `AlertManager`를 조회하거나 호출하지 않는다. 현재 PoC 승패 정책은 패배 판정을 구현하지 않았으므로 파괴 이벤트를 게임 오버에 연결하는 소비자는 후속 연동 대상이다.
+CU는 Enemy의 `TargetType.Turret` 후보에는 포함되지만 `FieldTurretBase`를 상속하거나 `FieldTurretInstanceRegistry`에 등록되지 않는다. 따라서 터렛 등록 수, 전력 예약, 자동 활성화, 개별 터렛 UI에는 포함되지 않는다. 터렛 전력은 `DataManager`와 CU 컴포넌트를 거치지 않고 `FieldTurretController`가 직접 소유한다. CU 파괴 시 `Destroyed` 이벤트를 한 번 발행한다. `HealthChanged`는 체력 변경을 전달한다. 레거시 `InGameManager`와 `AlertManager`를 조회하거나 호출하지 않는다. 현재 main의 MatchCoordinator는 IControlUnitVitals를 주입받아 완료 경계를 조율한다. 순수 PoC 규칙의 골격과 실제 Scene 완료 경계를 구분하며 정식 승패/보상·전체 게임 인수는 별도 확인한다.
 
 ```mermaid
 flowchart TD
@@ -361,16 +361,16 @@ flowchart TD
     Hit["FieldTurretBase<br>ApplyDamage(damage)"] --> Reduce["RuntimeState.ApplyDamage()<br>현재 체력 감소"]
     Reduce --> HealthEvent["Registry<br>HealthChanged"]
     HealthEvent -->|체력 남음| Alive["기존 활성 상태 유지"]
-    HealthEvent -->|체력 0| Off["RequestActivation(false)<br>전력 반환"]
+    HealthEvent -->|체력 0| Off["파괴 처리<br>비율에 따라 부분 반환 대기"]
     Off --> Destroyed["RuntimeState<br>MarkDestroyed()"]
     Destroyed --> DestroyEvent["Registry<br>Destroyed"]
     DestroyEvent --> Restore["FieldTurretBase<br>Restore()"]
-    Restore --> Full["최대 체력·비활성 상태로 복구"]
+    Restore --> Full["잔여 예약 반환 대기<br>최대 체력·비활성 상태로 복구"]
     Full --> RestoreEvent["Registry<br>HealthChanged·Restored"]
     RestoreEvent --> Manual["별도 RequestActivation(true)<br>필요"]
 ```
 
-위 흐름의 파괴 시 전량 반환은 **현재 코드의 전환기 동작**이며 확정된 제품 규칙이 아니다. 2026-09-26 회의와 9월 27일 정리에 따라, 터렛 API는 파괴 시 예약 전력의 **손실률(0~100%)**을 설정값으로 받을 수 있어야 한다. 반환량은 `예약 전력 × (1 - 손실률 / 100)`으로 계산할 수 있게 한다. 예를 들어 예약 전력 100에서 손실률 0%면 100, 50%면 50을 반환한다. 값의 실제 설정, 반환 여부와 시점, 점유율에 미치는 영향은 아직 결정하지 않았다. API 입력값을 열어두는 요구와 현재 코드에 이 동작이 구현되었다는 주장을 구분한다.
+main 1a03e9a9의 설정은 손실률이 아닌 반환 비율 DestructionPowerReturnPercent(0~100%, 기본 50%)이다. 파괴 시 실제 예약량에 반환 비율을 적용해 정수 내림한 몫만 반환 대기로 넘기고 나머지는 파괴 터렛에 예약한다. Restore 성공/실제 제거는 잔여분을 정리한다. 0.1초당 1 회복이며 파괴된 대상의 ON/OFF로 잔여 예약을 회수할 수 없다. 설정 변경은 이미 파괴된 대상을 재정산하지 않는다.
 
 파괴된 터렛은 Registry에서 즉시 제거하지 않는다. 플레이어가 같은 인스턴스를 복구할 수
 있도록 등록 상태를 유지하되 Active/Operational 조회와 활성화 요청에서는 제외한다. Scene
@@ -692,7 +692,7 @@ flowchart TD
 - [ ] 잠긴 터렛은 켜지지 않고 해금 후 수동으로 다시 켤 수 있다.
 - [ ] 비활성화하면 전력이 반환된다.
 - [ ] `Damage`로 현재 체력이 감소한다.
-- [ ] 현재 구현에서는 체력 0에서 파괴되고 예약 전력이 전량 반환된다. 향후 손실률 API 구현 시에는 0%·50%·100% 설정별 반환량을 별도로 검증한다.
+- [ ] 파괴 반환 비율 0%·50%·100% 및 홀수 예약량 내림, 잔여 예약 유지, Restore/제거 후 반환을 검증한다.
 - [ ] 파괴된 터렛은 활성화할 수 없다.
 - [ ] `Restore` 후 최대 체력·비활성 상태로 돌아오며 다시 활성화할 수 있다.
 - [ ] 파괴와 복구 시 Registry 이벤트가 한 번씩 발생한다.
@@ -733,7 +733,7 @@ flowchart TD
 | 컨트롤러 구성 | Canon/Missile은 씬별 컨트롤러를 조회하거나 생성 | Match Composition에서 명시적으로 주입 |
 | 등록부 | static 로컬 Registry | Match 수명주기의 조회 서비스로 이전 |
 | 전력 변경 | `IFieldTurretPowerSource`로 독립 `FieldTurretPowerBudget` 사용 | Command와 Authority 검증으로 분리 |
-| 파괴 시 예약 전력 | 현재는 전량 반환 | 손실률(0~100%)을 터렛 API 입력값으로 열고 반환량을 조정 가능하게 한다. 제품 기본값과 반환 정책은 미정 |
+| 파괴 시 예약 전력 | 반환 비율 0~100%(기본 50%)의 정수 내림 몫만 반환 대기, 잔여 예약 유지 | Restore/실제 제거·설정 변경·동시 예약의 회귀 확인 |
 | Target 평가 | concrete 코드가 Physics와 `EnemyController.IsTargeted` 직접 사용 | AI/Combat 계약과 평가 모델 분리 |
 | Namespace | 일부 concrete 터렛이 전역 namespace | 이식 시 `Presentation` 경계로 정리 |
 | 네트워크 | 로컬 상태만 존재 | Host authoritative 상태와 Snapshot 추가 |
@@ -774,7 +774,7 @@ flowchart TD
 
 `FieldTurretController.TryStartAutoActivation()`은 같은 Scene·컨트롤러의 등록된 무기 터렛을 대상으로 한다. 잠금·파괴 후보를 제외하고 버튼 시점의 공격 가능 사거리 내 적 수를 저장한다. Missile 최소 사거리도 반영하고 동일 Rigidbody의 여러 Collider를 중복 집계하지 않는다. enemyMask에는 적 Collider만 포함해야 한다. Rigidbody 없는 적의 여러 Collider는 개별 집계될 수 있다.
 
-적 수 내림차순, 동점은 InstanceId 오름차순으로 고정한다. 현재 켜진 소속 터렛을 모두 끈 뒤 가용 전력으로 순서대로 활성화를 시도한다. 부족한 후보는 건너뛰고 전력 반환 중에는 다시 시도한다. 후보를 모두 처리했거나 반환 대기가 끝나 더 켤 수 없는 경우 종료한다. 진행 중 잠금·파괴·제거된 후보는 제외하고 새 후보를 추가하거나 순위를 재계산하지 않는다. 자동 활성화가 진행되는 동안 공개 개별 활성화 요청은 `AutoActivationInProgress`로 거부하고 Console 로그로 알린다. 종료 후 수동 켜기·끄기를 다시 허용한다. 자동화 내부 요청과 피격·잠금에 따른 시스템 비활성화는 계속 처리한다.
+main 1a03e9a9 기준: 적 수(또는 명시 ScoreProvider) 내림차순, 동점은 유효 공격력/활성화 전력량 내림차순, 다시 동점이면 InstanceId 오름차순으로 고정한다. 현재 켜진 소속 터렛을 모두 끈 뒤 후보 순서대로 시도한다. 상위 후보의 냉각 또는 반환 대기 중에는 그 후보를 기다리고 하위 후보를 먼저 켜지 않는다. 가용 전력과 반환 예정 전력을 합쳐도 켤 수 없는 후보만 제외한다. 모든 후보 처리가 끝나면 종료한다. 진행 중 잠금·파괴·제거된 후보는 제외하고 새 후보를 추가하거나 순위를 재계산하지 않는다. 자동 활성화가 진행되는 동안 공개 개별 활성화 요청은 `AutoActivationInProgress`로 거부하고 Console 로그로 알린다. 종료 후 수동 켜기·끄기를 다시 허용한다. 자동화 내부 요청과 피격·잠금에 따른 시스템 비활성화는 계속 처리한다.
 
 쿨타임은 요청 수락부터 게임 시간 60초이며 일시정지 동안 진행하지 않는다. 진행 중 재요청은 거부한다. 비활성화된 컨트롤러는 작업을 중단한다. `AutoActivationScoreProvider`는 이후 가중치 정책을 주입할 수 있는 경계이며 현재 기본 점수는 적 수다.
 
@@ -783,12 +783,14 @@ CU interaction의 UGUI Button에는 `FieldTurretAutoActivationButton`을 연결�
 ```mermaid
 flowchart TD
     Button[CU 버튼 요청] --> Capture[적 수 캡처 / 잠금·파괴 제외]
-    Capture --> Sort[적 수순 고정 목록]
+    Capture --> Sort[적 수 / 공격력 대 전력 비율 / ID순 고정 목록]
     Sort --> Off[현재 활성 터렛 전체 끄기]
     Off --> Try[가용 전력으로 순서대로 시도]
-    Try --> Skip[부족한 후보 건너뛰기]
-    Skip --> Wait{반환 대기와 미처리 후보 있음?}
-    Wait -->|있음| Recover[전력 회복]
+    Try --> Gate{냉각 또는 일시 전력 부족?}
+    Gate -->|예| Recover[현재 후보의 냉각 / 전력 회복 대기]
     Recover --> Try
-    Wait -->|없음| End[종료]
+    Gate -->|아니오| Next[성공 / 영구 부족 / 무효 후보 처리]
+    Next --> Remain{미처리 후보 있음?}
+    Remain -->|예| Try
+    Remain -->|아니오| End[종료]
 ```
