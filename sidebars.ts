@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
       link: {type: 'doc', id: 'projects/the-developer/index'},
       items: [
         'projects/the-developer/api-search',
+        'projects/the-developer/archive-search',
         ...[
           {name: 'core', label: 'Core — 세션·명령·이벤트', pages: ['quick-start', 'api-reference', 'randomness', 'presence-reporting', 'contracts', 'events', 'regions-encounters', 'testing']},
           {name: 'player', label: 'Player — 입력·전투·피해', pages: ['quick-start', 'combat', 'health', 'skills', 'testing']},
@@ -50,6 +51,8 @@ const sidebars: SidebarsConfig = {
       type: 'category', label: 'Leave Me Alone', collapsed: false,
       link: {type: 'doc', id: 'projects/leave-me-alone/index'},
       items: [
+        'projects/leave-me-alone/api-search',
+        'projects/leave-me-alone/archive-search',
         'projects/leave-me-alone/gameplay-flow',
         'projects/leave-me-alone/player-guide',
         'projects/leave-me-alone/boss-guide',

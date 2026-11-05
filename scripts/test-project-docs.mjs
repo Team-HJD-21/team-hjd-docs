@@ -20,7 +20,8 @@ for (const [module, children] of Object.entries({
   for (const child of children)
     assert(pages.some(page => page.url === `/docs/projects/the-developer/${module}/${child}`), `Missing ${module}/${child}`);
 }
-assert.equal(pages.length, 37, 'Search must index every module document');
+assert(pages.length >= 37, 'Search includes module and project tool documents');
+assert(pages.every(page=>page.project==='the-developer' && page.archive===false && !page.url.includes('/archive/')));
 const leaveMeAlonePages = JSON.parse(readFileSync(path.join(root, 'static/leave-me-alone-search.json'), 'utf8'));
 for (const suffix of ['', '/gameplay-flow', '/player-guide', '/boss-guide', '/items-guide', '/unity-setup'])
   assert(leaveMeAlonePages.some(page => page.url === `/docs/projects/leave-me-alone${suffix}`), `Missing Leave Me Alone ${suffix}`);

@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {searchPages} from './search-contract.mjs';
+const read=name=>JSON.parse(readFileSync(new URL('../static/'+name,import.meta.url),'utf8'));
+const current=read('the-developer-search.json'),archive=read('the-developer-archive-search.json'),other=read('leave-me-alone-search.json');
+const pool=[...current,...archive,...other];
+assert(current.some(p=>p.url.startsWith('/docs/editor-tools/the-developer/')));
+assert(archive.some(p=>p.url.includes('/archive/')));
+assert(searchPages(pool,'the-developer',false,'').every(p=>p.project==='the-developer'&&!p.archive));
+assert(searchPages(pool,'the-developer',true,'').every(p=>p.project==='the-developer'&&p.archive));
+assert.equal(searchPages(archive,'the-developer',false,'').length,0);
+assert.equal(searchPages(current,'the-developer',true,'').length,0);
+assert.equal(searchPages(other,'the-developer',false,'').length,0);
+assert.equal(searchPages(current,'leave-me-alone',false,'').length,0);
+assert.equal(searchPages([{project:'the-developer',archive:false,url:'/docs/projects/leave-me-alone/secret',title:'x',text:'x'}],'the-developer',false,'x').length,0);
+assert.equal(searchPages(pool,'the-developer',false,'this-query-does-not-exist-490328').length,0);
+assert(searchPages(pool,'the-developer',false,'MatchSession').length>0);
+console.log('PASS project and archive isolation, tool coverage and empty queries');

@@ -9,6 +9,7 @@ import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 
 import {useDoc} from '@docusaurus/plugin-content-docs/client';
+import ProjectSearchLinks from '@site/src/components/ProjectSearchLinks';
 import DocItemPaginator from '@theme/DocItem/Paginator';
 import DocVersionBanner from '@theme/DocVersionBanner';
 import DocVersionBadge from '@theme/DocVersionBadge';
@@ -57,6 +58,7 @@ export default function DocItemLayout({children}: Props): ReactNode {
         <div className={styles.docItemContainer}>
           <article>
             <DocBreadcrumbs />
+            <ProjectSearchLinks />
             <DocVersionBadge />
 
             <DocItemContent>{children}</DocItemContent>
