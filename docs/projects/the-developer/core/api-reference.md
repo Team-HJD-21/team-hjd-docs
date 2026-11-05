@@ -4,14 +4,15 @@ title: Core API 사용법
 
 # Core API 사용법
 
-**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
+**기준:** 2026-11-05 Core API 정리 · **원본:** Core 공개 API와 `Docs/architecture/core-api-usage.md`.
 
 ## 주요 API
 
 | API | 사용할 때 | 주의 |
 | --- | --- | --- |
 | `IAppMatchHost.StartMatch(...)` | Scene 조립자가 설정·초기 상태·규칙·공간 입력을 연결 | Config와 State의 Match ID가 같아야 함 |
-| `MatchSession.Submit(GameCommand)` | 명령 권한과 처리 결과 조회 | `Accepted`를 가정하지 말고 상태 확인 |
+| `PlayerSceneAdapter.Bind/BindNetworkMatch/Unbind` | Player Feature의 Match·네트워크 수명 연결·정리 | 실제 이동·공격을 대신 실행하지 않음 |
+| `TurretCommandGateway.TrySubmit(request)` | 공용 터렛 조작 요청 전달 | 전송 접수와 실제 적용 결과를 구분 |
 | `MatchSession.Events.Subscribe(Action<MatchEvent>)` | UI·상태 표시가 Match 사실을 구독 | 반환된 `IDisposable` 해제 |
 | `MatchSession.CreateSnapshot(long sequence)` | 특정 순번의 상태 조회 | 네트워크 동기화·저장 복구 기능이 아님 |
 | `MatchSession.Battlefield` | topology·frontline·grid 읽기 | MatchSnapshot과 다른 공간 snapshot |
@@ -24,6 +25,8 @@ title: Core API 사용법
 | `session.Regions.Snapshot` / `Changed` | 확정 점유 상태 조회·변경 구독 | Battlefield 밀도 Grid와 별개 |
 | `EncounterRequestService.Submit(request, verifiedIssuer)` | Match 단위 Encounter 요청 | 발신자는 연결 경계에서 검증 |
 
+범용 Submit 두 개와 전용 명령·결과·로컬 권한 타입은 제거했습니다. 실제 스폰은 `EncounterRequestService`, 터렛은 전용 gateway/service를 사용합니다.
+
 `MatchSession`을 직접 `new`하는 public 생성자는 없습니다. 앱 경계나 `MatchSessionFactory`를 통해 생성합니다.
 
 [Core — 세션·명령·이벤트 목차](../core.md) · [통합 체크리스트](../integration.md)
@@ -32,7 +35,7 @@ title: Core API 사용법
 
 ## 공용 터렛 명령과 표시 — main 9cf0e16b
 
-**기준:** `9cf0e16b5924b6facfc35646184672c1d51e7b1a` (#570) · **출처:** 게임 `Docs/architecture/core-sprint-region-and-request-api.md`, `Assets/Scripts/Core/Contracts/Turrets/`, Core SceneComposition.
+**기준:** 2026-11-05 Core API 정리 · **원본:** Core 공개 API와 `Docs/architecture/core-api-usage.md`.
 
 | 공개 Port / API | 계약 |
 | --- | --- |
