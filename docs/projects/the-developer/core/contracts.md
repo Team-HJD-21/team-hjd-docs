@@ -4,7 +4,7 @@ title: Core 호출·소유권 계약
 
 # Core 호출·소유권 계약
 
-**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
+**기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06), 공개 API 정적 대조.
 
 Player·Turret·Enemy를 Core에 연결할 때 사용할 계약과 종료 책임입니다. 기존 `Global` 계열과의 대응은 책임을 이해하기 위한 설명이며 상속·호환 계보가 아닙니다.
 
@@ -65,3 +65,11 @@ App의 위치, 네트워크 준비·시작, Match 규칙 상태를 구분합니�
 Match/Scene 종료 시 RandomConsumerScope·환경·actor·지역/터렛·입력 구독·시간 서비스를 해제합니다. 체크포인트 scope의 필수 writer 목록은 조립 계약에서 정하며 실제 등록 목록으로 자동 추정하지 않습니다. 상세한 [시간·저장·화면 API](api-reference.md#공용-시간과-예약)를 확인하세요.
 
 현재 Feature 디렉터리와 Map에는 IRandomConsumer·IFieldSimulationConsumer·IMatchScheduledEnvironmentFeature·ICheckpointParticipant의 실제 구현이 확인되지 않습니다. Core 쪽 자동 탐색/Port가 있다고 실제 날씨·전투·저장 연결까지 완료된 것은 아닙니다.
+
+## MatchState와 snapshot 원본 경계 — main d9ea7057
+
+MatchSession.Start는 MatchState.Start를 호출하며 Preparing에서만 Running으로 전환합니다. Complete는 같은 Match의 결과를 Running에서만 확정하고, MarkDisposed는 단계만 닫습니다. Feature actor의 파괴와 실제 HP·전력 변경은 각 소유자의 책임입니다.
+
+MatchSessionFactory는 삭제된 범용 IAuthority를 받지 않습니다. Bind/BindNetworkMatch는 Player 수명/권한 문맥이며 이동·공격 명령 처리기를 새로 만드는 계약이 아닙니다. MatchSnapshot은 초기 Domain 자료·단계·확정 결과의 복사본이므로 실제 Player/CU HP, 터렛 전력, Enemy 상태와 공간은 각 Feature 읽기 Port와 Battlefield를 사용합니다.
+
+공용 시간/생성물·writer provider·Animator/참조 복원과 환경 epoch는 [최신 보충](api-reference.md#시간복원환경-보충--main-d9ea7057)을 따릅니다. 현재 Feature 채택 여부와 구분하며 source scope를 생략해 전역 Scene/Manager를 다시 검색하지 않습니다.

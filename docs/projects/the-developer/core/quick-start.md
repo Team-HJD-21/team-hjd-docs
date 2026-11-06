@@ -4,7 +4,7 @@ title: Core 빠른 시작
 
 # Core 빠른 시작
 
-**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
+**기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06), 공개 API 정적 대조.
 
 ## 먼저 준비할 것
 
@@ -26,3 +26,9 @@ Initial_Stage는 InitialStageNetworkBinding의 연결→Host 준비→모두 준
 기준 `1a03e9a9` (#615까지의 Core 기반 포함). App·시간·난수·환경·저장·Scene/화면의 호출 지도는 [App·Match 기반 API](api-reference.md#appmatch-기반-api--main-1a03e9a9)를 확인합니다. 기존 카테고리와 요청/표시 경계는 유지됩니다.
 
 Initial_Stage 조립은 현재 터렛 권한·논리 ID·지역과 CU 읽기 Port를 사용합니다. Random 소비자는 Feature가 IRandomConsumer를 구현한 경우만 연결되고, 환경/추가 Spawn consumer도 선택적입니다. 계약이 병합된 것과 실제 Weather·Player·Enemy에 전체 통합된 것은 다릅니다.
+
+## #623 적용 시 확인 — main d9ea7057
+
+처리기가 없던 범용 Submit과 LocalAuthority/MatchSimulation 계열은 삭제됐습니다. 터렛은 기존 전용 gateway/service, 스폰은 EncounterRequestService, 이동/공격은 Player Feature/Host 경계를 사용합니다. 기존 검색·수명 바인딩을 유지하고 삭제된 타입의 대체 골격을 새로 추가하지 않습니다.
+
+Match snapshot의 초기 HP를 실제 Feature 원본으로 읽지 않습니다. [시간·복원·환경 API 보충](api-reference.md#시간복원환경-보충--main-d9ea7057)과 [Scene driver와 App 제한](../world/quick-start.md#ngo-driver와-app-이동-제한--main-d9ea7057)을 확인하세요.
