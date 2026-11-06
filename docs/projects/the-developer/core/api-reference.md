@@ -4,7 +4,7 @@ title: Core API 사용법
 
 # Core API 사용법
 
-**기준:** 2026-11-05 Core API 정리 · **원본:** Core 공개 API와 `Docs/architecture/core-api-usage.md`.
+**기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06). 기존 전용 요청 API와 실제 scoped runtime/복원 계약을 정적으로 대조했습니다.
 
 ## 주요 API
 
@@ -118,6 +118,49 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 | `ShowMenu / ShowLoading / Close / Back` | 개인 화면과 입력 lease 수명 관리. Escape 메뉴는 공유 Match 시간 정지가 아닙니다. |
 | `BindMatch / ShowResult / ResetContext` | 현재 Match의 불변 결과만 표시하고 과거 문맥을 정리합니다. 완료 결과 전달 전에 연결/Session을 없애지 않습니다. |
 
-정식 귀환은 Match를 종료하므로 전투 중 임시 우주선 방문과 구분합니다. 현재 NGO Scene 교체는 단독 Host 경계이며 Client/다중 참가자의 공동 이동·재시작을 완료 기능으로 표시하지 않습니다. Steam 로그인·초대·매칭·중도 참가·Host Migration은 현재 플랫폼 Port의 존재만으로 구현 완료가 아닙니다.
+정식 귀환은 Match를 종료하므로 전투 중 임시 우주선 방문과 구분합니다. 현재 App/GameFlow의 다중 참가자 이동 제한은 유지됩니다. 하위 NGO Scene driver의 1–2인 완료 확인과 상위 App 제한은 [Scene 이동 경계](../world/quick-start.md#ngo-driver와-app-이동-제한--main-d9ea7057)를 확인하세요. 공동 이동·재시작을 전체 인수 완료로 표시하지 않습니다. Steam 로그인·초대·매칭·중도 참가·Host Migration은 현재 플랫폼 Port의 존재만으로 구현 완료가 아닙니다.
 
 **원본:** `Docs/architecture/core-lifecycle-and-api-guide.md`, `network-match-api.md`, `match-time-api.md`, `match-field-pause-api.md`, `match-environment-api.md`, `checkpoint-execution-api.md`, `checkpoint-storage-api.md`, `scene-flow-api.md`, `screen-management-api.md`와 현재 Core 조립 코드. 이 페이지는 API 정적 대조 결과이며 Unity 실행 인수 기록이 아닙니다.
+
+## 시간·복원·환경 보충 — main d9ea7057
+
+**기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06). 아래는 현재 main의 공개 계약이며 실제 Feature가 모두 이 경로를 소비한다는 뜻은 아닙니다.
+
+### FieldSimulationTime: 소유자와 생성물의 시간
+
+| API | 호출 계약 |
+| --- | --- |
+| `FieldSimulationTime.CanAdvance(owner)` | 부모의 PlayerMatchPresence 시간·종료 취소, 없으면 FieldSimulationActor를 확인합니다. null owner는 false입니다. |
+| `FieldSimulationTime.Seconds(owner)` | 쿨다운/수명 deadline에 사용할 절대 게임 초. 바인딩이 없는 독립 Feature 실행은 Time.timeAsDouble로 동작합니다. |
+| `FieldSimulationTime.DeltaTime(owner)` / `FieldSimulationTime.FixedDeltaTime(owner)` | 진행 불가면 0, 진행 가능하면 연결된 Match 배속으로 보정한 Unity delta를 제공합니다. |
+| `FieldSimulationTime.ScaleDelta(time, unityDelta)` | 연결된 Match의 배속을 적용하면서 Unity timeScale을 중복 곱하지 않습니다. 정지·준비 불가·유효하지 않은 결과는 진행시키지 않습니다. |
+| `FieldSimulationTime.BindSpawned(spawned, owner, destroyOnCompletion = true)` | 생성자가 생성 직후 호출합니다. 소유자의 Scene과 바인딩된 시간·Match 취소 수명을 전달합니다. |
+
+생성물과 소유자 Scene이 다르면 부모 없는 root를 소유자 Scene으로 옮깁니다. 이미 다른 Scene의 부모에 붙은 생성물은 거부하므로 바인딩/Scene 귀속을 먼저 준비하세요. 시계 없는 독립 실행에 임의의 전역 Match를 찾아 연결하지 않습니다. 같은 owner의 시간만 전달하며 Player의 우주선 이동 허용 여부는 별도 PlayerControlState 책임입니다.
+
+`FieldSimulationActor.Synchronize`는 필드 정지 동안 Rigidbody2D.simulated·Animator.speed를 다시 고정하고, NavMeshAgent의 이전 isStopped 상태를 보관·복원합니다. NetworkObject나 Feature 자체 수명을 끄는 API가 아닙니다. 이 공용 도구의 추가만으로 모든 Player/Enemy/터렛 이동·쿨다운·생성물이 이관됐다고 설명하지 않습니다.
+
+### 체크포인트 writer·Animator·대상 참조
+
+| 공개 계약 | 사용법과 실패 경계 |
+| --- | --- |
+| `ICheckpointParticipantProvider.GetCheckpointParticipants()` | Scene 밖에 유지되는 Feature 소유자가 실제 writer를 명시 제공합니다. 조립부에서 사용해야 하며, 구현만 추가해도 자동 등록되지는 않습니다. |
+| `CheckpointAnimatorState.Capture(animator)` | 레이어의 fullPathHash·normalizedTime과 Float/Int/Bool 파라미터를 값으로 보관합니다. 전환 중이면 예외를 처리하고 전환 완료 뒤 재시도합니다. |
+| `CheckpointAnimatorState.Apply(animator)` | 레이어 수·파라미터 타입·state 존재를 확인해 상태를 적용하고 Trigger는 재실행하지 않도록 reset합니다. 공격/스킬 함수를 새로 호출하는 기능이 아닙니다. |
+| `CheckpointAnimatorState.Write(writer)` / `Read(reader, codec)` | 불변 Animator 자료를 명시 바이너리 형식으로 처리합니다. 읽기는 레이어 16·파라미터 256개와 유효 수치를 검사합니다. |
+| `CheckpointSceneReferences.Capture(target)` | Player 슬롯 또는 SceneEntityIdentity 논리 ID로 참조 키를 만듭니다. null은 빈 키, ID 없는 실제 대상은 실패입니다. |
+| `CheckpointSceneReferences.Resolve(scene, key)` | 모든 actor 적용 뒤 같은 Scene의 활성·유효한 대상을 찾습니다. 빈 키는 null, 누락/중복 대상은 예외입니다. |
+
+참조 키는 helper가 만든 값을 그대로 저장합니다. Unity instance ID나 NetworkObjectId를 저장 키로 대체하지 않습니다. CheckpointActorFactory의 신규 자동 ID 접두사는 `entity/`이며 이미 유효한 ID를 새로 만들지 않습니다. 이러한 공용 도구와 실제 Feature의 Capture/Prepare/Apply/Resolve/rollback 전체 통합은 구분합니다.
+
+### 환경 epoch·낮밤 확장
+
+`MatchEnvironmentSnapshot.Epoch`가 Match 시간의 복원 세대를 함께 전달합니다. 같은 epoch에서는 게임 시간 역행을 거부하고, 복원으로 epoch가 바뀌면 더 작은 게임 초를 적용할 수 있습니다. 값이 같더라도 epoch 교체는 새 revision의 환경 상태로 게시합니다. 같은 revision에 epoch/시간/내용이 다르면 충돌이며, 과거 revision은 계속 거부합니다. `HasSameValues`만으로 epoch까지 동일하다고 판단하지 않습니다.
+
+`EnvironmentReplicationCodec`과 채널은 v2(`teamhjd.core.environment.v2`)로 변경됐습니다. 최대 payload는 16,384바이트이며 v1/v2 혼합 빌드가 호환된다고 가정하지 않습니다.
+
+`MatchEnvironmentSceneScope`는 선택적인 `IMatchClock clock`을 받아 실제 시간 epoch를 환경에 연결하고, `PublishCurrent()`로 Match 시작 직후 초기 환경을 게시하는 접점을 제공합니다. 호출과 실제 source 연결은 조립부 책임입니다. 현재 main의 기존 조립부가 이 추가 인자/초기 게시를 모두 사용한다고 설명하지 않습니다.
+
+`IMatchDayNightCycle`은 IMatchTimeOfDaySource를 확장해 `DayNightPhase.Day/Night`, `Phase`, `RemainingSeconds`와 `PhaseAdvanced`를 제공합니다. PhaseAdvanced는 정상 주기 진행 신호이며 복원/Client 적용의 Changed를 새 날씨 추첨 신호로 사용하지 않습니다. 이 인터페이스만으로 실제 낮밤 Feature나 Weather 연결이 완성되지 않습니다.
+
+**출처:** Core/Presentation/Scene의 FieldSimulationTime·FieldSimulationActor·CheckpointAnimatorState·CheckpointSceneReferences, Contracts의 ICheckpointParticipantProvider·IMatchDayNightCycle, Domain/Application의 MatchState·환경 snapshot/runtime/replica 및 환경 전송 코드. 이번 문서 갱신은 정적 대조이며 Unity·실제 두 실행 파일의 인수 검증이 아닙니다.

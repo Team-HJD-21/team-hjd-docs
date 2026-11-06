@@ -37,3 +37,9 @@ WeatherManager는 지정된 MainCamera의 WeatherShaderApply를 사용하고, �
 이번 갱신은 실제 main의 정적 API 대조입니다. 렌더링·카메라 외형·날씨 효과·포털/네트워크 동작을 Unity에서 새로 검증하지 않았습니다.
 
 [World 목차](../world.md) · [Core 시간·저장 API](../core/api-reference.md)
+
+## 낮밤·환경 복원 계약 — main d9ea7057
+
+Core에 `DayNightPhase.Day/Night`와 `IMatchDayNightCycle`(Phase·RemainingSeconds·PhaseAdvanced)이 추가됐습니다. 정상 낮밤 진행만 새 날씨 선택의 사건이며, 복원/Client 적용 알림으로 같은 날씨를 다시 추첨하지 않습니다. 현재 Map의 CountTick/Unity Random 구현이 이 계약을 자동 소비하는 것은 아닙니다.
+
+환경 snapshot은 시간 Epoch를 포함하고 v2 채널로 전송합니다. 같은 epoch에서 시간 역행은 거부하되 복원 세대 교체는 별도로 처리합니다. Scene 조립부의 clock 주입과 PublishCurrent 연결이 있어야 초기/복원 환경을 그 시계에 맞출 수 있습니다. [환경·낮밤 세부 계약](../core/api-reference.md#환경-epoch낮밤-확장)을 함께 확인하세요.

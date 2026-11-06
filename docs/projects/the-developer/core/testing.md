@@ -4,7 +4,7 @@ title: Core 검증과 제한 사항
 
 # Core 검증과 제한 사항
 
-**기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
+**기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06), 공개 API 정적 대조.
 
 ## 실제 요청 경계와 삭제한 골격
 
@@ -38,3 +38,9 @@ AppServices/MatchSessionFactory에서도 삭제한 범용 권한 객체의 주�
 이번 작업에서 Unity 컴파일·PlayMode·Initial_Stage 직접 조작·다중 프로세스 게임 인수는 실행하지 않았습니다. 소스 문서의 이전 실험 시험 수치와 이번 사이트 check/build는 서로 다른 증거입니다. 특히 실제 Feature의 시간·환경·난수·체크포인트 writer, 원격 Player/포털·공동 Scene 이동은 계약 존재와 별도로 확인합니다.
 
 MatchCoordinator의 CU 읽기/완료 경계와 각 Feature의 실제 전투 실행을 구분합니다. 삭제한 범용 Simulation/Submit 골격은 현재 실행 경로가 아닙니다.
+
+## #623의 확인 범위 — 2026-11-06
+
+원본 main `d9ea7057`의 공개 문서와 실제 코드로 시간/생성물 전달, checkpoint writer·Animator·참조 helper, 환경 epoch/v2, 낮밤 확장, 1–2인 NGO Scene driver를 대조했습니다. 일반 Submit 제거 안내는 사이트의 기존 #7을 보존하고 남아 있던 통합 체크리스트만 바로잡았습니다.
+
+이 동기화에서 Unity 컴파일·PlayMode·물리/Animator·NavMesh 정지 복원·실제 두 프로세스 Scene 이동을 재실행하지 않았습니다. NGO driver의 1–2인 전체 완료 확인과 AppRoot에 남은 다중 참가자 이동 제한을 구분합니다. 인터페이스/helper의 존재가 실제 Feature 전체 채택·저장 복구 인수 완료를 뜻하지 않습니다.
