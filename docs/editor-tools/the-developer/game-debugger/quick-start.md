@@ -68,3 +68,10 @@ Scene View의 **Gizmos**와 Battlefield의 **Scene layers**를 모두 켜고 `Fr
 ## Initial_Stage 연결 모드 — main 9cf0e16b
 
 원본 `Docs/tooling/game-debugger-guide.md`와 현재 네트워크 Scene 기준으로 SinglePlayerHost는 App 소유 연결→준비→Match 시작을 순서대로 실행합니다. 단계를 나누려면 재생 전 InitialStageCompositionRoot의 InitialStageNetworkBinding을 Manual로 바꾸고 재생 후 Inspector에서 Host/Client 연결→Host Match 준비→Host Match 시작을 사용합니다. 이 경로에서는 기존 Enemy Network Test 연결 버튼을 사용하지 않습니다. Game Debugger의 Encounter 버튼은 이미 시작한 Host Match에 요청할 뿐 서버 연결을 개설하지 않습니다. 기존 사진·영상은 촬영 당시 UI 예시이며 이 변경의 최신 실행 증거가 아닙니다.
+
+## App 흐름·저장·Steam 진단
+
+- **Overview → APP · GAME FLOW**에서 시작·허브·출격·귀환과 저장 슬롯의 새 Mission 복원을 요청합니다.
+- **Checkpoint**에서 등록·필수·누락 writer를 확인하고 명시 Save/Restore를 실행합니다. `world/weather`가 누락된 Initial_Stage에서는 전체 저장을 사용할 수 없습니다.
+- **Overview → PLATFORM · STEAM**에서 설정 에셋의 AppID와 Use Steam을 확인하고 새 Play에서 초기화 상태와 실패 이유를 봅니다. 개발 실행에서는 프로젝트의 로컬 `steam_appid.txt`를 같은 AppID로 맞춥니다. Standalone 개발 실행은 `-teamhjd-steam`으로 선택할 수 있습니다. 실제 테스트 계정에 앱 실행 권한이 필요합니다.
+- **Match 환경 · 현재**에서 날씨·낮밤과 Host의 다음 전환까지 남은 게임 초를 봅니다. 낮밤과 날씨 버튼은 [World의 낮밤·환경 복원 계약](../../../projects/the-developer/world/progress.md#낮밤환경-복원-계약)을 참고하세요.

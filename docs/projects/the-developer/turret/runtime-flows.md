@@ -378,7 +378,7 @@ main 1a03e9a9의 설정은 손실률이 아닌 반환 비율 DestructionPowerRet
 
 ### 4.4 탐색과 공격
 
-`IsOperational`이 `true`일 때만 각 터렛의 `Update()`가 탐색·회전·발사·과열 확인을 수행한다. 실제 탐색은 `FieldTurretTargetingUtility.CollectByDistance()`가 사거리 안의 `enemyMask` Collider를 거리순으로 모으는 방식이다.
+`IsOperational`이 `true`일 때만 각 터렛의 `Update()`가 탐색·회전·발사·과열 확인을 수행한다. Canon 산포는 발사마다 기준 조준점의 월드 X에 ±0.5를 적용하며 기준 Transform은 그대로 유지한다. 실제 탐색은 `FieldTurretTargetingUtility.CollectByDistance()`가 사거리 안의 `enemyMask` Collider를 거리순으로 모으는 방식이다.
 
 #### 최소 사거리와 내부 공격 금지 범위
 
@@ -469,7 +469,7 @@ flowchart TD
     Complete -->|false| Ready["꺼진 상태 유지<br>ON 요청 허용"]
 ```
 
-Canon 과열은 연속 사격 시간, Missile 과열은 발사 호출 횟수로 시작한다. 두 경우의 기준값은 각 Definition의 `OverHeatTime`, `OverHeatMissileCount`, `CoolTime`이다. 공통 냉각 중에는 `IsCoolingDown`과 `CoolingDownRemaining`을 사용할 수 있다. 과열된 터렛은 활성 상태와 예약 전력을 유지하지만 공격하지 않는다. OFF 요청은 냉각 중에도 가능하고 기존 냉각 종료 시각을 유지하며 전력을 반환한다. 꺼진 터렛은 냉각 종료 뒤에도 자동으로 켜지지 않는다. 냉각은 게임 시간 기준이다.
+Canon 과열은 연속 사격 시간, Missile 과열은 실제 발사에 성공한 일제 사격 횟수로 시작한다. 한 발도 발사하지 못한 호출은 횟수에 넣지 않는다. 기준 묶음을 모두 발사한 직후 냉각하며 미발사 예약만 반환한다. 두 경우의 기준값은 각 Definition의 `OverHeatTime`, `OverHeatMissileCount`, `CoolTime`이다. 공통 냉각 중에는 `IsCoolingDown`과 `CoolingDownRemaining`을 사용할 수 있다. 과열된 터렛은 활성 상태와 예약 전력을 유지하지만 공격하지 않는다. OFF 요청은 냉각 중에도 가능하고 기존 냉각 종료 시각을 유지하며 전력을 반환한다. 꺼진 터렛은 냉각 종료 뒤에도 자동으로 켜지지 않는다. 냉각은 게임 시간 기준이다.
 
 ## 5. Prefab과 Definition 설정 방법
 
@@ -631,7 +631,7 @@ flowchart TD
     Targetable -->|"비활성 무기 터렛 또는 파괴"| Excluded["목표 후보에서 제외"]
 ```
 
-`FieldTurretBase.TheoreticalDps = EffectiveDamage × Definition.FireRate × ProjectilesPerShot`이며 `DpsPerPower = TheoreticalDps / EffectivePower`다. Missile은 발사구 수를 발사당 최대 미사일 수로 반영한다. 이는 연속 사격 이론값으로 과열·명중률·폭발 다중 피해는 포함하지 않는다. 전력 0은 효율 0으로 처리하며 CU도 0이다. Snapshot에도 동일 값을 제공한다. Adapter의 fake 값은 제거했다. Enemy의 기존 `FirepowerRatio` 이름은 호환을 위해 유지하지만 실제 값은 0~1로 제한하지 않는 DPS/전력이며 위협 가중치가 효율 단위에 곱해진다.
+`FieldTurretBase.TheoreticalDps = EffectiveDamage × Definition.FireRate × ProjectilesPerShot`이며 `DpsPerPower = TheoreticalDps / EffectivePower`다. Canon과 Missile은 발사구 수를 발사당 최대 발사체 수로 반영한다. Canon LV1~3 기본 프리팹은 각각 1·2·3발이다. 이는 연속 사격 이론값으로 과열·명중률·폭발 다중 피해는 포함하지 않는다. 전력 0은 효율 0으로 처리하며 CU도 0이다. Snapshot에도 동일 값을 제공한다. Adapter의 fake 값은 제거했다. Enemy의 기존 `FirepowerRatio` 이름은 호환을 위해 유지하지만 실제 값은 0~1로 제한하지 않는 DPS/전력이며 위협 가중치가 효율 단위에 곱해진다.
 
 전선 시스템과 후속 AI 계약에 제공할 후보 데이터는 다음과 같다.
 

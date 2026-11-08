@@ -43,4 +43,4 @@ MatchCoordinator의 CU 읽기/완료 경계와 각 Feature의 실제 전투 실�
 
 원본 main `d9ea7057`의 공개 문서와 실제 코드로 시간/생성물 전달, checkpoint writer·Animator·참조 helper, 환경 epoch/v2, 낮밤 확장, 1–2인 NGO Scene driver를 대조했습니다. 일반 Submit 제거 안내는 사이트의 기존 #7을 보존하고 남아 있던 통합 체크리스트만 바로잡았습니다.
 
-이 동기화에서 Unity 컴파일·PlayMode·물리/Animator·NavMesh 정지 복원·실제 두 프로세스 Scene 이동을 재실행하지 않았습니다. NGO driver의 1–2인 전체 완료 확인과 AppRoot에 남은 다중 참가자 이동 제한을 구분합니다. 인터페이스/helper의 존재가 실제 Feature 전체 채택·저장 복구 인수 완료를 뜻하지 않습니다.
+이 동기화에서 Unity 컴파일·PlayMode·물리/Animator·NavMesh 정지 복원·실제 두 프로세스 Scene 이동을 재실행하지 않았습니다. 당시 AppRoot의 다중 참가자 이동 제한은 이 검증의 기준이었습니다. 이후 #656에서 고정 1–2인 Host의 공동 Scene 이동이 연결됐습니다. 인터페이스/helper의 존재가 실제 Feature 전체 채택·저장 복구 인수 완료를 뜻하지 않습니다.

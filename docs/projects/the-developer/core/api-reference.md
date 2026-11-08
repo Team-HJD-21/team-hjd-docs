@@ -89,7 +89,7 @@ Host의 표시 source가 FieldTurret 원본을 읽어 TurretPresentationFrame을
 
 Preparing 시간은 자동 정지하며 로딩 시간을 게임 시간에 포함하지 않습니다. callback과 시계 제어는 소유 스레드에서 사용합니다. `InitialStageCompositionRoot.MatchTime` / `MatchTimers`는 조립부의 주입 경계이며 전역 검색 API가 아닙니다.
 
-`IFieldSimulationConsumer.BindFieldSimulation`와 `IMatchScheduledEnvironmentFeature.BindAuthority`는 Feature가 실제로 구현·연결해야 하는 계약입니다. 현재 main의 Player/Enemy/FieldTurret/Map 전체가 이를 구현했다고 설명하지 않습니다. 특히 Map의 실제 날씨 루프는 [현재 Weather 구현](../world/progress.md)을 확인하세요.
+`IFieldSimulationConsumer.BindFieldSimulation`와 `IMatchScheduledEnvironmentFeature.BindAuthority`는 Feature가 실제로 구현·연결해야 하는 계약입니다. 현재 조립부는 Enemy·터렛의 FieldSimulation과 Map의 권위 환경을 연결합니다. 날씨의 Host/Client 처리와 난수 경계는 [현재 Weather 구현](../world/progress.md)을 확인하세요.
 
 ### 체크포인트 실행과 저장소
 
@@ -106,7 +106,9 @@ Preparing 시간은 자동 정지하며 로딩 시간을 게임 시간에 포함
 
 App은 `Application.persistentDataPath/Checkpoints`의 `BinaryCheckpointStore`와 codec을 조립합니다. 슬롯은 정규화한 1–64자 ASCII 문자·숫자·하이픈·밑줄 이름이며 경로를 받지 않습니다. 완성 임시 파일을 flush한 뒤 `<slot>.checkpoint`로 교체하고, 손상·미지원 schema를 빈 저장 성공으로 바꾸지 않습니다. 해시는 손상 감지이며 Backend 인증이 아닙니다.
 
-World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 기본 유지하며 `CurrencyRestorePolicy.RestoreCheckpoint`를 명시한 경우만 저장값을 사용합니다. 실제 Feature writer·전체 참조·재실행 게임 사이클·Load 화면 연결은 별도 통합 대상입니다. 과거 실험의 writer 목록을 현행 Scene 연결 완료로 취급하지 않습니다.
+World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 기본 유지하며 `CurrencyRestorePolicy.RestoreCheckpoint`를 명시한 경우만 저장값을 사용합니다. Initial_Stage는 `Checkpoints`와 `CheckpointRequests`를 제공하며 `RegisterCheckpointParticipant(writer)`로 Match 수명의 실제 writer를 연결할 수 있습니다. Core 난수·공간·시간대와 CU·터렛·Enemy·Encounter·Player writer를 조립합니다. 실제 `world/weather` writer가 필요한 Scene에서는 누락으로 전체 Save/Restore가 차단됩니다. 자동 저장 사건은 등록되어 있지 않습니다.
+
+`AppRoot.ResumeCheckpointAsync(slot, missionScene)`는 시작/허브에서 1인 Story 슬롯의 메타데이터를 읽고 새 Match에 복원합니다. 동일 Scene의 `RestoreAsync`와 달리 새 Match를 구성하며, 실패·취소 시 해당 복원 작업의 Match를 정리합니다. 결과의 `Status`, `Reason`, `IsCurrentScope`를 확인하세요.
 
 ### Scene·화면과 입력 잠금
 
@@ -118,7 +120,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 | `ShowMenu / ShowLoading / Close / Back` | 개인 화면과 입력 lease 수명 관리. Escape 메뉴는 공유 Match 시간 정지가 아닙니다. |
 | `BindMatch / ShowResult / ResetContext` | 현재 Match의 불변 결과만 표시하고 과거 문맥을 정리합니다. 완료 결과 전달 전에 연결/Session을 없애지 않습니다. |
 
-정식 귀환은 Match를 종료하므로 전투 중 임시 우주선 방문과 구분합니다. 현재 App/GameFlow의 다중 참가자 이동 제한은 유지됩니다. 하위 NGO Scene driver의 1–2인 완료 확인과 상위 App 제한은 [Scene 이동 경계](../world/quick-start.md#ngo-driver와-app-이동-제한--main-d9ea7057)를 확인하세요. 공동 이동·재시작을 전체 인수 완료로 표시하지 않습니다. Steam 로그인·초대·매칭·중도 참가·Host Migration은 현재 플랫폼 Port의 존재만으로 구현 완료가 아닙니다.
+정식 귀환은 Match를 종료하므로 전투 중 임시 우주선 방문과 구분합니다. 고정 1–2인 Host의 공동 Scene 로드와 전원 준비 이후 시작은 [Scene 이동 경계](../world/quick-start.md#ngo-driver와-app-이동-제한--main-d9ea7057)를 확인하세요. SDK 초기화와 로비 사용법은 아래 플랫폼 항목을 따릅니다.
 
 **원본:** `Docs/architecture/core-lifecycle-and-api-guide.md`, `network-match-api.md`, `match-time-api.md`, `match-field-pause-api.md`, `match-environment-api.md`, `checkpoint-execution-api.md`, `checkpoint-storage-api.md`, `scene-flow-api.md`, `screen-management-api.md`와 현재 Core 조립 코드. 이 페이지는 API 정적 대조 결과이며 Unity 실행 인수 기록이 아닙니다.
 
@@ -161,6 +163,15 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 
 `MatchEnvironmentSceneScope`는 선택적인 `IMatchClock clock`을 받아 실제 시간 epoch를 환경에 연결하고, `PublishCurrent()`로 Match 시작 직후 초기 환경을 게시하는 접점을 제공합니다. 호출과 실제 source 연결은 조립부 책임입니다. 현재 main의 기존 조립부가 이 추가 인자/초기 게시를 모두 사용한다고 설명하지 않습니다.
 
-`IMatchDayNightCycle`은 IMatchTimeOfDaySource를 확장해 `DayNightPhase.Day/Night`, `Phase`, `RemainingSeconds`와 `PhaseAdvanced`를 제공합니다. PhaseAdvanced는 정상 주기 진행 신호이며 복원/Client 적용의 Changed를 새 날씨 추첨 신호로 사용하지 않습니다. 이 인터페이스만으로 실제 낮밤 Feature나 Weather 연결이 완성되지 않습니다.
+`IMatchDayNightCycle`은 IMatchTimeOfDaySource를 확장해 `DayNightPhase.Day/Night`, `Phase`, `RemainingSeconds`와 `PhaseAdvanced`를 제공합니다. PhaseAdvanced는 정상 주기 진행 신호이며 복원/Client 적용의 Changed를 새 날씨 추첨 신호로 사용하지 않습니다. Initial_Stage의 실제 주기·예약과 Client 표현은 [낮밤·환경 복원 계약](../world/progress.md#낮밤환경-복원-계약)에서 확인하세요.
 
 **출처:** Core/Presentation/Scene의 FieldSimulationTime·FieldSimulationActor·CheckpointAnimatorState·CheckpointSceneReferences, Contracts의 ICheckpointParticipantProvider·IMatchDayNightCycle, Domain/Application의 MatchState·환경 snapshot/runtime/replica 및 환경 전송 코드. 이번 문서 갱신은 정적 대조이며 Unity·실제 두 실행 파일의 인수 검증이 아닙니다.
+
+## Steam 초기화와 로비
+
+앱은 주입된 `IPlatformService.SignInAsync(cancellation)`로 사용자를 읽습니다. `PlatformUser.PlatformId`는 Steam 계정 ID입니다. Match 참가자와 NGO 연결 ID는 별도 계약으로 배정합니다. Steam 모드 초기화에 실패하면 진단창에서 원인을 확인하고 재시도할 때까지 출격을 차단합니다.
+
+- `IPlatformLobbyService`의 `CreateLobbyAsync`와 `JoinLobbyAsync`는 각각 친구 공개 2인 로비 생성과 명시 참가입니다. `CurrentLobby`로 ID·Owner·멤버를 읽습니다.
+- `JoinRequested`는 초대에서 받은 참가 의도를 전달합니다. `OpenInviteOverlay()`로 초대 창을 열고 `LeaveLobby()`로 나갑니다.
+- 앱이 `IPlatformRuntime.Pump()`를 계속 호출합니다. 취소 또는 실시간 제한 이후에는 늦게 돌아온 SDK 응답을 정리해야 다음 생성·참가가 가능합니다.
+- 로비 참가 이후의 게임 연결은 현재 UTP 경로입니다. Steam transport와 Backend ticket 검증은 별도 연동입니다.

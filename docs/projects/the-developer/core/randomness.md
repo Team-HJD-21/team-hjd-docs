@@ -253,7 +253,7 @@ requiredKeys.Add(randomWriter.Key); // core/random
 
 ## 적용 범위와 한계
 
-이 API만으로 Weather·Enemy·터렛·HUD의 기존 호출이 자동 교체되지는 않습니다. 각 담당자는 위 방식으로 Host 흐름 또는 App 연출 흐름을 연결한 뒤 실제 게임 흐름을 검증해야 합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
+#656 기준 `EnemySpawnExecutor`와 `FieldTurretController`가 Match 난수를 주입받습니다. `WeatherManager`의 현재 큐 추첨은 Unity 난수이며 HUD 연출의 난수는 별도 흐름으로 연결합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
 
 ## 검증
 

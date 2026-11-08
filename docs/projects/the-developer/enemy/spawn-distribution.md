@@ -47,6 +47,8 @@ Statistics의 **Spawn decisions / distribution**에서 요청 당시 셀의 적 
 
 Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·WorldPoint·WorldArea를 구분합니다. `CauseEventId`는 요청 GUID와 별도이며 의도/전달 방식도 재전송 충돌 비교에 포함됩니다. `IEncounterSpawnSourceRegistry.Register`의 lease는 source 수명 동안 보관하고, 이동은 TryUpdate, 제거는 Dispose로 처리하는 계약입니다.
 
-명시 origin 실행은 `IOriginAwareEncounterExecutor`와 권위 resolver, 환경은 `IEncounterEnvironmentConsumer`, source/지연은 `IEncounterSpawnContextConsumer` 등 실제 Feature 연결을 요구합니다. **현재 main의 Enemy Feature가 이 확장 소비자를 구현한 것은 아닙니다.** 기존 Battlefield 자동 Spawn 경로를 유지하며 미지원 요청을 임의의 즉시 생성으로 대체하지 않습니다. 지면 출현·공중 투하·실제 source 지연 생성·날씨별 스폰이 현재 게임에 완성됐다고 표시하지 않습니다.
+`Initial_Stage`의 `EncounterSceneConfiguration`은 사용할 Executor를 명시합니다. Host는 `IEncounterOriginRequestTarget.RequestOrigin(...)`으로 즉시 요청하거나 `TryScheduleOrigin(..., delayGameSeconds, out requestId)`로 예약합니다. 예약은 게임 초를 따르고 Match/source 해제 시 취소되며, 실행 때 최신 공간·환경을 읽습니다. `PendingSpawnRequests`는 대기 건수입니다.
+
+지원하는 전달 방식은 `Immediate`입니다. `GroundEmergence`·`AirDrop`에는 전달 어댑터가 필요합니다. 동적 source가 필요하면 유효한 등록을 유지하세요. 저장할 수 없는 동적 source 예약은 체크포인트에서 거부될 수 있습니다.
 
 확장 계약 출처는 `Docs/architecture/encounter-spawn-origin-api.md`와 현재 Core/Enemy 조립부입니다. 문서에 남은 과거 실험의 생성 성공·시험 수치는 현재 Feature 인수로 사용하지 않습니다.
