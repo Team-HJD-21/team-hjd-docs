@@ -64,7 +64,7 @@ App의 위치, 네트워크 준비·시작, Match 규칙 상태를 구분합니�
 
 Match/Scene 종료 시 RandomConsumerScope·환경·actor·지역/터렛·입력 구독·시간 서비스를 해제합니다. 체크포인트 scope의 필수 writer 목록은 조립 계약에서 정하며 실제 등록 목록으로 자동 추정하지 않습니다. 상세한 [시간·저장·화면 API](api-reference.md#공용-시간과-예약)를 확인하세요.
 
-현재 Feature 디렉터리와 Map에는 IRandomConsumer·IFieldSimulationConsumer·IMatchScheduledEnvironmentFeature·ICheckpointParticipant의 실제 구현이 확인되지 않습니다. Core 쪽 자동 탐색/Port가 있다고 실제 날씨·전투·저장 연결까지 완료된 것은 아닙니다.
+현재 `EnemySpawnExecutor`와 `FieldTurretController`는 `IRandomConsumer`·`IFieldSimulationConsumer`를 구현합니다. `WeatherManager`는 `IMatchScheduledEnvironmentFeature`·`IMatchWeatherSource`를 구현하며 자체 추첨은 Unity 난수를 사용합니다. 저장은 실제 writer 등록과 필수 키를 검사하며 `world/weather` 누락 시 전체 저장을 거부합니다.
 
 ## MatchState와 snapshot 원본 경계 — main d9ea7057
 

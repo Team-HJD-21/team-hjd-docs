@@ -18,6 +18,6 @@ sidebar_position: 4
 | 진행 상태·저장 실험·날씨 큐 | [진행 상태와 날씨](world/progress.md) |
 | World 검증과 제한 사항 | [World 검증과 제한 사항](world/testing.md) |
 
-기존 공간·Spaceship 설명은 개별 기준을 유지합니다. Map 날씨 큐와 변경 알림은 main `4ff1e77d` (#537)의 `Assets/Scripts/Map/WeatherManager.cs`, `CountTick.cs`, `WeatherChangeEvent.cs`를 추가 대조했으며 Unity 플레이 검증을 뜻하지 않습니다.
+Spaceship 왕복과 Map 날씨 사용법은 main `e00fcba0`의 출입·환경 조립을 기준으로 합니다. 공간 입력의 개별 기준과 Unity 실행 검증은 각 문서에서 확인하세요.
 
 [The Developer 목차](index.md) · [통합 체크리스트](integration.md)

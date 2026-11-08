@@ -18,3 +18,7 @@ title: 체력과 UI 연결
 `curHp`, `maxHp`가 public이라고 새 모듈에서 직접 바꾸는 계약으로 삼지 마세요. `PlayerInfo`를 새 Match PlayerState와 자동 동기화하는 계약은 현재 미완성입니다.
 
 [Player — 입력·전투·피해 목차](../player.md) · [통합 체크리스트](../integration.md)
+
+## 공용 필드 시간의 감속
+
+`PlayerSlowEffects.ApplySlow(speedMultiplier, duration)`에 이동 배율과 남은 게임 초를 전달합니다. 감속마다 만료 시간을 따로 유지하며 일반 이동과 Dash에는 현재 가장 강한 배율 하나를 적용합니다. 필드 정지 중에는 만료가 진행되지 않습니다. `Changed(multiplier, count)`를 사용해 HUD를 갱신할 수 있습니다. Player의 체크포인트 writer는 감속별 배율과 남은 게임 초를 보관합니다.

@@ -50,3 +50,6 @@ var initial = new FieldTurretInitializationData(
 
 JSON 저장, 슬롯·버전·마이그레이션, 영구 ID, Research/Profile 해금, 전체 Match 복원은 아직 포함하지 않습니다.
 
+## Match 시계와 복원 소유자
+
+`FieldTurretFactory.CreateForCheckpoint`는 복원에 사용할 Controller를 넘깁니다. `PrepareInitialization`은 활성화 전에 전력 공급자와 시간·발사체 소유자를 같은 Controller로 연결합니다. 냉각 마감은 `owner.FieldSeconds`에 남은 시간을 더해 복원합니다. 이후 생성한 발사체도 같은 Match 시간과 종료 수명을 사용합니다.
