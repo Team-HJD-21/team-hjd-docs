@@ -175,3 +175,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 - `JoinRequested`는 초대에서 받은 참가 의도를 전달합니다. `OpenInviteOverlay()`로 초대 창을 열고 `LeaveLobby()`로 나갑니다.
 - 앱이 `IPlatformRuntime.Pump()`를 계속 호출합니다. 취소 또는 실시간 제한 이후에는 늦게 돌아온 SDK 응답을 정리해야 다음 생성·참가가 가능합니다.
 - 로비 참가 이후의 게임 연결은 현재 UTP 경로입니다. Steam transport와 Backend ticket 검증은 별도 연동입니다.
+
+## 현재 날씨 조회
+
+`IMatchEnvironmentSource.TryGetCurrentWeather(matchId, out weatherId)`는 확정 환경의 날씨 ID를 읽습니다. source나 날씨가 없거나 Match ID가 비었거나 다르면 false와 빈 ID를 반환합니다. 즉시 갱신이 필요한 소비자는 `Changed`를 구독한 뒤 다시 읽고 수명 종료 시 해제하세요. 시간대만 바뀌어도 알림이 올 수 있으므로 이전 날씨와 비교합니다. Host 규칙은 권위 source, Client 표시는 복제 source를 읽습니다.

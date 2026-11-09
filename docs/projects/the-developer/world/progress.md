@@ -4,7 +4,7 @@ title: 진행 상태·날씨 큐와 저장 경계
 
 # 진행 상태·날씨 큐와 저장 경계
 
-**기준:** 날씨 사용법은 게임 main `e00fcba0692a69dbf656c68be1f033300961e302` (2026-11-08)의 `day-night-api.md`, `weather-debug-hud.md`와 Map 코드를 대조했습니다. 독립 Scene 설정은 기존 `weather-system-guide.md`를 함께 참고했습니다.
+**기준:** 날씨 사용법은 게임 main `fda448b49` (#654)의 `weather-system-guide.md`와 Map 코드를 대조했습니다.
 
 ## 기존 Spaceship 진행 실험
 
@@ -17,14 +17,14 @@ SpaceshipProgressReader의 MissionData·ProgressData·Load, MissionProgresser.Ad
 | API / 값 | 현재 구현 |
 | --- | --- |
 | WeatherManager.CurrentWeather | 현재 값 읽기, 시작값은 Inspector의 `currentWeather` (코드 기본값 `SUNNY`) |
-| ChangeWeather / CallWeatherChange | 권위 Match 또는 독립 Scene에서 큐 소비·보충 → 화면 적용 → `Changed` → `OnWeatherChange` 순서로 진행합니다. Match에 속한 Client의 변경 호출은 적용되지 않습니다. |
+| ChangeWeather / CallWeatherChange | 권위 범위에서 난수가 바인딩된 경우 큐 소비·보충 → 화면 적용 → `Changed` → `OnWeatherChange` 순서로 진행합니다. Match에 속한 Client의 변경 호출은 적용되지 않습니다. |
 | Weather | SUNNY / RAIN / THUNDERSTORM / HEATWAVE. WEATHER_COUNT는 개수 sentinel이며 날씨가 아닙니다. |
 | OnWeatherChange | static Action이며 Weather와 실제 Queue를 전달합니다. 구독·해제하고 복사 필요 시 ToArray로 보관합니다. |
 | CountTick | 낮밤 소스가 없는 경우의 간격 전환입니다. 독립 Scene에서는 `Time.timeAsDouble`, Host Match에서는 주입된 Match 시계·예약을 사용합니다. 간격 기본값은 5초입니다. |
 
-기본 큐 길이는 5(최소 1), sunnyWeight는 3, 다른 세 날씨는 각 1입니다. 현재 추첨은 UnityEngine.Random.Range이며 기본 독립 확률은 맑음 3/6·나머지 각 1/6입니다. 초기 Start는 큐·표시·셰이더를 준비하지만 초기 변경 알림을 발행하지 않으므로 구독 직후 CurrentWeather를 읽습니다. `IMatchWeatherSource.WeatherId`와 `Forecast`에서 현재 ID와 읽기 전용 예고 복사본을 읽습니다. 최초 예고를 읽기 전에 Scene 조립이 완료됐는지 확인하세요.
+기본 큐 길이는 5(최소 1)입니다. `IRandomConsumer.BindRandom()`이 받은 Match `weather` 스트림으로 낮·밤별 가중치 합에서 추첨합니다. 맑음·비·뇌우·폭염 순으로 낮은 5·2·1·2, 밤은 6·2·2·0이 기본값입니다. 합이 0이면 오류를 기록하고 맑음을 반환합니다. 난수 바인딩 전에는 큐를 채우거나 소비하지 않습니다. `IMatchWeatherSource.WeatherId`와 `Forecast`에서 현재 ID와 읽기 전용 예고 복사본을 읽습니다. 최초 예고를 읽기 전에 Scene 조립이 완료됐는지 확인하세요.
 
-`WeatherManager`는 `IMatchScheduledEnvironmentFeature`와 `IMatchWeatherSource`를 구현합니다. `BindAuthority`가 Host 전환을 연결하고, Client는 `BindReplica`와 `ApplyReplica(snapshot)`를 통해 확정 환경을 화면에 적용합니다. Client 적용은 예고 추첨이나 `OnWeatherChange`를 실행하지 않습니다. 현재 Weather 자체는 `UnityEngine.Random.Range`로 추첨하며 `IRandomConsumer`와 `world/weather` writer는 아직 연결되지 않았습니다. [가중 선택 예제](../core/randomness.md)에서 공용 난수 API를 확인하세요.
+`WeatherManager`는 `IMatchScheduledEnvironmentFeature`와 `IMatchWeatherSource`를 구현합니다. `BindAuthority`가 Host 전환을 연결하고, Client는 `BindReplica`와 `ApplyReplica(snapshot)`를 통해 확정 환경을 화면에 적용합니다. Client 적용은 예고 추첨이나 `OnWeatherChange`를 실행하지 않습니다. `world/weather` writer는 아직 연결되지 않았습니다. [가중 선택 예제](../core/randomness.md)에서 공용 난수 API를 확인하세요.
 
 ### 구독과 수동 변경
 
@@ -54,7 +54,7 @@ WeatherManager는 지정된 MainCamera의 WeatherShaderApply를 사용하고, �
 
 ## 낮밤·환경 복원 계약
 
-`Initial_Stage`의 Host는 기본 낮 300게임초, 밤 300게임초를 반복합니다. `WeatherManager`가 같은 객체의 `IMatchDayNightCycle.PhaseAdvanced`를 구독하면 `CountTick`의 간격 예약은 시작하지 않습니다. 정상 주기 전환에서 다음 날씨를 한 번 선택하고, 복원·Client 적용에서는 새 날씨를 선택하지 않습니다. 전환한 환경은 다음 Encounter 계획에 반영됩니다.
+`Initial_Stage`의 Host는 기본 낮 300게임초, 밤 300게임초를 반복합니다. `WeatherManager`가 같은 객체의 `IMatchDayNightCycle.PhaseAdvanced`를 구독하면 `CountTick`의 간격 예약은 시작하지 않습니다. 정상 주기 전환에서 이전 단계의 예고를 비우고 새 단계 가중치로 채운 큐의 첫 날씨를 선택하며, 복원·Client 적용에서는 새 날씨를 선택하지 않습니다. 전환한 환경은 다음 Encounter 계획에 반영됩니다.
 
 디버그 HUD는 현재 단계와 남은 시간을 표시합니다. Host의 `TryRestartCurrentPhase()`는 공용 시각과 현재 단계를 유지하고 이 구간의 예약을 교체합니다. 재시작에 성공하면 HUD가 기존 날씨 버튼을 한 번 호출합니다. 낮밤 모드는 `world/time-of-day`로 시간을 복원합니다. `CountTick.CaptureTimerState()`와 `RestoreTimerState()`는 간격 예약이 실제로 바인딩된 모드에만 사용합니다.
 
