@@ -46,7 +46,7 @@ sidebar_position: 7
 ## 최신 기반 연결 확인 — main 1a03e9a9
 
 - App 위치·Network 준비·Match 규칙 상태를 구분하고 Mission Scene 조립 실패/취소를 처리합니다.
-- Feature가 실제로 구현한 난수·시간·환경·Spawn consumer만 조립합니다. 현재 Map의 전환은 Host 공용 시간과 낮밤 또는 간격 예약을 따릅니다. 날씨 자체의 Unity 난수와 `world/weather` writer는 별도 경계입니다.
+- Feature가 실제로 구현한 난수·시간·환경·Spawn consumer만 조립합니다. 현재 Map의 전환은 Host 공용 시간과 낮밤 또는 간격 예약을 따릅니다. 날씨는 Match 난수를 사용하며 `world/weather` writer는 아직 연결되지 않았습니다.
 - 체크포인트는 실제 writer와 필수 키, 참조 복원, stale 비동기 결과, 전체 재실행 흐름을 함께 확인합니다.
 - Player의 새 LMB 소비·Space 대시·무기 선택과 Enemy AssignTarget/EnemyAbility, 터렛 파괴 반환·자동 활성화 우선순위는 동일한 main 기준으로 연결합니다.
 - Source Docs에 남은 과거 실험·보류 문구와 실제 main 심볼이 다르면 현재 코드의 연결 상태를 확인하고, 실행 검증은 따로 기록합니다.

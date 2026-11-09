@@ -253,7 +253,7 @@ requiredKeys.Add(randomWriter.Key); // core/random
 
 ## 적용 범위와 한계
 
-#656 기준 `EnemySpawnExecutor`와 `FieldTurretController`가 Match 난수를 주입받습니다. `WeatherManager`의 현재 큐 추첨은 Unity 난수이며 HUD 연출의 난수는 별도 흐름으로 연결합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
+#656 기준 `EnemySpawnExecutor`와 `FieldTurretController`가 Match 난수를 주입받습니다. `WeatherManager`도 #654부터 Match `weather` 스트림과 낮밤별 가중치를 사용하며 HUD 연출의 난수는 별도 흐름으로 연결합니다. 체크포인트 writer는 난수 진행 상태만 저장하며, Feature의 실제 상태 writer를 대신하지 않습니다.
 
 ## 검증
 
