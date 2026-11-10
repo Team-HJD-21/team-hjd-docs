@@ -52,3 +52,9 @@ Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·Wo
 지원하는 전달 방식은 `Immediate`입니다. `GroundEmergence`·`AirDrop`에는 전달 어댑터가 필요합니다. 동적 source가 필요하면 유효한 등록을 유지하세요. 저장할 수 없는 동적 source 예약은 체크포인트에서 거부될 수 있습니다.
 
 확장 계약 출처는 `Docs/architecture/encounter-spawn-origin-api.md`와 현재 Core/Enemy 조립부입니다. 문서에 남은 과거 실험의 생성 성공·시험 수치는 현재 Feature 인수로 사용하지 않습니다.
+
+## 고정 편성과 상황별 편성
+
+Game Debugger의 **Squad Preset Order** 요청은 지정한 편성을 사용합니다. Match 초기 요청도 런처의 `initialSquadOrder`를 사용하는 고정 요청입니다. 런처의 **Plan & Spawn** 또는 `RequestSpawn(out result)`는 최신 전장·지역·환경과 Core 난수로 지점별 편성을 선택합니다. `EncounterRequest.PresetId`는 명시 origin 요청에서 계속 필요합니다.
+
+`SpawnBudgetPolicy.CalculateTotalBudget()`는 Core 지역 Grid의 점령 셀 비율에서 전체 예산을 계산합니다. Planner는 예산·배치 제약으로 명령을 만들고, Executor는 서버에서 생성에 성공한 결과만 분산 이력에 반영합니다.
