@@ -44,7 +44,7 @@ var initial = new FieldTurretInitializationData(
 - 체력과 업그레이드를 적용한 뒤 전력 비용을 계산합니다.
 - 기존 Scene/Prefab 직접 배치도 초기 상태 적용 → 등록 → 초기 활성화 순서로 동작합니다.
 
-새 비활성 인스턴스를 직접 조립하는 소비자는 `PrepareInitialization(data, source)`를 한 번 호출한 뒤 활성화할 수 있습니다. 기본 경로는 `FieldTurretFactory.Create`입니다. 현재 Canon/Missile은 이 계약을 따르며 기존 Laser는 지원하지 않습니다.
+새 비활성 인스턴스를 직접 조립하는 소비자는 `PrepareInitialization(data, source)`를 한 번 호출한 뒤 활성화할 수 있습니다. 기본 경로는 `FieldTurretFactory.Create`입니다. 현재 Canon·Missile·Laser가 공통 초기화 계약을 사용합니다.
 
 `CopyForLevelChange`는 승급·강등 상태 이전, `Repair(healthPerSecond, deltaTime)`와 `Repair(int)`는 살아 있는 터렛의 부분 수리, `Restore()`는 파괴 터렛의 복구, `Initialize(data)`는 생성 입력 적용입니다. 서로 대체하지 않습니다. 지속 수리 호출은 [API 사용법](api-reference.md#호출-시간-기준-지속-수리)을 참고하세요.
 

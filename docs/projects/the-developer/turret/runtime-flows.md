@@ -37,7 +37,7 @@ sidebar_position: 6
 
 다음 항목은 이 문서의 현재 적용 범위가 아니다.
 
-- Laser Turret 이식
+- Laser 공통 활성화·전력·저장 연동 (#664)
 - 파괴 연출과 복구 비용·시간의 최종 게임 규칙
 - 승급 비용·시간과 Spaceship Research 연동
 - NGO를 통한 `InstanceId`와 상태 동기화
@@ -251,9 +251,9 @@ Assembly와 namespace는 `TeamHJD.Game.*` 표기를 사용한다. 새 reference�
 
 `MaximumPower = AvailablePower + ReservedPower + PendingRecoveryPower`다. 과열된 터렛도 켜진 수와 예약 전력에는 포함되지만 작동 가능한 수에는 포함되지 않는다. 잠금과 파괴 상태의 터렛은 Registry에 남아 있다면 등록 수에 포함된다. 컴포넌트 비활성화나 Scene 제거로 등록 해제된 터렛은 제외된다.
 
-종류는 레벨과 Stage에 관계없이 `FieldTurretBase.Kind`로 구분한다. Canon과 Missile의 공통 구현체가 각각 `Canon`과 `Missile`을 제공하며 나머지 공통 터렛의 기본값은 `Unknown`이다. 사전에는 `Unknown`, `Canon`, `Missile`, `Laser`, `Tesla`가 0부터 포함된다. `GetActivatedCount(FieldTurretKind)`는 해당 종류가 없으면 0을 반환한다. 사전은 내부 원본을 복사해서 ReadOnlyDictionary로 감싸므로 호출자가 값을 수정하거나 이후 집계가 기존 스냅샷을 바꿀 수 없다.
+종류는 레벨과 Stage에 관계없이 `FieldTurretBase.Kind`로 구분한다. Canon·Missile·Laser 구현체가 해당 Kind를 제공하며 나머지 공통 터렛의 기본값은 `Unknown`이다. 사전에는 `Unknown`, `Canon`, `Missile`, `Laser`, `Tesla`가 0부터 포함된다. `GetActivatedCount(FieldTurretKind)`는 해당 종류가 없으면 0을 반환한다. 사전은 내부 원본을 복사해서 ReadOnlyDictionary로 감싸므로 호출자가 값을 수정하거나 이후 집계가 기존 스냅샷을 바꿀 수 없다.
 
-집계 기준은 Scene 이름이나 전체 Registry가 아니라 **같은 전력 공급자를 사용하는지**다. 다른 씬에 있어도 명시적으로 같은 컨트롤러에 연결되면 포함되고 같은 씬에 있어도 다른 컨트롤러면 제외된다. 기존 Laser는 아직 FieldTurretBase와 Registry를 사용하지 않으므로 개수에는 포함되지 않는다. 호환 CU API로 소비한 Laser 전력은 전체 예산에는 포함되므로 ReservedPower가 등록 터렛 전력 합계와 항상 같지는 않다. Laser와 Tesla의 enum 값이 있다는 사실은 공통 구조 이식이 완료됐다는 뜻이 아니다.
+집계 기준은 Scene 이름이나 전체 Registry가 아니라 **같은 전력 공급자를 사용하는지**다. 다른 씬에 있어도 명시적으로 같은 컨트롤러에 연결되면 포함되고 같은 씬에 있어도 다른 컨트롤러면 제외된다. 현재 Laser는 FieldTurretBase와 Registry를 사용하며 같은 전력 공급자의 집계에 포함된다.
 
 ```csharp
 FieldTurretControllerSnapshot snapshot = controller.GetSnapshot();
@@ -299,7 +299,7 @@ Level 스크립트에서 `Damage = 10`처럼 밸런스 수치를 다시 하드�
 
 ## 4. 실행 흐름
 
-아래 흐름도는 **현재 Canon/Missile 구현의 실제 호출 경로**다. 상자는 클래스의 메서드 또는 변경되는 상태를 뜻한다. 실패 조건과 생략된 연출은 본문에서 따로 설명한다. Laser는 아직 이 경로를 사용하지 않는다.
+아래 흐름도는 **현재 Canon/Missile 구현의 실제 호출 경로**다. 상자는 클래스의 메서드 또는 변경되는 상태를 뜻한다. 실패 조건과 생략된 연출은 본문에서 따로 설명한다. Laser의 빔 발사 경로는 이 흐름도와 별도다.
 
 ### 4.1 생성과 등록
 
@@ -657,7 +657,7 @@ flowchart TD
 - [ ] `.cs`·`.asset`·Prefab의 `.meta`가 함께 존재한다.
 - [ ] `TeamHJD.Game.FieldTurrets`가 Contracts 외의 legacy assembly를 참조하지 않는다.
 - [ ] Level 스크립트에 Definition 수치가 중복 하드코딩되지 않았다.
-- [ ] Laser Turret을 실수로 Canon/Missile 변경 범위에 포함하지 않았다.
+- [ ] Laser의 활성화와 빔 발사·냉각을 따로 확인했다.
 
 ### FieldTurretTest 조작 순서
 
@@ -739,7 +739,7 @@ flowchart TD
 | 네트워크 | 로컬 상태만 존재 | Host authoritative 상태와 Snapshot 추가 |
 | AI 화력 평가 | 이론 DPS / EffectivePower 제공 | 조수빈과 계산식·갱신 시점을 확정 |
 | 레벨 승급 | Stage 1 카탈로그와 테스트 UI만 연결 | 제품 UI, 다른 Stage 경로, 비용·시간 및 참조 갱신 정책 검증 |
-| Laser | 기존 독립 구조 유지 | 별도 Issue에서 행동 확인 후 이식 |
+| Laser | 공통 터렛 기반·전력·체크포인트 연결 | 빔 피해와 냉각은 Laser 구현에서 확인 |
 
 이 항목을 해결할 때 한 번에 전체 시스템을 다시 쓰지 않는다. observable behavior를 먼저 기록하고, 테스트 가능한 작은 Architecture Slice로 교체한다.
 
@@ -794,3 +794,7 @@ flowchart TD
     Remain -->|예| Try
     Remain -->|아니오| End[종료]
 ```
+
+## Laser 사용 경계
+
+`DefaultFieldLaserTurret`는 `FieldTurretBase`를 상속하고 `Kind`는 `Laser`입니다. 켜기와 끄기는 공통 `RequestActivation(bool)`을 사용합니다. `ProjectilesPerShot`은 0이므로 발사체 기반 이론 DPS를 빔 피해량으로 해석하지 않습니다. 체크포인트 복원은 `FieldLaserTurret.Checkpoint.cs`의 Laser 상태 연결을 사용합니다.
