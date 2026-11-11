@@ -1,6 +1,6 @@
 # Core 서비스 문서 동기화
 
-작성일: 2026-11-12. PR: 생성 후 번호 기록. 대조 기준: 게임 main `2cbc4542b`.
+작성일: 2026-11-12. PR: [#14](https://github.com/Team-HJD-21/team-hjd-docs/pull/14), `codex/docs-runtime-status-20261112 → main`. 대조 기준: 게임 main `2cbc4542b`.
 
 ## 바뀐 페이지
 
