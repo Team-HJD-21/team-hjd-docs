@@ -4,6 +4,8 @@ title: 지역·Encounter 연동
 
 # 지역·Encounter 연동
 
+**2026-11-12 추가 대조:** 게임 main `2cbc4542b`의 CU 시작 셀·동적 4방향 연결을 아래에 반영했습니다. 기존 네트워크/요청 계약의 당시 기준과 구분합니다.
+
 **기준:** 게임 `main` `9cf0e16b5924b6facfc35646184672c1d51e7b1a` (#570, 2026-11-02) · **원본:** `Docs/architecture/core-sprint-region-and-request-api.md`, 공개 Core·FieldTurret 계약.
 
 ## 지역 Grid
@@ -17,7 +19,24 @@ title: 지역·Encounter 연동
 | `FieldTurretController.Regions` | HUD·Feature가 점령 상태를 읽는 Port | Core 바인딩이 없으면 `null`일 수 있습니다. |
 | `RegionGridReplica.Apply(frame, senderIsVerifiedServer)` | 검증된 전달자에게서 받은 프레임으로 Client 읽기 모델 갱신 | 인수의 검증 여부는 전송 어댑터가 보장해야 합니다. |
 
-정적 모드는 CU가 정한 구역을 해금합니다. 동적 모드는 활성 터렛이 셀을 점유하며 지역 잠금은 사용하지 않습니다. 비활성·파괴된 터렛은 다음 계산에서 점유를 내놓고, 과열 터렛은 활성 상태이므로 계속 점유합니다. 점유의 실제 단위는 Grid 셀입니다.
+정적 모드는 CU가 정한 구역을 해금합니다. 동적 모드는 CU 시작 영역과 활성 터렛의 투영 결과에서 CU와 4방향으로 이어진 셀을 점유하며 지역 잠금은 사용하지 않습니다. 비활성·파괴된 터렛은 다음 계산에서 후보에서 빠지지만 CU 시작 영역과 남은 연결은 유지됩니다. 과열은 OFF가 아닙니다. 점유의 실제 단위는 Grid 셀입니다.
+
+### CU 시작 영역과 동적 연결
+
+CU는 위치만 제공하며 FieldTurret의 HP·전력·냉각 대상을 공유하지 않습니다. 기본 시작 영역은 CU가 위치한 셀 하나입니다. CU와 활성·비파괴 터렛 두 개가 비공선이면 들로네 삼각형을 만들 수 있습니다. 투영 후보와 시작 셀을 합친 뒤 CU에서 상하좌우로 연결된 셀만 최종 지역 snapshot에 기록합니다. 대각선 접촉만으로 연결되지 않습니다.
+
+| API | 호출 주체·동작 |
+| --- | --- |
+| `binding.TrySetDynamicStartCells(cells, true, out error)` | Host의 맵/도구가 명시 Reset으로 시작 셀을 적용. null/빈 목록은 CU 1셀 기본값 |
+| `binding.CaptureDynamicStartCells()` | 설정 도구/저장 실행기가 현재 명시 목록을 복사. 빈 배열은 기본값 |
+| `binding.LastEvaluation` / `LastDynamicError` | 시작 셀 수·연결 제외 수·임시 기하·설정 오류 조회 |
+| `binding.RefreshDynamicAfterRestore()` | 모든 actor/공간 복원 뒤 조립부가 호출. 일반 Feature의 매 프레임 호출 API가 아님 |
+
+시작 셀 인덱스는 현재 지역 Grid의 `y * CellsX + x`입니다. 명시 목록은 CU 셀 포함·Grid 범위·4방향 연결을 만족해야 합니다. 잘못된 입력은 기존 상태를 유지하며, 적용은 새 Grid 세대로 발행합니다. 정책/Grid Reset은 명시 목록을 지우고 기본 CU 셀로 돌아갑니다.
+
+설정은 `world/region-start` v1 section에 저장합니다. 새 필수 section이 없는 과거 Checkpoint는 적용 전에 거부합니다. 기존 공간/네트워크 snapshot 형식은 유지했지만 과거 저장 마이그레이션을 제공하는 것은 아닙니다. 실제 Weather 등 필수 writer가 없으면 전체 저장은 계속 차단됩니다.
+
+물/통행 가능 제작 마스크와 Enemy의 일반 스폰 제한은 별도 연결입니다. 점유 Grid가 갱신됐다는 사실만으로 모든 생성 경로가 그곳을 자동 제외한다고 가정하지 마세요. [도구에서 설정하기](../../../editor-tools/the-developer/game-debugger/battlefield.md#동적-지역의-cu-시작-영역)
 
 ### Initial_Stage 지역 초기화 순서
 

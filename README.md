@@ -1,5 +1,9 @@
 # TeamHJD Tech Docs
 
+## Core 구현 현황 (2026-11-12)
+
+프로젝트 Docs → The Developer → Core에서 현재 사용할 수 있는 기능, CameraManager와 시점 전환, Audio 구현 상태를 확인합니다. 게임 main `2cbc4542b`의 공개 호출 계약과 실제 연결 경계를 대조했습니다. CameraManager 기반은 구현됐고 공용 AudioManager는 아직 없습니다. 지역 API와 Battlefield 도구의 CU 시작 영역 사용법도 갱신했습니다. [문서 범위·확인 결과](planning/core-api-status-20261112.md)를 참고하세요.
+
 ## 에디터 도구 문서 (2026-10-08)
 
 상단 `프로젝트 API → 에디터 도구 → 용어 사전` 순서로 탐색합니다. `/docs/editor-tools`에서 프로젝트를 선택하고 `The Developer → Game Debugger`에서 빠른 시작·창/시간·Battlefield/Scene·Encounter·통계·스폰 판단·Timeline/공유·문제 해결을 읽습니다. API sidebar와 도구 sidebar를 분리하며 기존 프로젝트 API/검색 주소는 유지합니다.
