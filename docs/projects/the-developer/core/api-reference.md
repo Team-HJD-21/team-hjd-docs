@@ -179,3 +179,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 ## 현재 날씨 조회
 
 `IMatchEnvironmentSource.TryGetCurrentWeather(matchId, out weatherId)`는 확정 환경의 날씨 ID를 읽습니다. source나 날씨가 없거나 Match ID가 비었거나 다르면 false와 빈 ID를 반환합니다. 즉시 갱신이 필요한 소비자는 `Changed`를 구독한 뒤 다시 읽고 수명 종료 시 해제하세요. 시간대만 바뀌어도 알림이 올 수 있으므로 이전 날씨와 비교합니다. Host 규칙은 권위 source, Client 표시는 복제 source를 읽습니다.
+
+## 현재 낮밤 조회
+
+`MatchDayNightQueries.TryGetCurrentDayPhase(source, matchId, out phase)`는 확정 환경 snapshot의 `day` 또는 `night`를 `DayNightPhase`로 읽습니다. `TeamHJD.Game.Contracts`의 확장 메서드이며, source·snapshot·시간대가 없거나 Match가 다르거나 ID를 해석할 수 없으면 false입니다. 반환값이 true일 때만 phase를 사용하세요. `Changed` 알림에서 다시 조회하고 이전 단계와 비교합니다.

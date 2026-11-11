@@ -63,3 +63,9 @@ Presenter는 요청 직전에도 거리와 조작 허용 조건을 검사합니�
 CU 점령 수치는 표시 Frame의 모드·RegionGridId·RegionRevision이 현재 지역 Snapshot과 일치할 때만 결합합니다. 채널 도착 순서가 다르면 대기 안내를 표시하고 이전 지역 수치와 새 HUD 상태를 섞지 않습니다. Client는 오래된 로컬 터렛 사거리 원을 확정 표시로 사용하지 않습니다.
 
 PlayerControlState는 IPlayerInteractionActor로 XY·생존·CanAct를 제공합니다. 서버 actor 소유자가 RegisterAuthorityPlayerActor의 lease를 실제 actor 수명에 연결해야 하며 Client의 위치 주장을 주입하면 안 됩니다. 현재 자기 로컬 actor 생성과 Core 명령·표시 전송을 원격 Player 이동/공격·FieldTurret 전투 복제 완성으로 해석하지 않습니다. 원본의 자동 버튼/UTP·두 프로세스 검사 보고와 PL의 실제 마우스·해상도별 시각 인수는 별도이며, 이번 문서 작업은 실행 시험을 재수행하지 않았습니다.
+
+## 플레이어 상태창과 성장
+
+I 상태창은 `PlayerAttack.TryGetCurrentWeaponStats(out PlayerWeaponStats)`와 `PlayerWeaponAmmo.GetReloadDuration(weapon)`에서 실제 무기 수치를 읽습니다. 피해는 탄환 한 발 또는 근접 타격 한 번 기준입니다. 장착 무기 선택은 기존 `PlayerWeaponSelection`을 사용합니다.
+
+보상 지급은 `PlayerExperience.AddExperience(int)`를 사용합니다. 0 이하·최대 레벨·권한 없는 Client의 요청은 거부됩니다. HUD는 `Level`, `TotalExperience`, `Progress`를 읽고 `Changed`에서 새로 표시합니다. `LevelChanged(previous, current)`는 지급으로 레벨이 달라졌을 때 통지합니다. 복원 후에는 `Changed`로 표시를 갱신합니다.

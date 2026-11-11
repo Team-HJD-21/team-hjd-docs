@@ -8,7 +8,7 @@ title: 타깃 제공과 선택
 
 ## 타깃 제공
 
-`ITargetable`은 TargetTransform·TargetType·HealthRatio·FirepowerRatio·CanBeTargeted를 제공합니다. `DamageableTargetAdapter`가 IDamageableTarget을 읽어 TargetableComponent에 투영합니다. CU는 생존 중, 무기 터렛은 현행 adapter의 활성·생존 조건에서 대상이 됩니다. 문서의 향후 OFF/잠금 타기팅 요구를 구현 완료로 가져오지 않습니다.
+`ITargetable`은 TargetTransform·TargetType·HealthRatio·FirepowerRatio·CanBeTargeted를 제공합니다. `DamageableTargetAdapter`가 IDamageableTarget을 읽어 TargetableComponent에 투영합니다. CU는 생존 중, 무기 터렛은 생존하고 잠금 해제 상태라면 OFF여도 대상 후보입니다. `DamageableTargetAdapter`는 `IsLocked`를 확인합니다.
 
 FirepowerRatio는 호환 이름이며 현행 DpsPerPower 값입니다. 유효 공격력 × 발사율 × 발사당 최대 탄환 수 / 전력을 계산하고 전력 0/CU는 0입니다. 0–1 비율, 실제 명중률·폭발 총 피해와 구분합니다. 자동 활성화의 공격력/전력 동점 비교값과도 다릅니다.
 
