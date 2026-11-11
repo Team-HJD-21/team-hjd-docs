@@ -4,6 +4,8 @@ title: Core API 사용법
 
 # Core API 사용법
 
+**2026-11-12 추가:** [CameraManager의 로컬 시점 API](camera-management.md), [CU 시작 셀 설정](regions-encounters.md#cu-시작-영역과-동적-연결)을 사용할 수 있습니다. [Audio는 공용 API 미구현](audio.md)입니다. 아래 기반 API의 당시 대조일과 최신 항목을 구분하며 [전체 상태](implementation-status.md)를 확인하세요.
+
 **기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06). 기존 전용 요청 API와 실제 scoped runtime/복원 계약을 정적으로 대조했습니다.
 
 ## 주요 API

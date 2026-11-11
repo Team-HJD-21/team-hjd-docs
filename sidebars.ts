@@ -26,7 +26,7 @@ const sidebars: SidebarsConfig = {
         'projects/the-developer/api-search',
         'projects/the-developer/archive-search',
         ...[
-          {name: 'core', label: 'Core — 세션·명령·이벤트', pages: ['quick-start', 'api-reference', 'randomness', 'presence-reporting', 'contracts', 'events', 'regions-encounters', 'testing']},
+          {name: 'core', label: 'Core — 세션·명령·이벤트', pages: ['implementation-status', 'quick-start', 'api-reference', 'camera-management', 'audio', 'randomness', 'presence-reporting', 'contracts', 'events', 'regions-encounters', 'testing']},
           {name: 'player', label: 'Player — 입력·전투·피해', pages: ['quick-start', 'combat', 'health', 'skills', 'testing']},
           {name: 'world', label: 'World / Spaceship — 공간·씬·진행 상태', pages: ['quick-start', 'spatial-inputs', 'progress', 'testing']},
         ].map(({name, label, pages}) => ({

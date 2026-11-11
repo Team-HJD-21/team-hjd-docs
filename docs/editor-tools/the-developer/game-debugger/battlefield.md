@@ -92,6 +92,20 @@ Grid 크기를 크게 바꾸면 객체가 OOB가 되거나 cell ID/후보 판정
 
 Edit Mode의 `Add Turret Battlefield Input Source to Active Scene`은 실제 컴포넌트를 추가하는 구성 명령입니다. 조회/Frame과 달리 Scene을 변경하므로 대상 Active Scene을 확인하고 저장합니다. 정상 구성된 팀 Scene에 무조건 다시 설치하는 절차는 아닙니다.
 
+## 동적 지역의 CU 시작 영역
+
+11월 12일 main `2cbc4542b`부터 지역 Grid의 시작 셀을 설정할 수 있습니다. 위에서 설명한 Battlefield 밀도 Grid·전선 기하와 다른 데이터입니다. 지역 점유 계산에서는 CU도 위치 노드여서 CU와 터렛 두 개가 비공선이면 삼각형을 만들 수 있습니다.
+
+1. Host Match에서 **지역 Grid · 점령 원본 → 지역 정책 → Dynamic**을 선택하고 Reset을 확인합니다.
+2. **동적 시작 영역 · Host 설정**을 펼칩니다. 빈 목록은 CU가 있는 셀 하나입니다.
+3. `셀 추가`로 X/Y를 편집합니다. 월드 좌표가 아닌 지역 Grid의 셀 좌표이며 CU를 포함하고 상하좌우로 연결돼야 합니다. 목록은 32행씩 표시합니다.
+4. **시작 셀 적용 / 점유 Reset**을 누르고 확인합니다. 초안만 편집하면 게임 상태는 변하지 않습니다. 범위 밖·CU 미포함·대각선만 연결된 목록은 거부합니다.
+5. **Scene 점령 Grid**와 **CU 시작 / 연결 제외 셀**을 확인합니다. **임시 판정 삼각형**은 계산에 쓴 자료이며 최종 점유 원본은 셀 집합입니다.
+
+**CU 1셀 기본값**은 초안 목록만 비웁니다. 실제 적용 버튼을 눌러야 합니다. 모드/Grid Reset은 기존 명시 목록을 기본값으로 되돌립니다. Client는 확정 점유를 읽으며 시작 영역을 바꾸지 않습니다. 런타임 편집은 Scene/Prefab에 자동 저장되지 않습니다.
+
+[API·저장 호환성과 미연결 범위](../../../projects/the-developer/core/regions-encounters.md#cu-시작-영역과-동적-연결)를 함께 확인하세요. 기존 위 영상은 신규 시작 셀 UI의 검증 영상이 아닙니다.
+
 ## 다음에 읽을 문서
 
 [Spawn 판단과 당시 공간](spawn-inspection.md) · [공유용 캡처](timeline-and-sharing.md) · [World 공간 입력 API](../../../projects/the-developer/world/spatial-inputs.md)
