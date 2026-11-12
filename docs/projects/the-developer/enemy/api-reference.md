@@ -20,7 +20,7 @@ title: Enemy 스폰 API 사용법
 | `EnemyNetworkController.DeathConfirmed` / `Despawned` | 서버에서 확인한 사망 / 네트워크 제거 알림, 인자는 NetworkObjectId | 드라이버가 Died를 받아 서버 사망 통지 후 Despawn; 생성 주체가 추적 해제 |
 | `EnemyController.AssignTarget(Transform)` | 공통 Targeting 갱신 후 하위 OnTargetChanged 실행 | MovingEnemyController가 목적지/경로를 갱신; null은 대상 해제 |
 | `EnemyAbility.CheckCondition()` / `TryUse()` / `IsExecuting` | 발동 조건 / 실행 수락 / 진행 상태 | 조건은 쿨타임과 분리하며 Activate 성공 때만 쿨타임 시작 |
-| `EnemySquadTargetSelector.TrySelectNearestTarget(origin, out target)` | 가장 가까운 유효 Player/Turret 선택 | 대상이 없으면 false |
+| `EnemyTargetSelector.TryFindNearest(...)` | Runtime 후보에서 유효한 최근접 목표를 선택합니다. 요청 인원 수를 전달하면 배정 여유도 검사합니다. | 후보가 없으면 false |
 
 `TrySpawn`의 squadOrder는 catalog의 실제 프리셋 키를 전달합니다. 특정 문자열을 모든 Scene에서 유효하다고 가정하지 않습니다. 생성 상한과 실제 생성 수는 같지 않을 수 있습니다.
 

@@ -25,3 +25,11 @@ MovingEnemyController는 능력 실행 중이거나 CheckCondition이 참이면 
 능력 공통 기반 `EnemyAbility`는 CheckCondition·TryUse·IsExecuting과 protected Activate를 분리합니다. CheckCondition은 위치/상태, TryUse는 활성·실행 중·쿨타임·조건을 검사하고 Activate 성공 때만 공통 쿨타임을 시작합니다. 근접 능력은 실제 Collider 표면 거리를 사용하고 유효 TargetableComponent와 양수 피해를 요구합니다. 몸통을 명시 연결한 경우와 자동으로 비 Trigger 몸통을 찾는 경우를 구분하세요.
 
 이전 EnemyCombat/EnemyAttack/EnemyCloseRangeAttack을 새 능력 구조에 중복 연결하지 않습니다. [현재 능력·투사체 API](api-reference.md)를 확인하세요. 정적 구조 확인은 실제 AI·네트워크 플레이·밸런스 검증이 아닙니다.
+
+## 분대의 타깃 전환과 공격 인원
+
+`EnemySquad`는 타깃 불가 알림을 받으면 기존 배정을 해제하고 즉시 다시 검색합니다. 후보가 없으면 활성 구성원의 기존 행동 갱신에서 `RefreshTarget()`으로 0.5초마다 재시도합니다. `EnemyPlayerSensor`로 감지한 유효 플레이어를 우선하며, 기존 플레이어가 유효하면 유지합니다.
+
+`ITargetable.MaxAttackers`와 `AssignedAttackerCount`로 한도와 현재 배정을 읽습니다. `TryAssignAttackers(count)`는 유효한 타깃에 남은 자리가 있을 때 양수 인원을 배정합니다. 호출자는 타깃 교체·이탈 시 `UnassignAttackers(count)`로 자신의 배정을 반환합니다. `EnemyDefinition.IsIncludedInAttackerLimit`가 꺼진 몬스터는 분대 타깃을 공유하면서 인원 집계에서 빠집니다. 현재 BomberSlime이 이 설정을 사용합니다.
+
+서버 생성·복원 호출부는 `SetSimulationMatch`를 `NetworkObject.Spawn` 전에 호출합니다. NGO 값은 `OnNetworkSpawn` 이후 서버가 반영하고 Client는 초기 Spawn 자료를 읽습니다.
