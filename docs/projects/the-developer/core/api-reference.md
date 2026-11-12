@@ -161,7 +161,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 
 `MatchEnvironmentSnapshot.Epoch`가 Match 시간의 복원 세대를 함께 전달합니다. 같은 epoch에서는 게임 시간 역행을 거부하고, 복원으로 epoch가 바뀌면 더 작은 게임 초를 적용할 수 있습니다. 값이 같더라도 epoch 교체는 새 revision의 환경 상태로 게시합니다. 같은 revision에 epoch/시간/내용이 다르면 충돌이며, 과거 revision은 계속 거부합니다. `HasSameValues`만으로 epoch까지 동일하다고 판단하지 않습니다.
 
-`EnvironmentReplicationCodec`과 채널은 v2(`teamhjd.core.environment.v2`)로 변경됐습니다. 최대 payload는 16,384바이트이며 v1/v2 혼합 빌드가 호환된다고 가정하지 않습니다.
+`EnvironmentReplicationCodec`은 `PhaseAnchor`가 있으면 v3, 없으면 v2 payload를 사용합니다. NGO 채널은 `teamhjd.core.environment.v2`이며 최대 payload는 16,384바이트입니다. 협동 실행에는 같은 빌드를 사용하세요.
 
 `MatchEnvironmentSceneScope`는 선택적인 `IMatchClock clock`을 받아 실제 시간 epoch를 환경에 연결하고, `PublishCurrent()`로 Match 시작 직후 초기 환경을 게시하는 접점을 제공합니다. 호출과 실제 source 연결은 조립부 책임입니다. 현재 main의 기존 조립부가 이 추가 인자/초기 게시를 모두 사용한다고 설명하지 않습니다.
 

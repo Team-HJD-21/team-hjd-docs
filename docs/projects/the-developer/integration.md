@@ -58,5 +58,5 @@ sidebar_position: 7
 - MatchSnapshot의 초기 자료를 실제 Feature HP/전력 원본으로 사용하지 않습니다.
 - FieldSimulationTime에 실제 owner를 전달하고 생성물을 같은 Scene/시간/종료 수명에 연결합니다. 독립 시험의 Unity 시간 fallback과 정식 Match 연결을 구분합니다.
 - Animator 전환 중 캡처 재시도, 논리 ID 참조의 누락/중복, 모든 actor 적용 뒤 Resolve와 실패 rollback을 확인합니다.
-- 환경 revision·epoch·게임 초를 함께 검사하고 v2 환경 전송에 같은 빌드를 사용합니다.
+- 환경 revision·epoch·게임 초를 함께 검사하고 환경 payload의 PhaseAnchor v3 지원을 맞추기 위해 같은 빌드를 사용합니다.
 - NGO driver의 1–2인 참가자 완료 검사와 AppRoot의 남은 이동 제한을 따로 확인합니다.

@@ -56,3 +56,7 @@ WeatherManager는 지정된 MainCamera의 WeatherShaderApply를 사용하고, �
 디버그 HUD는 현재 단계와 남은 시간을 표시합니다. Host의 `TryRestartCurrentPhase()`는 공용 시각과 현재 단계를 유지하고 이 구간의 예약을 교체합니다. 재시작에 성공하면 HUD가 기존 날씨 버튼을 한 번 호출합니다. 낮밤 모드는 `world/time-of-day`로 시간을 복원합니다. `CountTick.CaptureTimerState()`와 `RestoreTimerState()`는 간격 예약이 실제로 바인딩된 모드에만 사용합니다.
 
 환경 snapshot은 시간 Epoch를 포함하고 v2 채널로 전송합니다. 같은 epoch에서 시간 역행은 거부하되 복원 세대 교체는 별도로 처리합니다. Scene 조립부의 clock 주입과 PublishCurrent 연결이 있어야 초기/복원 환경을 그 시계에 맞출 수 있습니다. [환경·낮밤 세부 계약](../core/api-reference.md#환경-epoch낮밤-확장)을 함께 확인하세요.
+
+### Client 카운트다운
+
+HUD는 기존 `IMatchDayNightCycle.RemainingSeconds`를 읽습니다. Client는 Host가 보낸 `MatchEnvironmentSnapshot.PhaseAnchor`와 같은 Match·복원 세대의 공용 게임 시계로 남은 시간을 계산합니다. 자료가 없으면 `--:--`를 표시하고, 경계에 먼저 도달하면 0에서 다음 Host 확정을 기다립니다. 낮밤은 공용 게임 시계의 정지·배속을 따르므로 필드 전용 정지와 구분합니다. Reset은 Host 권한에서 사용합니다.
