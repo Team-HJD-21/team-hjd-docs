@@ -27,3 +27,7 @@ title: Spaceship 씬 왕복
 `NgoSceneFlow` 자체는 Scene 관리를 켠 **1–2인 Host**가 선택한 Load/Replace/Unload를 지원합니다. 작업 시작 때 참가자 집합을 고정하고 전체 완료 목록을 확인하며, 도중 새 참가/이탈·Host 종료·일부 timeout·실시간 deadline 초과를 성공으로 처리하지 않습니다. 완료 콜백 내부 정리가 끝난 뒤 다음 작업을 허용하고 이벤트 구독을 정리합니다. Client가 Scene을 독자적으로 고르는 API가 아닙니다.
 
 현재 App/GameFlow도 고정 1–2인 Host의 공동 Scene 이동을 허용합니다. `LaunchMissionAsync`는 전체 Scene 로드 후 전원의 Feature 준비를 기다리고 시작합니다. Client의 독립 Scene 전환은 차단됩니다. 임시 포털 방문은 Host 권위 actor의 위치를 보고하며, 원격 Client의 출입 요청 RPC는 별도 구현 범위입니다.
+
+## 우주선 내부 자동문
+
+`DoorOperation`의 감지 트리거에 `PlayerFeetBox`가 닿으면 내부 자동문이 열립니다. 출격·필드 왕복은 위의 `SpaceshipEnter`와 `SpaceshipExit` 계약을 사용합니다.

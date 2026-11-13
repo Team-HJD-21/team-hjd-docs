@@ -69,3 +69,9 @@ PlayerControlState는 IPlayerInteractionActor로 XY·생존·CanAct를 제공합
 I 상태창은 `PlayerAttack.TryGetCurrentWeaponStats(out PlayerWeaponStats)`와 `PlayerWeaponAmmo.GetReloadDuration(weapon)`에서 실제 무기 수치를 읽습니다. 피해는 탄환 한 발 또는 근접 타격 한 번 기준입니다. 장착 무기 선택은 기존 `PlayerWeaponSelection`을 사용합니다.
 
 보상 지급은 `PlayerExperience.AddExperience(int)`를 사용합니다. 0 이하·최대 레벨·권한 없는 Client의 요청은 거부됩니다. HUD는 `Level`, `TotalExperience`, `Progress`를 읽고 `Changed`에서 새로 표시합니다. `LevelChanged(previous, current)`는 지급으로 레벨이 달라졌을 때 통지합니다. 복원 후에는 `Changed`로 표시를 갱신합니다.
+
+## 전투 HUD와 장착
+
+`CombatSkillPicker`의 반원 선택창에서 Q/E 슬롯으로 스킬을 끌어 장착합니다. `PlayerSkillController.TryEquip(slot, skill)`의 슬롯 0은 Q, 1은 E입니다. 반대 슬롯의 스킬을 가져오면 서로 교환합니다. SPACE는 고정 Dash입니다. 선택창을 닫는 동안에도 전투 입력 제한을 유지하며 ESC는 선택창이 먼저 소비합니다.
+
+`TryUseSlot(slot)`은 허용된 Q/E 시도에서 `SlotUseAttempted(slot, skill, accepted)`를 한 번 알립니다. 미배정 슬롯과 실제 설치 확정 실패는 공통 Alert로 표시합니다. `PlayerAttack.ShotFired(WeaponType)`는 원거리 발사 성공 시 조준선 피드백에 사용하며 산탄도 한 번만 알립니다. XP 팝업은 `PlayerExperience.ExperienceGranted`를 구독합니다. 우주선 방문 중 HUD 입력과 표시를 숨기고 필드 복귀 시 같은 actor의 상태를 읽습니다.

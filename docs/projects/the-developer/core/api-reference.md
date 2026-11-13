@@ -185,3 +185,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 ## 현재 낮밤 조회
 
 `MatchDayNightQueries.TryGetCurrentDayPhase(source, matchId, out phase)`는 확정 환경 snapshot의 `day` 또는 `night`를 `DayNightPhase`로 읽습니다. `TeamHJD.Game.Contracts`의 확장 메서드이며, source·snapshot·시간대가 없거나 Match가 다르거나 ID를 해석할 수 없으면 false입니다. 반환값이 true일 때만 phase를 사용하세요. `Changed` 알림에서 다시 조회하고 이전 단계와 비교합니다.
+
+## 공통 조작 알림
+
+`TeamHJD.Game.Application.GameAlerts.Show(message, tone, key)`는 로컬 화면에 일회성 결과를 표시합니다. Unity 메인 스레드에서 실제 조작 결과를 받은 뒤 한 번 호출하세요. 반환값은 표시 큐 수락 여부입니다. `key`가 생략되면 문구로 중복을 판단합니다. 기본 노출은 실시간 2.2초이며, 표시 한 건 외에 최대 세 건을 대기시킵니다. 로딩·결과 화면·우주선 이동 페이드가 시작되면 큐를 비웁니다. 네트워크 참가자별 결과는 해당 참가자의 UI에서 표시합니다.
