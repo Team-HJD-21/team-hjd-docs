@@ -58,3 +58,9 @@ Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·Wo
 Game Debugger의 **Squad Preset Order** 요청은 지정한 편성을 사용합니다. Match 초기 요청도 런처의 `initialSquadOrder`를 사용하는 고정 요청입니다. 런처의 **Plan & Spawn** 또는 `RequestSpawn(out result)`는 최신 전장·지역·환경과 Core 난수로 지점별 편성을 선택합니다. `EncounterRequest.PresetId`는 명시 origin 요청에서 계속 필요합니다.
 
 `SpawnBudgetPolicy.CalculateTotalBudget()`는 Core 지역 Grid의 점령 셀 비율에서 전체 예산을 계산합니다. Planner는 예산·배치 제약으로 명령을 만들고, Executor는 서버에서 생성에 성공한 결과만 분산 이력에 반영합니다.
+
+## 정적 Region의 스폰 허용
+
+지점을 `SpawnPointRegistry.Initialize(points)`로 등록한 뒤 Static Region snapshot으로 `InitializeRegionGroups(regionSnapshot)`을 호출합니다. XY 좌표의 셀에 지정된 Region ID로 묶으며 Grid 밖과 ID 0은 제외합니다. `SetRegionSpawnEnabled(regionId, enabled)`는 그룹의 스폰 허용 상태를 바꾸고 그룹이 없으면 false를 반환합니다. 개별적으로 차단된 지점은 Region을 다시 켜도 차단 상태를 유지합니다.
+
+현재 Match가 Dynamic으로 전환되거나 종료되면 정적 그룹 제한을 해제합니다. 점령 상태로 자동 차단하려면 Core 호출부에서 `SetRegionSpawnEnabled`를 연결해야 합니다.

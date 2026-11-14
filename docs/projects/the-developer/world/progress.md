@@ -41,7 +41,7 @@ SpaceshipProgressReader의 MissionData·ProgressData·Load, MissionProgresser.Ad
 
 ## 날씨 화면 효과
 
-WeatherManager는 지정된 MainCamera의 WeatherShaderApply를 사용하고, 없거나 다른 태그 참조면 Camera.main에서 같은 컴포넌트를 찾습니다. `ApplyWeather(weather)`는 초기 값을 즉시 표시하고 이후 변경은 설정된 Material과 전환 시간(기본 1.5초)으로 보간합니다. `ApplyWeather`와 `SetEffectsEnabled(bool)`의 변경 범위는 카메라 표현입니다. 현재 날씨·예고 큐·변경 알림은 `WeatherManager`가 관리합니다. 같은 날씨를 다시 적용하면 전환을 재시작하지 않습니다. 렌더링은 `OnRenderImage`와 `Graphics.Blit` 경로를 사용합니다.
+WeatherManager는 지정된 MainCamera의 WeatherShaderApply를 사용하고, 없거나 다른 태그 참조면 Camera.main에서 같은 컴포넌트를 찾습니다. `ApplyWeather(weather)`는 초기 값을 즉시 표시하고 이후 변경은 설정된 Material과 전환 시간(기본 1.5초)으로 보간합니다. `ApplyWeather`와 `SetEffectsEnabled(bool)`의 변경 범위는 카메라 표현입니다. 현재 날씨·예고 큐·변경 알림은 `WeatherManager`가 관리합니다. 같은 날씨를 다시 적용하면 전환을 재시작하지 않습니다. URP 2D의 `StageCameraEffectsFeature`가 날씨 효과를 Render Graph 패스로 그립니다. 같은 카메라에 `DayNightShaderApply`가 연결돼 있으면 날씨 합성 뒤 낮밤 효과를 적용합니다.
 
 `PlayerWeatherEffectBinding`은 로컬 플레이어 조립부에서 `PrepareLocalActor`·`BindLocalActor`·`UnbindLocalActor`로 연결합니다. `BindLocalActor`는 `PlayerLocationState`의 현재 위치를 즉시 적용하고 `LocationChanged`를 구독합니다. `true`면 효과를 숨기고 `false`면 다시 표시합니다. 기준 main의 C#에서 `CheckLocation(bool)` 호출부는 확인되지 않아 실제 포털 진입과의 연결은 별도 확인이 필요합니다. 로컬 화면 표시와 Host의 확정 출입/전체 필드 정지는 별개입니다. 전원 내부 정책은 [출입 보고 API](../core/presence-reporting.md)를 따릅니다.
 

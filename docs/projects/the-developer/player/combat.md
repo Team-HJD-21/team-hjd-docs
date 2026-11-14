@@ -46,7 +46,7 @@ main `d0922f0b`에서 `EnemyHealth` 자체 서버 검사는 제거됐습니다. 
 
 ## 8방향 표시와 모션 API
 
-몸체·총구 외형은 연결된 클립에 따라 8방향을 사용하고 실제 탄환은 연속 마우스 조준 벡터로 발사합니다. 표시 방향을 탄환 방향의 양자화 규칙으로 쓰지 않습니다. 표시 모션은 물리 루트·Collider를 이동시키지 않습니다.
+현재 Player는 옆모습 몸체를 좌우 반전하고 무기는 연속 회전합니다. `PlayerWeaponRig.TryGetContinuousAimDirection`으로 조준 방향을 읽고 `TryGetMuzzle`로 회전된 총구 위치를 읽습니다. 기존 8방향 구성도 지원합니다. 기본총과 스나이퍼는 발사당 1발, 냉각총은 25도 범위에 3발을 생성합니다. 탄창은 발사당 한 발을 소비합니다. 연속 조준 스패너의 판정과 검기는 `PlayerWeaponVisual.TryGetSpannerStrikeGeometry`에서 같은 원점과 반경을 사용합니다.
 
 | 공개 API | 책임 |
 | --- | --- |
