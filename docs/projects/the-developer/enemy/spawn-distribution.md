@@ -47,7 +47,7 @@ Statistics의 **Spawn decisions / distribution**에서 요청 당시 셀의 적 
 
 Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·WorldPoint·WorldArea를 구분합니다. `CauseEventId`는 요청 GUID와 별도이며 의도/전달 방식도 재전송 충돌 비교에 포함됩니다. `IEncounterSpawnSourceRegistry.Register`의 lease는 source 수명 동안 보관하고, 이동은 TryUpdate, 제거는 Dispose로 처리하는 계약입니다.
 
-`Initial_Stage`의 `EncounterSceneConfiguration`은 사용할 Executor를 명시합니다. Host는 `IEncounterOriginRequestTarget.RequestOrigin(...)`으로 즉시 요청하거나 `TryScheduleOrigin(..., delayGameSeconds, out requestId)`로 예약합니다. 예약은 게임 초를 따르고 Match/source 해제 시 취소되며, 실행 때 최신 공간·환경을 읽습니다. `PendingSpawnRequests`는 대기 건수입니다.
+`Stage_1`의 `EncounterSceneConfiguration`은 사용할 Executor를 명시합니다. Host는 `IEncounterOriginRequestTarget.RequestOrigin(...)`으로 즉시 요청하거나 `TryScheduleOrigin(..., delayGameSeconds, out requestId)`로 예약합니다. 예약은 게임 초를 따르고 Match/source 해제 시 취소되며, 실행 때 최신 공간·환경을 읽습니다. `PendingSpawnRequests`는 대기 건수입니다.
 
 지원하는 전달 방식은 `Immediate`입니다. `GroundEmergence`·`AirDrop`에는 전달 어댑터가 필요합니다. 동적 source가 필요하면 유효한 등록을 유지하세요. 저장할 수 없는 동적 source 예약은 체크포인트에서 거부될 수 있습니다.
 
@@ -55,7 +55,7 @@ Core의 `EncounterRequest.Origin`은 Automatic·AuthoredPoint·DynamicSource·Wo
 
 ## 고정 편성과 상황별 편성
 
-Game Debugger의 **Squad Preset Order** 요청은 지정한 편성을 사용합니다. Match 초기 요청도 런처의 `initialSquadOrder`를 사용하는 고정 요청입니다. 런처의 **Plan & Spawn** 또는 `RequestSpawn(out result)`는 최신 전장·지역·환경과 Core 난수로 지점별 편성을 선택합니다. `EncounterRequest.PresetId`는 명시 origin 요청에서 계속 필요합니다.
+Game Debugger의 **Squad Preset Order** 요청은 지정한 편성을 사용합니다. Stage_1의 정규 생산은 `MatchCoordinator`의 Field 예약에서 시작합니다. `EncounterSceneBinding`은 현재 Match·전장·환경·난수를 연결합니다. 시험 Scene에서는 `EnemyNetworkTestControls`를 명시 배치해 수동 요청을 보냅니다. 상황별 편성은 최신 전장·지역·환경과 Core 난수를 사용합니다. `EncounterRequest.PresetId`는 명시 origin 요청에서 계속 필요합니다.
 
 `SpawnBudgetPolicy.CalculateTotalBudget()`는 Core 지역 Grid의 점령 셀 비율에서 전체 예산을 계산합니다. Planner는 예산·배치 제약으로 명령을 만들고, Executor는 서버에서 생성에 성공한 결과만 분산 이력에 반영합니다.
 

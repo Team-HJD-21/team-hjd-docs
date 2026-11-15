@@ -8,12 +8,12 @@ title: 현재 사용할 수 있는 기능
 
 ## Camera와 Audio부터 구분하기
 
-**CameraManager는 구현돼 있습니다.** 기존 Player 추적 카메라에 자동 연결되며 임시 시점·블렌드·복귀를 요청할 수 있습니다. **새 AudioManager는 아직 없습니다.** CameraManager가 AudioListener 하나를 선택하는 기능은 BGM/SFX를 재생하는 관리 기능과 다릅니다.
+**CameraManager는 구현돼 있습니다.** 기존 Player 추적 카메라에 자동 연결되며 임시 시점·블렌드·복귀를 요청할 수 있습니다. 공용 재생은 `GameAudioManager`를 사용합니다.
 
 | 기능 | 지금 사용할 수 있는 것 | 아직 별도로 필요한 것 |
 | --- | --- | --- |
 | 로컬 카메라 | `CameraManager.Current`, `PushView`, 반환 lease의 `Dispose`, 출력/시점 알림 | 제품 컷씬·자막 콘텐츠, 실제 조준/Weather 표현 인수 |
-| 오디오 | 출력 Camera의 활성 AudioListener 선택 | 공용 BGM/SFX 서비스·볼륨/믹서·Scene 음악 연결. 기존 AudioManager 호출 재활성화 금지 |
+| 오디오 | GameAudioManager의 공용 효과음 풀, Mixer, 낮밤·우주선 음악 | 장치 청감과 실제 Client 검증 |
 | App/Scene 흐름 | Startup·우주선 허브·Mission 출격/귀환, 소유 Scene 정리와 전환 실패 전달 | 추가 방/전장·제품별 도착점과 전체 Scene 인수 |
 | Match 관리 | Scene 조립·Player/터렛·CU 바인딩, 완료/해제 수명과 모드 규칙 경계 | 최종 전투 진행·컷씬·결과 UI 등 실제 콘텐츠 연결 |
 | 공용 시간·낮밤 | Host 게임 시간/정지/배속, 낮밤 기준과 Client 잔여시간 읽기 | 실제 Weather writer·표현 소유자와의 최종 인수 |
