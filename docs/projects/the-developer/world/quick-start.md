@@ -31,3 +31,7 @@ title: Spaceship 씬 왕복
 ## 우주선 내부 자동문
 
 `DoorOperation`의 감지 트리거에 `PlayerFeetBox`가 닿으면 내부 자동문이 열립니다. 출격·필드 왕복은 위의 `SpaceshipEnter`와 `SpaceshipExit` 계약을 사용합니다.
+
+## Stage 1 진입과 제작 검증
+
+제품 Build Settings는 Startup 다음에 `Assets/Scenes/Gameplay/Stage_1.unity`를 사용합니다. 출격과 재시작은 Stage_1로 연결됩니다. Initial_Stage는 명시적 Editor 검사용입니다. 이동 가능 영역이나 장애물을 편집한 뒤에는 Stage_1의 `NavMeshSurface`를 다시 베이크하고, 타일맵 외곽 경계와 NavMesh 이동을 각각 확인하세요.

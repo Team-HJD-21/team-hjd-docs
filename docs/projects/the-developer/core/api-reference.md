@@ -4,7 +4,7 @@ title: Core API 사용법
 
 # Core API 사용법
 
-**2026-11-12 추가:** [CameraManager의 로컬 시점 API](camera-management.md), [CU 시작 셀 설정](regions-encounters.md#cu-시작-영역과-동적-연결)을 사용할 수 있습니다. [Audio는 공용 API 미구현](audio.md)입니다. 아래 기반 API의 당시 대조일과 최신 항목을 구분하며 [전체 상태](implementation-status.md)를 확인하세요.
+**2026-11-12 추가:** [CameraManager의 로컬 시점 API](camera-management.md), [CU 시작 셀 설정](regions-encounters.md#cu-시작-영역과-동적-연결)을 사용할 수 있습니다. [GameAudioManager 재생 API](audio.md)도 사용할 수 있습니다. 아래 기반 API의 당시 대조일과 최신 항목을 구분하며 [전체 상태](implementation-status.md)를 확인하세요.
 
 **기준:** 게임 main `d9ea70570b40a7d8d6a4d633299d0be7d1c1502c` (#623, 2026-11-06). 기존 전용 요청 API와 실제 scoped runtime/복원 계약을 정적으로 대조했습니다.
 
@@ -108,7 +108,7 @@ Preparing 시간은 자동 정지하며 로딩 시간을 게임 시간에 포함
 
 App은 `Application.persistentDataPath/Checkpoints`의 `BinaryCheckpointStore`와 codec을 조립합니다. 슬롯은 정규화한 1–64자 ASCII 문자·숫자·하이픈·밑줄 이름이며 경로를 받지 않습니다. 완성 임시 파일을 flush한 뒤 `<slot>.checkpoint`로 교체하고, 손상·미지원 schema를 빈 저장 성공으로 바꾸지 않습니다. 해시는 손상 감지이며 Backend 인증이 아닙니다.
 
-World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 기본 유지하며 `CurrencyRestorePolicy.RestoreCheckpoint`를 명시한 경우만 저장값을 사용합니다. Initial_Stage는 `Checkpoints`와 `CheckpointRequests`를 제공하며 `RegisterCheckpointParticipant(writer)`로 Match 수명의 실제 writer를 연결할 수 있습니다. Core 난수·공간·시간대와 CU·터렛·Enemy·Encounter·Player writer를 조립합니다. 실제 `world/weather` writer가 필요한 Scene에서는 누락으로 전체 Save/Restore가 차단됩니다. 자동 저장 사건은 등록되어 있지 않습니다.
+World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 기본 유지하며 `CurrencyRestorePolicy.RestoreCheckpoint`를 명시한 경우만 저장값을 사용합니다. Initial_Stage는 `Checkpoints`와 `CheckpointRequests`를 제공하며 `RegisterCheckpointParticipant(writer)`로 Match 수명의 실제 writer를 연결할 수 있습니다. Core 난수·공간·시간대와 CU·터렛·Enemy·Encounter·Player writer를 조립합니다. 실제 `world/weather` writer가 필요한 Scene에서는 누락으로 전체 Save/Restore가 차단됩니다. Stage 진행의 등장 전 저장 요청은 StageCheckpointGate가 담당합니다.
 
 `AppRoot.ResumeCheckpointAsync(slot, missionScene)`는 시작/허브에서 1인 Story 슬롯의 메타데이터를 읽고 새 Match에 복원합니다. 동일 Scene의 `RestoreAsync`와 달리 새 Match를 구성하며, 실패·취소 시 해당 복원 작업의 Match를 정리합니다. 결과의 `Status`, `Reason`, `IsCurrentScope`를 확인하세요.
 
@@ -189,3 +189,9 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 ## 공통 조작 알림
 
 `TeamHJD.Game.Application.GameAlerts.Show(message, tone, key)`는 로컬 화면에 일회성 결과를 표시합니다. Unity 메인 스레드에서 실제 조작 결과를 받은 뒤 한 번 호출하세요. 반환값은 표시 큐 수락 여부입니다. `key`가 생략되면 문구로 중복을 판단합니다. 기본 노출은 실시간 2.2초이며, 표시 한 건 외에 최대 세 건을 대기시킵니다. 로딩·결과 화면·우주선 이동 페이드가 시작되면 큐를 비웁니다. 네트워크 참가자별 결과는 해당 참가자의 UI에서 표시합니다.
+
+## 성장 저장과 Mission 복귀
+
+Editor에서는 저장과 복원을 같은 Play 안에서 시험합니다. App이 대기 중인 성장 쓰기를 마친 뒤 프로젝트별 Editor 임시 저장을 정리합니다. 빌드의 영구 저장은 별도 경로를 사용합니다. Stage_1의 시험 설정 `fixedMaximumPower = 500`은 성장 로드와 월드 복원에도 최대 용량을 적용합니다. `0`으로 설정하면 성장 저장에서 용량을 복원합니다.
+
+전멸 또는 구조 시간 소진 시 공용 시간을 정지하고 안전장치 사용과 처음부터 다시하기 중 선택을 기다립니다. 실제 월드 저장을 사용하는 복원은 필수 writer 조건을 충족해야 합니다. Stage 진행은 현재 점유와 최고 도달률을 따로 읽으며, 최종 진입 가능 여부는 `StageProgress.CanEnterFinalBattle`에서 확인합니다.

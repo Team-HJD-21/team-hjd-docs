@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Core 연동 가이드
 
-**11월 12일 확인:** [현재 사용할 수 있는 기능](core/implementation-status.md)에서 기반 구현과 실제 게임 연결을 구분합니다. [CameraManager](core/camera-management.md)는 사용할 수 있으며, [공용 AudioManager](core/audio.md)는 아직 없습니다. CU 시작 셀과 Host 설정은 [지역 API](core/regions-encounters.md#cu-시작-영역과-동적-연결)에 추가됐습니다.
+**11월 15일 확인** [현재 사용할 수 있는 기능](core/implementation-status.md)에서 기반 구현과 실제 게임 연결을 구분합니다. [CameraManager](core/camera-management.md)는 사용할 수 있으며, [공용 AudioManager](core/audio.md)의 재생 계약도 사용할 수 있습니다. CU 시작 셀과 Host 설정은 [지역 API](core/regions-encounters.md#cu-시작-영역과-동적-연결)에 추가됐습니다.
 
 **기준:** 게임 main `1a03e9a9164e5db94cbc8775162467d08cf63a3b` (2026-11-05), 공개 API·현재 구현 정적 대조.
 

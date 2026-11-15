@@ -1,0 +1,1 @@
+게임 main 9a6ac9b3da04227cba5b58bb79e4c4711a610935, 사이트 main 3627567 기준. Docs/02_architecture의 game-audio-api, growth-save-api, match-recovery-api, stage-progression-api, encounter-runtime-and-testing, stage1-scene-authoring의 사용법을 반영했습니다.
