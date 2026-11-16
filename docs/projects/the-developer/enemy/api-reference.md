@@ -41,3 +41,7 @@ title: Enemy 스폰 API 사용법
 | `ArcaneSlowEffect.SetSlowActive(bool)` | 외부에서 확정한 감속의 고리/잔상 표시만 수행합니다. 지속시간은 호출자가 소유합니다. |
 
 현재 능력은 근접·원거리·폭발 등 제작된 구성을 재사용합니다. Source에 추가된 Stage 1 프리팹/이펙트의 존재를 최종 스폰 편성·밸런스·다중 Client 인수로 확대하지 않습니다. `EnemyRoot` 기반과 실제 Runtime catalog 참조를 확인하세요.
+
+## Stage 1 보스 연결
+
+`Stage1BossController`는 페이즈별 능력 순서와 패턴 종료 후 탈진을 관리합니다. `EnemyAbility.ControlsMovement`를 반환하는 돌진 능력은 실행 중 이동을 직접 제어합니다. `EnemyDamageRule.ModifyDamage()`는 `EnemyHealth`의 HP 차감 전에 호출됩니다. 보스는 자신의 소환수가 생존하면 피해를 줄이고 탈진 중에는 피해를 늘립니다. `BossSkillNetworkView`는 클라이언트에 모션과 범위 예고를 전달하며 실제 타격은 서버가 처리합니다.
