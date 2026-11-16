@@ -195,3 +195,7 @@ World는 복원하고 Progression은 현재 값을 유지합니다. Currency도 
 Editor에서는 저장과 복원을 같은 Play 안에서 시험합니다. App이 대기 중인 성장 쓰기를 마친 뒤 프로젝트별 Editor 임시 저장을 정리합니다. 빌드의 영구 저장은 별도 경로를 사용합니다. Stage_1의 시험 설정 `fixedMaximumPower = 500`은 성장 로드와 월드 복원에도 최대 용량을 적용합니다. `0`으로 설정하면 성장 저장에서 용량을 복원합니다.
 
 전멸 또는 구조 시간 소진 시 공용 시간을 정지하고 안전장치 사용과 처음부터 다시하기 중 선택을 기다립니다. 실제 월드 저장을 사용하는 복원은 필수 writer 조건을 충족해야 합니다. Stage 진행은 현재 점유와 최고 도달률을 따로 읽으며, 최종 진입 가능 여부는 `StageProgress.CanEnterFinalBattle`에서 확인합니다.
+
+### Stage 1 최종 보스전
+
+`enableStage1BossFlow`가 켜진 Stage_1은 현재 점유 100%에서 입장 컷씬을 시작합니다. `StageProgress.CanEnterFinalBattle`은 현재 점유율을 사용하며 33%·66% 중간보스 생성이나 처치를 요구하지 않습니다. `EnterFinalBattleSceneAsync`는 같은 Match에 BossRoom을 Additive로 연결하고 실제 도착과 보스 HP 원본을 확인합니다. Stage_1은 도착 후 보스전 시작 상태를 저장하고 Confirm한 뒤 전투를 재개합니다. 시작 저장은 같은 Match의 보스전 재도전용입니다. 등록된 보스의 실제 HP 사망을 확인하면 성공 연출과 암전을 거쳐 승리를 확정하고 우주선으로 돌아갑니다.
