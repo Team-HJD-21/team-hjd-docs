@@ -798,3 +798,7 @@ flowchart TD
 ## Laser 사용 경계
 
 `DefaultFieldLaserTurret`는 `FieldTurretBase`를 상속하고 `Kind`는 `Laser`입니다. 켜기와 끄기는 공통 `RequestActivation(bool)`을 사용합니다. `ProjectilesPerShot`은 0이므로 발사체 기반 이론 DPS를 빔 피해량으로 해석하지 않습니다. 체크포인트 복원은 `FieldLaserTurret.Checkpoint.cs`의 Laser 상태 연결을 사용합니다.
+
+## 필드 호버 사거리 표시
+
+터렛의 베이스·포신·발사대 Collider와 화면 기준 8px 여유로 호버를 판정합니다. 정보창을 열면 사거리 원이 약 0.8초 동안 중심에서 펼쳐지고 닫으면 같은 시간 동안 줄어듭니다. 최종 반경은 표시 snapshot의 `Range`를 읽습니다. Scene/Game의 사거리 Gizmo는 각 뷰의 Gizmos 설정에서 표시를 조절합니다.

@@ -33,3 +33,11 @@ MovingEnemyController는 능력 실행 중이거나 CheckCondition이 참이면 
 `ITargetable.MaxAttackers`와 `AssignedAttackerCount`로 한도와 현재 배정을 읽습니다. `TryAssignAttackers(count)`는 유효한 타깃에 남은 자리가 있을 때 양수 인원을 배정합니다. 호출자는 타깃 교체·이탈 시 `UnassignAttackers(count)`로 자신의 배정을 반환합니다. `EnemyDefinition.IsIncludedInAttackerLimit`가 꺼진 몬스터는 분대 타깃을 공유하면서 인원 집계에서 빠집니다. 현재 BomberSlime이 이 설정을 사용합니다.
 
 서버 생성·복원 호출부는 `SetSimulationMatch`를 `NetworkObject.Spawn` 전에 호출합니다. NGO 값은 `OnNetworkSpawn` 이후 서버가 반영하고 Client는 초기 Spawn 자료를 읽습니다.
+
+## 배정 상한과 Agent 이동
+
+`MaxAttackers = 0`은 무제한입니다. 양수일 때 남은 자리를 검사하며 호출자는 배정한 인원을 타깃 교체·이탈 때 반환합니다. 현재 Player와 Stage1 CU는 0, Stage1 캐논·미사일·레이저는 20을 사용합니다.
+
+이동형 적의 `EnemyMovement`는 서버에서 NavMeshAgent에 경로 계산과 이동·회피를 맡깁니다. 일반 이동의 Rigidbody2D는 Kinematic이며 Client는 NetworkTransform을 읽습니다. 사거리 진입·능력 실행·타깃 부재 시 `Brake()`로 멈춥니다. 보스 돌진은 Agent를 끄고 Dynamic 물리 이동을 사용한 뒤 Agent 추적을 재개합니다.
+
+`GetTargetProjectionDistance()`는 런타임과 시험 스폰의 목표 투영 거리를 제공합니다. 체크포인트는 복원 위치와 타깃에서 Agent 경로를 다시 계산하며 과거 경유점·정지 플래그 자료는 형식 호환을 위해 읽습니다.
