@@ -75,3 +75,10 @@ I 상태창은 `PlayerAttack.TryGetCurrentWeaponStats(out PlayerWeaponStats)`와
 `CombatSkillPicker`의 반원 선택창에서 Q/E 슬롯으로 스킬을 끌어 장착합니다. `PlayerSkillController.TryEquip(slot, skill)`의 슬롯 0은 Q, 1은 E입니다. 반대 슬롯의 스킬을 가져오면 서로 교환합니다. SPACE는 고정 Dash입니다. 선택창을 닫는 동안에도 전투 입력 제한을 유지하며 ESC는 선택창이 먼저 소비합니다.
 
 `TryUseSlot(slot)`은 허용된 Q/E 시도에서 `SlotUseAttempted(slot, skill, accepted)`를 한 번 알립니다. 미배정 슬롯과 실제 설치 확정 실패는 공통 Alert로 표시합니다. `PlayerAttack.ShotFired(WeaponType)`는 원거리 발사 성공 시 조준선 피드백에 사용하며 산탄도 한 번만 알립니다. XP 팝업은 `PlayerExperience.ExperienceGranted`를 구독합니다. 우주선 방문 중 HUD 입력과 표시를 숨기고 필드 복귀 시 같은 actor의 상태를 읽습니다.
+
+
+## 점유 표시와 개인 메뉴
+
+지도와 전체도는 확정 점유·해금된 점유 가능 셀·확보 진행 중인 셀·잠긴 셀을 구분합니다. 확보 진행은 Host의 실제 비율로 표시하며, 100%는 전체 Stage 1 점유가 완료됐을 때 표시합니다. Host 진단은 한 표본의 동시 확보·상실과 해당 revision을 함께 기록합니다.
+
+필드와 우주선의 개인 메뉴를 열어도 공유 월드 시간은 계속 흐릅니다. 일반 필드에서 우주선으로 이동할 때는 출입구를 사용합니다. 메뉴의 우주선 귀환 버튼은 복귀 오류 화면에서 제공합니다.
